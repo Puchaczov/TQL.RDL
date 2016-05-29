@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{12D9B4D8-333B-4630-A02E-2005A5814740}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RDL.Parser</RootNamespace>
+    <AssemblyName>TQL.RDL.Parser</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Lexer.cs" />
+    <Compile Include="LexerEnumerator.cs" />
+    <Compile Include="Nodes\BinaryNode.cs" />
+    <Compile Include="Nodes\ConstantNode.cs" />
+    <Compile Include="Nodes\DateTimeNode.cs" />
+    <Compile Include="Nodes\FunctionNode.cs" />
+    <Compile Include="Nodes\INodeVisitor.cs" />
+    <Compile Include="Nodes\LeafNode.cs" />
+    <Compile Include="Nodes\NumericNode.cs" />
+    <Compile Include="Nodes\OperatorsNodes.cs" />
+    <Compile Include="Nodes\RdlSyntaxNode.cs" />
+    <Compile Include="Nodes\RepeatEveryNode.cs" />
+    <Compile Include="Nodes\RootScript.cs" />
+    <Compile Include="Nodes\StartAtNode.cs" />
+    <Compile Include="Nodes\StopAtNode.cs" />
+    <Compile Include="Nodes\UnaryNode.cs" />
+    <Compile Include="Nodes\WhereConditionsNode.cs" />
+    <Compile Include="Nodes\WordNode.cs" />
+    <Compile Include="LexerComplexTokensDecorator.cs" />
+    <Compile Include="RDLParser.cs" />
+    <Compile Include="RDLWhereParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tokens\CommaToken.cs" />
+    <Compile Include="Tokens\DiffToken.cs" />
+    <Compile Include="Tokens\EndOfFileToken.cs" />
+    <Compile Include="Tokens\EqualityToken.cs" />
+    <Compile Include="Tokens\LeftParenthesisToken.cs" />
+    <Compile Include="Tokens\NoneToken.cs" />
+    <Compile Include="Tokens\NumericToken.cs" />
+    <Compile Include="Tokens\OperatorsTokens.cs" />
+    <Compile Include="Tokens\RightParenthesisToken.cs" />
+    <Compile Include="Tokens\Token.cs" />
+    <Compile Include="Tokens\SyntaxType.cs" />
+    <Compile Include="Tokens\WhisteSpaceToken.cs" />
+    <Compile Include="Tokens\WordToken.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Description.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="TQL.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TQL.Common.1.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TQL.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TQL.Core.1.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TQL.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TQL.Interfaces.1.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UsefullAlgorithms.Helpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.0\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UsefullAlgorithms.Parsing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.0\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Parsing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

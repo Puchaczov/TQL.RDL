@@ -1,0 +1,173 @@
+﻿using System;
+using TQL.Core.Syntax;
+using TQL.Core.Tokens;
+using TQL.RDL.Parser.Tokens;
+
+namespace TQL.RDL.Parser
+{
+    public class Lexer : LexerBase<Token>
+    {
+        public Lexer(string input) : 
+            base(input, new NoneToken())
+        { }
+
+        public override Token NextToken()
+        {
+            bool useNextChar = true;
+            while(useNextChar)
+            {
+                if (pos > input.Length - 1)
+                {
+                    AssignTokenOfType(() => new EndOfFileToken(new TextSpan(input.Length, 0)));
+                    return currentToken;
+                }
+
+                var currentChar = input[pos];
+
+                if(IsMultipleKeywordSign(currentChar))
+                {
+                    pos += 1;
+                    var token = this.ConsumeTillEnd('`');
+                    pos += 1;
+                    return token;
+                }
+
+                if(IsTextStartEndSign(currentChar))
+                {
+                    pos += 1;
+                    var token = this.ConsumeTillEnd('\'');
+                    pos += 1;
+                    return token;
+                }
+
+                if (IsLetter(currentChar))
+                {
+                    var token = ConsumeLetters();
+                    if(token.Value.StartsWith("@") && token.Value.Length > 1)
+                    {
+                        return new VarToken(token.Span, token.Value.Split('@')[1]);
+                    }
+                    return token;
+                }
+
+                if (IsDigit(currentChar))
+                {
+                    return this.ConsumeNumeric();
+                }
+
+                if (IsDiffOp(currentChar))
+                {
+                    return this.ConsumeDiffOperator();
+                }
+
+                if(IsGreaterEqualOp(currentChar))
+                {
+                    return this.ConsumeGreateEqualOperator();
+                }
+
+                if(IsLessEqualOp(currentChar))
+                {
+                    return this.ConsumeLessEqualOperator();
+                }
+
+                switch (currentChar)
+                {
+                    case ' ':
+                        pos += 1;
+                        continue;
+                    case ',':
+                        return new CommaToken(new TextSpan(pos++, 1));
+                    case '(':
+                        return new LeftParenthesisToken(new TextSpan(pos++, 1));
+                    case ')':
+                        return new RightParenthesisToken(new TextSpan(pos++, 1));
+                    case '+':
+                        return new PlusToken(new TextSpan(pos++, 1));
+                    case '-':
+                        return new MinusToken(new TextSpan(pos++, 1));
+                    case '=':
+                        return new EqualityToken(new TextSpan(pos++, 1));
+                    case '>':
+                        return new GreaterToken(new TextSpan(pos++, 1));
+                    case '<':
+                        return new LessToken(new TextSpan(pos++, 1));
+                }
+
+                useNextChar = false;
+            }
+
+            throw new NotSupportedException();
+        }
+
+        private Token ConsumeGreateEqualOperator()
+        {
+            var oldPos = pos;
+            pos += 2;
+            return new GreaterEqualToken(new TextSpan(oldPos, 2));
+        }
+
+        private Token ConsumeLessEqualOperator()
+        {
+            var oldPos = pos;
+            pos += 2;
+            return new LessEqualToken(new TextSpan(oldPos, 2));
+        }
+
+        private bool IsGreaterEqualOp(char currentChar) => input[pos] == '>' && pos + 1 < input.Length && input[pos + 1] == '=';
+
+        private bool IsLessEqualOp(char currentChar) => input[pos] == '<' && pos + 1 < input.Length && input[pos + 1] == '=';
+
+        private bool IsTextStartEndSign(char currentChar) => currentChar == '\'';
+
+        private Token ConsumeTillEnd(char pChar)
+        {
+            var startPos = pos;
+            var cnt = input.Length;
+            while (cnt > pos && input[pos] != pChar)
+            {
+                ++pos;
+            }
+
+            return AssignTokenOfType(() => new WordToken(input.Substring(startPos, pos - startPos), new TextSpan(startPos, pos - startPos))) as WordToken;
+        }
+
+        private DiffToken ConsumeDiffOperator()
+        {
+            var start = pos;
+            pos += 2;
+            return new DiffToken(new TextSpan(start, 2));
+        }
+
+        private bool IsDiffOp(char currentChar) => currentChar == '<' && input.Length > pos + 1 && input[pos + 1] == '>';
+
+        private NumericToken ConsumeNumeric()
+        {
+            var startPos = pos;
+            var cnt = input.Length;
+            while (cnt > pos && IsDigit(input[pos]))
+            {
+                ++pos;
+            }
+
+            return AssignTokenOfType(() => new NumericToken(input.Substring(startPos, pos - startPos), new TextSpan(startPos, pos - startPos))) as NumericToken;
+        }
+
+        private WordToken ConsumeLetters()
+        {
+            var startPos = pos;
+            var cnt = input.Length;
+            while (cnt > pos && (IsLetter(input[pos]) || IsDigit(input[pos])))
+            {
+                ++pos;
+            }
+
+            return AssignTokenOfType(() => new WordToken(input.Substring(startPos, pos - startPos), new TextSpan(startPos, pos - startPos))) as WordToken;
+        }
+
+        private bool IsMultipleKeywordSign(char sign) => sign == '`';
+
+        public override Token LastToken() => lastToken;
+
+        public override Token CurrentToken() => currentToken;
+    }
+}
