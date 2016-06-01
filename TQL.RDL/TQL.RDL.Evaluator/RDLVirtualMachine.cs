@@ -25,6 +25,7 @@ namespace TQL.RDL.Evaluator
 
         public Stack<long?> Values { get; }
         public Stack<DateTimeOffset?> Datetimes { get; }
+        public object[] CallArgs { get; set; }
 
         public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions)
         {

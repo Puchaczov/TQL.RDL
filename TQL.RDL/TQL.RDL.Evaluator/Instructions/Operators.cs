@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace TQL.RDL.Evaluator.Instructions
@@ -35,43 +36,22 @@ namespace TQL.RDL.Evaluator.Instructions
     public class CallExternalInstruction : IRDLInstruction
     {
         private MethodInfo info;
-        private string name;
-        private Type[] parameters;
+        private object obj;
 
-        public CallExternalInstruction(MethodInfo info, string name)
+        public CallExternalInstruction(object obj, MethodInfo info)
         {
-            this.name = name;
-
-            var parameters = info.GetParameters();
-
+            this.obj = obj;
+            this.info = info;
         }
 
         public void Run(RDLVirtualMachine machine)
         {
-            var argsCount = machine.Values.Pop();
-
-            if (!argsCount.HasValue)
-                throw new ArgumentNullException(nameof(argsCount));
-
-            List<object> paramsPrepare = new List<object>();
-            foreach(var param in parameters)
-            {
-                switch(param.Name)
-                {
-                    case nameof(Int64):
-                        paramsPrepare.Add(machine.Values.Pop());
-                        break;
-                    case nameof(DateTimeOffset):
-                        paramsPrepare.Add(machine.Datetimes.Pop());
-                        break;
-                }
-            }
-
-            info.Invoke(null, paramsPrepare.ToArray());
+            var result = info.Invoke(obj, machine.CallArgs);
+            machine.Values.Push(Convert.ToBoolean(result) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
 
-        public override string ToString() => string.Format("CALL {0}", name);
+        public override string ToString() => string.Format("CALL");
     }
 
 
@@ -345,7 +325,7 @@ namespace TQL.RDL.Evaluator.Instructions
                     var tmpRes = pop(machine);
                     result |= tmpRes.HasValue && tmpRes.Value.Equals(toCompare.Value);
                 }
-                for(; i < inArgsCount; ++i)
+                for (; i < inArgsCount; ++i)
                 {
                     pop(machine);
                 }
@@ -360,7 +340,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class InInstructionNumeric : InInstruction<long>
     {
-        public InInstructionNumeric() 
+        public InInstructionNumeric()
             : base((x) => x.Values.Pop(), (x, v) => x.Values.Push(v), (x) => x.Values.Peek())
         { }
         public override string ToString() => "IN-NUMERIC";
@@ -395,5 +375,32 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => "MODIFY";
+    }
+
+    public class PrepareFunctionCall : IRDLInstruction
+    {
+        private IEnumerable<Type> enumerable;
+
+        public PrepareFunctionCall(IEnumerable<Type> enumerable)
+        {
+            this.enumerable = enumerable;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            object[] args = enumerable.Select(f => {
+                switch(f.Name)
+                {
+                    case nameof(DateTimeOffset):
+                        return (object)machine.Datetimes.Pop();
+                    case nameof(Int64):
+                        return (object)machine.Values.Pop();
+                    default:
+                        throw new Exception();
+                }
+            }).ToArray();
+            machine.CallArgs = args;
+            machine.InstructionPointer += 1;
+        }
     }
 }

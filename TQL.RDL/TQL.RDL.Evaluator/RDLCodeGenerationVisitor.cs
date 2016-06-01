@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser.Nodes;
 
@@ -15,8 +17,9 @@ namespace TQL.RDL.Evaluator
         private Stack<IRDLInstruction> instructions;
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
+        private MethodManager bindableObjects;
 
-        public RDLCodeGenerationVisitor()
+        public RDLCodeGenerationVisitor(MethodManager bindableObjects)
         {
             variables = new MemoryVariables();
             instructions = new Stack<IRDLInstruction>();
@@ -24,7 +27,12 @@ namespace TQL.RDL.Evaluator
             stopAt = null;
 
             this.Register<RDLCodeGenerationVisitor>(f => true);
+            this.bindableObjects = bindableObjects;
         }
+
+        public RDLCodeGenerationVisitor()
+            : this(new MethodManager())
+        { }
 
         public void Register<T>(Expression<Func<T, bool>> exp)
         {
@@ -189,12 +197,14 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(FunctionNode node)
         {
-            foreach(var arg in node.Descendants)
+            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
+            var registeredFunction = bindableObjects.GetMethod(node.Name, argTypes);
+            instructions.Push(new CallExternalInstruction(registeredFunction.Item2, registeredFunction.Item1));
+            instructions.Push(new PrepareFunctionCall(argTypes));
+            foreach (var arg in node.Descendants)
             {
                 arg.Accept(this);
             }
-            instructions.Push(new PushNumericInstruction(node.Descendants.Length));
-            instructions.Push(new CallExternalInstruction(null, node.Name));
         }
 
         public void Visit(GreaterNode node)
