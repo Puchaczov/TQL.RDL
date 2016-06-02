@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Parser", "TQL.RDL.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Parser.Tests", "TQL.RDL.Parser.Tests\TQL.RDL.Parser.Tests.csproj", "{91E3BA5F-F43E-4F77-83D7-762652367722}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Converter", "TQL.RDL.Converter\TQL.RDL.Converter.csproj", "{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{91E3BA5F-F43E-4F77-83D7-762652367722}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91E3BA5F-F43E-4F77-83D7-762652367722}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91E3BA5F-F43E-4F77-83D7-762652367722}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

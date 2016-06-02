@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{44933415-5E61-4069-8E05-75145D365A90}</ProjectGuid>
+    <ProjectGuid>{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TQL.RDL.Evaluator</RootNamespace>
-    <AssemblyName>TQL.RDL.Evaluator</AssemblyName>
+    <RootNamespace>TQL.RDL.Converter</RootNamespace>
+    <AssemblyName>TQL.RDL.Converter</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,19 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\TQL.RDL.Parser\TQL.RDL.Parser.csproj">
-      <Project>{12d9b4d8-333b-4630-a02e-2005a5814740}</Project>
-      <Name>TQL.RDL.Parser</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DefaultMethods.cs" />
-    <Compile Include="Instructions\Operators.cs" />
-    <Compile Include="MethodManager.cs" />
-    <Compile Include="RDLCodeGenerationVisitor.cs" />
-    <Compile Include="RDLVirtualMachine.cs" />
-    <Compile Include="IInstruction.cs" />
+    <Compile Include="AbstractConverter.cs" />
+    <Compile Include="ConvertionRequest.cs" />
+    <Compile Include="ConvertionResponse.cs" />
+    <Compile Include="RdlTimeline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +56,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj">
+      <Project>{44933415-5e61-4069-8e05-75145d365a90}</Project>
+      <Name>TQL.RDL.Evaluator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TQL.RDL.Parser\TQL.RDL.Parser.csproj">
+      <Project>{12d9b4d8-333b-4630-a02e-2005a5814740}</Project>
+      <Name>TQL.RDL.Parser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

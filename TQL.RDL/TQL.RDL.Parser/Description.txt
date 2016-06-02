@@ -1,6 +1,6 @@
 ﻿repeat every {n}/{month} {segment[seconds,[minutes,[...]]]} where [{segment} operator value,[{segment} not in (values)]]
 
-repeat every {hour}/{month}/{year} seconds where day in (MON-FRI) and month <> january start from {date} end {date}
+repeat every {hour}/{month}/{year} seconds where day in (MON-FRI) and month <> january and fn(@datetime, @weekday) start from {date} end {date}
 
 //functions
 IsLastDayOfMonth();
