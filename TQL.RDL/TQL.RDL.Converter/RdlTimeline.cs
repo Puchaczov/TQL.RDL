@@ -13,7 +13,13 @@ namespace TQL.RDL.Converter
 
         private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest request)
         {
-            var visitor = new RDLCodeGenerationVisitor();
+            MethodManager manager = new MethodManager();
+            foreach(var pair in request.MethodsToBind)
+            {
+                manager.RegisterMethod(pair.Value.Name, pair.Key, pair.Value);
+            }
+
+            var visitor = new RDLCodeGenerationVisitor(manager);
             ast.Accept(visitor);
             var evaluator = visitor.VirtualMachine;
             if(evaluator != null)

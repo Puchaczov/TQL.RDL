@@ -6,7 +6,7 @@ namespace TQL.RDL.Converter
 {
     public class ConvertionResponse<T> : ConvertionResponseBase<T>
     {
-        private T Output;
+        public T Output { get; }
 
         public ConvertionResponse(T output)
         {
