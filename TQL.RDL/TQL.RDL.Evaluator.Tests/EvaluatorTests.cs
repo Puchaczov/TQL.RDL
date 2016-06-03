@@ -9,6 +9,10 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class UnitTest1
     {
+        private static bool staticMethodCalled = false;
+        private bool methodCalled = false;
+
+        [Ignore()]
         [TestMethod]
         public void TestMethod1()
         {
@@ -42,21 +46,23 @@ namespace TQL.RDL.Evaluator.Tests
 
             node.Accept(visitor);
             var machine = visitor.VirtualMachine;
+            
+            machine.NextFire();
 
-            while (true)
-            {
-                var reftime = machine.NextFire();
-            }
+            Assert.IsTrue(staticMethodCalled);
+            Assert.IsTrue(methodCalled);
         }
 
-        [TestMethod]
-        public void TEstCall()
+        public static bool TestMethodWithDateTimeOffset(DateTimeOffset date)
         {
-            var m = this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset));
+            staticMethodCalled = true;
+            return true;
         }
 
-        public static bool TestMethodWithDateTimeOffset(DateTimeOffset date) => true;
-
-        public bool TestMethodWithDateTimeOffset(DateTimeOffset date, long year) => true;
+        public bool TestMethodWithDateTimeOffset(DateTimeOffset date, long year)
+        {
+            methodCalled = true;
+            return true;
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using TQL.RDL.Parser.Nodes;
 using TQL.Core.Converters;
 using TQL.RDL.Parser.Tokens;
-using System;
 using TQL.RDL.Parser;
 
 namespace TQL.RDL.Converter

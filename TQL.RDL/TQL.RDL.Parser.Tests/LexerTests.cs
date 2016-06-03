@@ -35,6 +35,66 @@ namespace TQL.RDL.Parser.Tests
                 SyntaxType.EndOfFile);
         }
 
+        [TestMethod]
+        public void CheckProducedTokens_WithMultiWordKeyword_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every day start at @var stop at '123213'");
+            var tokens = Tokenize(lexer);
+
+            CheckTokenized_ShouldReturnOrderedToken(tokens,
+                SyntaxType.Repeat,
+                SyntaxType.Every,
+                SyntaxType.Word,
+                SyntaxType.StartAt,
+                SyntaxType.Var,
+                SyntaxType.StopAt,
+                SyntaxType.Word,
+                SyntaxType.EndOfFile);
+        }
+
+        [TestMethod]
+        public void CheckProducedTokens_WithFunctionCall_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every day where myfun(1,2)");
+            var tokens = Tokenize(lexer);
+
+            CheckTokenized_ShouldReturnOrderedToken(tokens,
+                SyntaxType.Repeat,
+                SyntaxType.Every,
+                SyntaxType.Word,
+                SyntaxType.Where,
+                SyntaxType.Word,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Numeric,
+                SyntaxType.Comma,
+                SyntaxType.Numeric,
+                SyntaxType.RightParenthesis,
+                SyntaxType.EndOfFile);
+        }
+
+        [TestMethod]
+        public void CheckProducedTokens_WithInOperator_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every day where @year in (@year, 2013, 'WORD')");
+            var tokens = Tokenize(lexer);
+
+            CheckTokenized_ShouldReturnOrderedToken(tokens,
+                SyntaxType.Repeat,
+                SyntaxType.Every,
+                SyntaxType.Word,
+                SyntaxType.Where,
+                SyntaxType.Var,
+                SyntaxType.In,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Var,
+                SyntaxType.Comma,
+                SyntaxType.Numeric,
+                SyntaxType.Comma,
+                SyntaxType.Word,
+                SyntaxType.RightParenthesis,
+                SyntaxType.EndOfFile);
+        }
+
         private static Token[] Tokenize(ILexer<Token> lexer)
         {
             List<Token> lst = new List<Token>();

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using TQL.Core.Syntax;
 using TQL.Core.Tokens;
 using TQL.RDL.Parser.Tokens;
@@ -7,9 +10,19 @@ namespace TQL.RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {
+        private Dictionary<string, string> multiWordKeywords;
+        private Dictionary<string, SyntaxType> multiWordKeywordsSyntaxMapper;
+
         public Lexer(string input) : 
             base(input, new NoneToken())
-        { }
+        {
+            multiWordKeywords = new Dictionary<string, string>();
+            multiWordKeywords.Add("start", "at");
+            multiWordKeywords.Add("stop", "at");
+            multiWordKeywordsSyntaxMapper = new Dictionary<string, SyntaxType>();
+            multiWordKeywordsSyntaxMapper.Add("start at", SyntaxType.StartAt);
+            multiWordKeywordsSyntaxMapper.Add("stop at", SyntaxType.StopAt);
+        }
 
         public override Token NextToken()
         {
@@ -46,6 +59,22 @@ namespace TQL.RDL.Parser
                     if(token.Value.StartsWith("@") && token.Value.Length > 1)
                     {
                         return new VarToken(token.Span, token.Value.Split('@')[1]);
+                    }
+                    if(IsMulitkeywordCandidate(token))
+                    {
+                        var keyword = string.Empty;
+                        var type = SyntaxType.None;
+                        if(IsMultikeyword(token, ref keyword, ref type))
+                        {
+                            var pos = this.pos - keyword.Length;
+                            switch (type)
+                            {
+                                case SyntaxType.StartAt:
+                                    return new StartAtToken(new TextSpan(pos, keyword.Length));
+                                case SyntaxType.StopAt:
+                                    return new StopAtToken(new TextSpan(pos, keyword.Length));
+                            }
+                        }
                     }
                     return token;
                 }
@@ -98,6 +127,36 @@ namespace TQL.RDL.Parser
 
             throw new NotSupportedException();
         }
+
+        private bool IsMultikeyword(WordToken token, ref string keyword, ref SyntaxType type)
+        {
+            var pos = this.pos;
+            var spaces = new StringBuilder();
+            while(this.input.Length > pos && this.input[pos] == ' ')
+            {
+                spaces.Append(' ');
+                pos += 1;
+            }
+            var builder = new StringBuilder();
+            while(this.input.Length > pos && IsLetter(this.input[pos]))
+            {
+                builder.Append(this.input[pos]);
+                pos += 1;
+            }
+            this.pos = pos;
+            var keywordCandidate = builder.ToString();
+            if(this.multiWordKeywords.ContainsKey(token.Value) && this.multiWordKeywords[token.Value] == keywordCandidate)
+            {
+                type = multiWordKeywordsSyntaxMapper[token.Value + ' ' + keywordCandidate];
+                keyword = token.Value + spaces + keywordCandidate;
+                return true;
+            }
+            type = SyntaxType.None;
+            keyword = string.Empty;
+            return false;
+        }
+
+        private bool IsMulitkeywordCandidate(WordToken token) => this.multiWordKeywords.ContainsKey(token.Value);
 
         private Token ConsumeGreateEqualOperator()
         {
