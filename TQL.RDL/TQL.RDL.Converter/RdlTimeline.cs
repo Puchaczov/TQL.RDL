@@ -11,7 +11,7 @@ namespace TQL.RDL.Converter
             : base(throwOnError)
         { }
 
-        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScript ast, ConvertionRequest request)
+        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest request)
         {
             var visitor = new RDLCodeGenerationVisitor();
             ast.Accept(visitor);
@@ -24,9 +24,6 @@ namespace TQL.RDL.Converter
             return new ConvertionResponse<IFireTimeEvaluator>(null);
         }
 
-        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request)
-        {
-            return base.Convert(request, (ast) => this.Convert(ast, request));
-        }
+        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, (ast) => this.Convert(ast, request));
     }
 }

@@ -12,6 +12,11 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         private int newInstructionPtr;
 
+        public GoToInstruction(int newInstructionPtr)
+        {
+            this.newInstructionPtr = newInstructionPtr;
+        }
+
         public void Run(RDLVirtualMachine machine)
         {
             machine.InstructionPointer = newInstructionPtr;
@@ -375,6 +380,14 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => "MODIFY";
+    }
+
+    public class NotInstruction : IRDLInstruction
+    {
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Values.Push(~machine.Values.Pop().Value);
+        }
     }
 
     public class PrepareFunctionCall : IRDLInstruction

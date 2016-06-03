@@ -20,7 +20,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Token Token => null;
 
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+        public override void Accept(INodeVisitor visitor) { }
 
         public LeafNode Value => value;
     }

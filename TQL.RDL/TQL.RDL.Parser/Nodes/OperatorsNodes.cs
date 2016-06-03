@@ -54,7 +54,7 @@ namespace TQL.RDL.Parser.Nodes
         { }
 
         public override string ToString() => string.Format("{0},{1}", Left.ToString(), Right.ToString());
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+        public override void Accept(INodeVisitor visitor) { }
     }
 
     public class EqualityNode : BinaryNode
@@ -107,19 +107,15 @@ namespace TQL.RDL.Parser.Nodes
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 
-    public class NotNode : UnaryNode
+    public class NotInNode : InNode
     {
-        public NotNode(RdlSyntaxNode node)
-            : base(node)
+        public NotInNode(RdlSyntaxNode partOfDate, RdlSyntaxNode right) 
+            : base(partOfDate, right)
         { }
-
-        public override Type ReturnType => Descendant.ReturnType;
-
-        public override Token Token => null;
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => string.Format("not {0}", base.Descendant);
+        public override string ToString() => string.Format("not in {0}", base.Right);
     }
 
     public class ArgListNode : RdlSyntaxNode
@@ -172,7 +168,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => string.Format("@{0}", token.Value);
+        public override string ToString() => token.ToString();
 
         public string Value => token.Value;
 

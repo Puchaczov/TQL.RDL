@@ -5,7 +5,7 @@ using TQL.RDL.Parser;
 
 namespace TQL.RDL.Converter
 {
-    public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, SyntaxType, RootScript, ConvertionRequest>
+    public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, SyntaxType, RootScriptNode, ConvertionRequest>
     {
         protected bool throwOnError;
 
@@ -14,7 +14,7 @@ namespace TQL.RDL.Converter
             this.throwOnError = throwOnError;
         }
 
-        protected override RootScript InstantiateRootNodeFromRequest(ConvertionRequest request)
+        protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest request)
         {
             var lexer = new LexerComplexTokensDecorator(request.Query);
             var parser = new RDLParser(lexer);

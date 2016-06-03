@@ -19,6 +19,7 @@ namespace TQL.RDL.Evaluator
     {
         private IRDLInstruction[] instructions;
         private int instrPtr;
+        private DateTimeOffset? stopAt;
 
         public MemoryVariables Variables { get; }
         private Func<DateTimeOffset?, DateTimeOffset?> GenerateNext;
@@ -27,7 +28,7 @@ namespace TQL.RDL.Evaluator
         public Stack<DateTimeOffset?> Datetimes { get; }
         public object[] CallArgs { get; set; }
 
-        public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions)
+        public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt)
         {
             Values = new Stack<long?>();
             Datetimes = new Stack<DateTimeOffset?>();
@@ -58,16 +59,19 @@ namespace TQL.RDL.Evaluator
                     instruction = instructions[instrPtr];
                     instruction.Run(this);
                 }
-
+                
                 isRightTime = Values.Peek().HasValue ? Convert.ToBoolean(Values.Pop().Value) : false;
 
-                if (isRightTime)
+                if (isRightTime && (!stopAt.HasValue || stopAt.Value <= Datetimes.Peek()))
                 {
                     var stored = Datetimes.Pop();
                     var old = ReferenceTime;
                     ReferenceTime = stored;
                     return old;
                 }
+
+                if (stopAt.HasValue && Datetimes.Peek() > stopAt.Value)
+                    return null;
 
                 if (!ReferenceTime.HasValue)
                     return null;

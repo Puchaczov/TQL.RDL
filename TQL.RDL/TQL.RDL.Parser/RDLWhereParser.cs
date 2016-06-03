@@ -14,6 +14,7 @@ namespace TQL.RDL.Parser
             operators.Add(new Token("or", SyntaxType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
             operators.Add(new Token("and", SyntaxType.And, new TextSpan(0, 0)), new PrecedenceAssociativity(5, Associativity.Left));
             operators.Add(new Token("in", SyntaxType.In, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("not in", SyntaxType.NotIn, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
             operators.Add(new Token("=", SyntaxType.Equality, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
             operators.Add(new Token("<>", SyntaxType.Diff, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
             operators.Add(new Token(">", SyntaxType.Greater, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));

@@ -11,9 +11,9 @@ namespace TQL.RDL.Evaluator
 
     public class RDLCodeGenerationVisitor : INodeVisitor
     {
-        private DateTimeOffset? startAt;
+        private DateTimeOffset referenceTime;
+        private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
-        private RDLVirtualMachine machine;
         private Stack<IRDLInstruction> instructions;
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
@@ -25,8 +25,7 @@ namespace TQL.RDL.Evaluator
             instructions = new Stack<IRDLInstruction>();
             startAt = DateTimeOffset.Now;
             stopAt = null;
-
-            this.Register<RDLCodeGenerationVisitor>(f => true);
+            
             this.bindableObjects = bindableObjects;
         }
 
@@ -34,11 +33,15 @@ namespace TQL.RDL.Evaluator
             : this(new MethodManager())
         { }
 
-        public void Register<T>(Expression<Func<T, bool>> exp)
+        public RDLVirtualMachine VirtualMachine
         {
+            get
+            {
+                var machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt);
+                machine.ReferenceTime = referenceTime;
+                return machine;
+            }
         }
-
-        public RDLVirtualMachine VirtualMachine => new RDLVirtualMachine(generateNext, instructions.ToArray());
 
         public void Visit(WhereConditionsNode node)
         {
@@ -50,7 +53,7 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(StopAtNode node)
         {
-            throw new NotImplementedException();
+            stopAt = node.Datetime;
         }
 
         public void Visit(RepeatEveryNode node)
@@ -88,14 +91,10 @@ namespace TQL.RDL.Evaluator
             instructions.Push(new PushDateTimeInstruction(node.DateTime));
         }
 
-        public void Visit(CommaNode node)
+        public void Visit(NotInNode node)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Visit(NotNode node)
-        {
-            throw new NotImplementedException();
+            instructions.Push(new NotInstruction());
+            Visit(node as InNode);
         }
 
         public void Visit(VarNode node)
@@ -127,11 +126,6 @@ namespace TQL.RDL.Evaluator
                     instructions.Push(new LoadNumericVariableInstruction(v => (int?)v.Current?.DayOfWeek));
                     break;
             }
-        }
-
-        public void Visit(ConstantNode node)
-        {
-            throw new NotImplementedException();
         }
 
         public void Visit(NumericNode node)
@@ -175,7 +169,7 @@ namespace TQL.RDL.Evaluator
             ExpressionGenerateLeftToRightInstructions<AndInstruction>(node);
         }
 
-        public void Visit(RootScript node)
+        public void Visit(RootScriptNode node)
         {
             instructions.Push(new BreakInstruction());
             instructions.Push(new Modify((f) => f.Datetimes.Push(generateNext(f.Datetimes.Pop()))));
@@ -187,7 +181,7 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(StartAtNode node)
         {
-            machine.ReferenceTime = node.When;
+            referenceTime = node.When;
         }
 
         public void Visit(WordNode node)

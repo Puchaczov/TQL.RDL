@@ -102,13 +102,11 @@ namespace TQL.RDL.Parser.Tokens
 
     public class VarToken : Token
     {
-        public VarToken(TextSpan span)
-            : base("@", SyntaxType.Var, span)
-        { }
-
         public VarToken(TextSpan span, string value)
             : base(value, SyntaxType.Var, span)
         { }
+
+        public override string ToString() => string.Format("@{0}", Value);
     }
 
     public class VarArgToken : Token

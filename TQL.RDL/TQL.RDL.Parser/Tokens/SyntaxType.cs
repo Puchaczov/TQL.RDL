@@ -30,6 +30,7 @@
         Greater,
         GreaterEqual,
         Less,
-        LessEqual
+        LessEqual,
+        NotIn
     }
 }

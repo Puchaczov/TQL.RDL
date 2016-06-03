@@ -46,7 +46,7 @@
     <Compile Include="Nodes\OperatorsNodes.cs" />
     <Compile Include="Nodes\RdlSyntaxNode.cs" />
     <Compile Include="Nodes\RepeatEveryNode.cs" />
-    <Compile Include="Nodes\RootScript.cs" />
+    <Compile Include="Nodes\RootScriptNode.cs" />
     <Compile Include="Nodes\StartAtNode.cs" />
     <Compile Include="Nodes\StopAtNode.cs" />
     <Compile Include="Nodes\UnaryNode.cs" />

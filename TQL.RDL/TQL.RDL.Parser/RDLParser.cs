@@ -18,7 +18,7 @@ namespace TQL.RDL.Parser
             cLexer = lexer;
         }
 
-        public RootScript ComposeRootComponents()
+        public RootScriptNode ComposeRootComponents()
         {
             var rootComponents = new List<RdlSyntaxNode>();
             var i = 0;
@@ -30,7 +30,7 @@ namespace TQL.RDL.Parser
                 }
                 rootComponents.Add(ComposeNextComponents());
             }
-            return new RootScript(rootComponents.ToArray());
+            return new RootScriptNode(rootComponents.ToArray());
         }
 
         private RdlSyntaxNode ComposeNextComponents()
@@ -107,9 +107,6 @@ namespace TQL.RDL.Parser
                     case SyntaxType.Or:
                         nodes.Push(new OrNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Not:
-                        nodes.Push(new NotNode(nodes.Pop()));
-                        break;
                     case SyntaxType.Equality:
                         nodes.Push(new EqualityNode(nodes.Pop(), nodes.Pop()));
                         break;
@@ -123,9 +120,13 @@ namespace TQL.RDL.Parser
                         nodes.Push(new DiffNode(nodes.Pop(), nodes.Pop()));
                         break;
                     case SyntaxType.In:
+                    case SyntaxType.NotIn:
                         var args = nodes.Pop();
                         var partOfDate = nodes.Pop();
-                        nodes.Push(new InNode(partOfDate, args));
+                        if(tokens[i].TokenType == SyntaxType.In)
+                            nodes.Push(new InNode(partOfDate, args));
+                        else
+                            nodes.Push(new NotInNode(partOfDate, args));
                         break;
                     case SyntaxType.Greater:
                         nodes.Push(new GreaterNode(nodes.Pop(), nodes.Pop()));

@@ -4,11 +4,11 @@ using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser.Nodes
 {
-    public class RootScript : RdlSyntaxNode
+    public class RootScriptNode : RdlSyntaxNode
     {
         private RdlSyntaxNode[] parts;
 
-        public RootScript(RdlSyntaxNode[] parts)
+        public RootScriptNode(RdlSyntaxNode[] parts)
         {
             this.parts = parts;
         }

@@ -11,10 +11,11 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every seconds where day in (mon-fri) and month <> january `start at` @now");
+            var query = "repeat every seconds where day in (mon-fri) and month <> january `start at` @now";
+            var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
-            CheckTokenized_ShouldReturnOrderedToken(tokens,
+            CheckTokenized_ShouldReturnOrderedToken(query, tokens,
                 SyntaxType.Repeat,
                 SyntaxType.Every,
                 SyntaxType.Word,
@@ -38,10 +39,11 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_WithMultiWordKeyword_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every day start at @var stop at '123213'");
+            var query = "repeat every day start at @var stop at '123213'";
+            var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
-            CheckTokenized_ShouldReturnOrderedToken(tokens,
+            CheckTokenized_ShouldReturnOrderedToken(query, tokens,
                 SyntaxType.Repeat,
                 SyntaxType.Every,
                 SyntaxType.Word,
@@ -55,10 +57,11 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_WithFunctionCall_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every day where myfun(1,2)");
+            var query = "repeat every day where myfun(1,2)";
+            var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
-            CheckTokenized_ShouldReturnOrderedToken(tokens,
+            CheckTokenized_ShouldReturnOrderedToken(query, tokens,
                 SyntaxType.Repeat,
                 SyntaxType.Every,
                 SyntaxType.Word,
@@ -75,10 +78,11 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_WithInOperator_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every day where @year in (@year, 2013, 'WORD')");
+            var query = "repeat every day where @year in (@year, 2013, 'WORD')";
+            var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
-            CheckTokenized_ShouldReturnOrderedToken(tokens,
+            CheckTokenized_ShouldReturnOrderedToken(query, tokens,
                 SyntaxType.Repeat,
                 SyntaxType.Every,
                 SyntaxType.Word,
@@ -108,10 +112,13 @@ namespace TQL.RDL.Parser.Tests
             return lst.ToArray();
         }
 
-        private static void CheckTokenized_ShouldReturnOrderedToken(Token[] tokens, params SyntaxType[] types)
+        private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens, params SyntaxType[] types)
         {
             for(int i = 0; i < tokens.Length; ++i)
             {
+                var span = tokens[i].Span;
+                var substr = query.Substring(span.Start, span.Length);
+                Assert.AreEqual(tokens[i].ToString(), substr);
                 Assert.IsTrue(tokens[i].TokenType == types[i]);
             }
         }

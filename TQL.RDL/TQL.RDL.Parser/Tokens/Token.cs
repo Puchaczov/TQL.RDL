@@ -30,5 +30,7 @@ namespace TQL.RDL.Parser.Tokens
         }
 
         public override int GetHashCode() => 17 * TokenType.GetHashCode() + Value.GetHashCode();
+
+        public override string ToString() => Value;
     }
 }

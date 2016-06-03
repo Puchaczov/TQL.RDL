@@ -9,6 +9,19 @@ namespace TQL.RDL.Parser.Tests
     public class RDLParserTests
     {
         [TestMethod]
+        public void RDLParser_ComposeWhereWithOperators_ShouldPass()
+        {
+            TestOperator_Simple<OrNode, NumericNode, NumericNode>("or", "1", "32");
+            TestOperator_Simple<AndNode, NumericNode, NumericNode>("and", "1", "32");
+            TestOperator_Simple<DiffNode, NumericNode, NumericNode>("<>", "1", "32");
+            TestOperator_Simple<EqualityNode, NumericNode, NumericNode>("=", "1", "32");
+            TestOperator_Simple<GreaterNode, NumericNode, NumericNode>(">", "1", "32");
+            TestOperator_Simple<LessNode, NumericNode, NumericNode>("<", "1", "32");
+            TestOperator_Simple<GreaterEqualNode, NumericNode, NumericNode>(">=", "1", "32");
+            TestOperator_Simple<LessEqualNode, NumericNode, NumericNode>("<=", "1", "32");
+        }
+
+        [TestMethod]
         public void RDLParser_ComposeWhereWithMulitpleSimpleConditions_ShouldPass()
         {
             var lexer = new LexerComplexTokensDecorator("repeat every seconds where @day = @monday and @month <> @january");
@@ -156,6 +169,21 @@ namespace TQL.RDL.Parser.Tests
 
             Assert.IsTrue(andNode.Left.GetType() == typeof(NumericNode));
             Assert.IsTrue(andNode.Right.GetType() == typeof(NumericNode));
+        }
+
+        private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)
+        {
+            var lexer = new LexerComplexTokensDecorator(string.Format("repeat every seconds where {1} {0} {2}", op, left, right));
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            Assert.AreEqual(2, node.Descendants.Length);
+            Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
+            Assert.AreEqual(typeof(WhereConditionsNode), node.Descendants[1].GetType());
+
+            Assert.IsTrue(node.Descendants[1].Descendants.OfType<TOperatorNode>().Any());
+            Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<TLeftOperand>().Any());
+            Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<TRightOperand>().Any());
         }
     }
 }
