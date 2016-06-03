@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser.Nodes;
 
@@ -79,6 +77,11 @@ namespace TQL.RDL.Evaluator
                     generateNext = (DateTimeOffset? datetime) => datetime.Value.AddYears(node.Value);
                     break;
             }
+        }
+
+        public void Visit(NumericConsequentRepeatEveryNode node)
+        {
+            Visit(node as RepeatEveryNode);
         }
 
         public void Visit(OrNode node)

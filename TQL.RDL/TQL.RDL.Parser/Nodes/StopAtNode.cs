@@ -5,10 +5,10 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class StopAtNode : ConstantNode
     {
-        private LeafNode when;
+        private DateTimeNode when;
         private Token token;
 
-        public StopAtNode(Token token, LeafNode when) 
+        public StopAtNode(Token token, DateTimeNode when) 
             : base(when)
         {
             this.token = token;
@@ -21,7 +21,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(DateTimeOffset);
 
-        public DateTimeOffset Datetime => DateTimeOffset.Parse(token.Value);
+        public DateTimeOffset Datetime => when.DateTime;
 
     }
 }

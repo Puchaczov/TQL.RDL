@@ -23,5 +23,6 @@
         void Visit(GreaterEqualNode node);
         void Visit(LessNode node);
         void Visit(LessEqualNode node);
+        void Visit(NumericConsequentRepeatEveryNode node);
     }
 }

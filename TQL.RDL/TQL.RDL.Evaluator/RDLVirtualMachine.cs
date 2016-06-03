@@ -36,6 +36,7 @@ namespace TQL.RDL.Evaluator
             Variables = new MemoryVariables();
             Variables["current"] = DateTimeOffset.Now;
             this.instructions = instructions;
+            this.stopAt = stopAt;
         }
 
         public DateTimeOffset? NextFire()
@@ -60,9 +61,9 @@ namespace TQL.RDL.Evaluator
                     instruction.Run(this);
                 }
                 
-                isRightTime = Values.Peek().HasValue ? Convert.ToBoolean(Values.Pop().Value) : false;
+                isRightTime = Values.Count == 0 || (Values.Count > 0 && Convert.ToBoolean(Values.Pop().Value));
 
-                if (isRightTime && (!stopAt.HasValue || stopAt.Value <= Datetimes.Peek()))
+                if (isRightTime && (!stopAt.HasValue || stopAt.Value >= Datetimes.Peek()))
                 {
                     var stored = Datetimes.Pop();
                     var old = ReferenceTime;

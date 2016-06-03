@@ -9,6 +9,21 @@ namespace TQL.RDL.Parser.Tests
     public class RDLParserTests
     {
         [TestMethod]
+        public void RDLParser_ComposeRepeatAt_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every 5 seconds");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            Assert.AreEqual(1, node.Descendants.Length);
+            Assert.AreEqual(typeof(NumericConsequentRepeatEveryNode), node.Descendants[0].GetType());
+
+            var repeatNode = node.Descendants[0] as NumericConsequentRepeatEveryNode;
+
+            Assert.AreEqual(5, repeatNode.Value);
+        }
+
+        [TestMethod]
         public void RDLParser_ComposeWhereWithOperators_ShouldPass()
         {
             TestOperator_Simple<OrNode, NumericNode, NumericNode>("or", "1", "32");

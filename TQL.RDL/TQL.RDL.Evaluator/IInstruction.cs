@@ -4,9 +4,4 @@
     {
         void Run(RDLVirtualMachine machine);
     }
-
-    public interface IFunction
-    {
-        bool Call(params object[] args);
-    }
 }

@@ -64,11 +64,11 @@ namespace TQL.RDL.Parser.Nodes
         public override string ToString() => string.Format("{0} {1}", "repeat every", currentToken.Value);
     }
 
-    public class NumericConsequentRepeatEvery : RepeatEveryNode
+    public class NumericConsequentRepeatEveryNode : RepeatEveryNode
     {
         private NumericToken number;
 
-        public NumericConsequentRepeatEvery(Token repeatEvery, NumericToken number, WordToken partOfDatetime)
+        public NumericConsequentRepeatEveryNode(Token repeatEvery, NumericToken number, WordToken partOfDatetime)
             : base(repeatEvery, partOfDatetime)
         {
             this.number = number;

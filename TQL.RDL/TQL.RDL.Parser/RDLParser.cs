@@ -78,7 +78,7 @@ namespace TQL.RDL.Parser
             switch (token.TokenType)
             {
                 case SyntaxType.Var:
-                    return new StopAtNode(stopAtToken, new VarNode(token as VarToken));
+                    throw new NotImplementedException();
                 case SyntaxType.Word:
                     return new StopAtNode(stopAtToken, new DateTimeNode(token));
             }
@@ -166,22 +166,26 @@ namespace TQL.RDL.Parser
         private RdlSyntaxNode ComposeRepeat()
         {
             RepeatEveryNode node = null;
+            var repeat = lastToken;
             switch(currentToken.TokenType)
             {
                 case SyntaxType.Every:
+                    var every = currentToken;
                     Consume(SyntaxType.Every);
-                    node = new RepeatEveryNode(lastToken, currentToken);
-                    Consume(currentToken.TokenType);
-                    break;
-                case SyntaxType.Numeric:
-                    var numeric = currentToken;
-                    Consume(SyntaxType.Numeric);
-                    if(numeric is NumericToken || currentToken is WordToken)
+                    if(currentToken.TokenType == SyntaxType.Numeric)
                     {
-                        goto default;
+                        var numeric = currentToken;
+                        Consume(SyntaxType.Numeric);
+                        node = new NumericConsequentRepeatEveryNode(
+                            new Token("repeat every", SyntaxType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, currentToken.Span.End - repeat.Span.Start)), 
+                            numeric as NumericToken, 
+                            currentToken as WordToken);
                     }
-                    node = new NumericConsequentRepeatEvery(lastToken, numeric as NumericToken, currentToken as WordToken);
-                    Consume(SyntaxType.Word);
+                    else
+                    {
+                        node = new RepeatEveryNode(lastToken, currentToken);
+                    }
+                    Consume(currentToken.TokenType);
                     break;
                 default:
                     throw new Exception("error");

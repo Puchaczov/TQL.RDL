@@ -8,7 +8,7 @@ using TQL.RDL.Parser;
 namespace TQL.RDL.Evaluator.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class EvaluatorTests
     {
         private static bool staticMethodCalled = false;
         private bool methodCalled = false;
@@ -52,6 +52,54 @@ namespace TQL.RDL.Evaluator.Tests
 
             Assert.IsTrue(staticMethodCalled);
             Assert.IsTrue(methodCalled);
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateSimpleStartAtStopAt_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor();
+
+            node.Accept(visitor);
+
+            var machine = visitor.VirtualMachine;
+
+            var refTime = machine.ReferenceTime;
+            var datetime = default(DateTimeOffset?);
+            while((datetime = machine.NextFire()).HasValue)
+            {
+                Assert.AreEqual(refTime, datetime);
+                refTime = refTime.Value.AddHours(1);
+            }
+
+            Assert.AreEqual(null, datetime);
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateSimpleWithModifiedRepetiotion_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every 2 hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor();
+
+            node.Accept(visitor);
+
+            var machine = visitor.VirtualMachine;
+
+            var refTime = machine.ReferenceTime;
+            var datetime = default(DateTimeOffset?);
+            while ((datetime = machine.NextFire()).HasValue)
+            {
+                Assert.AreEqual(refTime, datetime);
+                refTime = refTime.Value.AddHours(2);
+            }
+
+            Assert.AreEqual(null, datetime);
         }
 
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset date)
