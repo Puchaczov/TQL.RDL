@@ -24,7 +24,7 @@ namespace TQL.RDL.Parser
 
         public Token CurrentToken() => lexer.CurrentToken();
 
-        public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this);
+        public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this, disableEnumerationForTokens);
 
         public void DisableEnumerationWhen(params SyntaxType[] tokens)
         {
@@ -75,6 +75,6 @@ namespace TQL.RDL.Parser
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => new LexerEnumerator(this);
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

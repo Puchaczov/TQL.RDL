@@ -70,9 +70,9 @@ namespace TQL.RDL.Parser
                             switch (type)
                             {
                                 case SyntaxType.StartAt:
-                                    return new StartAtToken(new TextSpan(pos, keyword.Length));
+                                    return AssignTokenOfType(() => new StartAtToken(new TextSpan(pos, keyword.Length)));
                                 case SyntaxType.StopAt:
-                                    return new StopAtToken(new TextSpan(pos, keyword.Length));
+                                    return AssignTokenOfType(() => new StopAtToken(new TextSpan(pos, keyword.Length)));
                             }
                         }
                     }
