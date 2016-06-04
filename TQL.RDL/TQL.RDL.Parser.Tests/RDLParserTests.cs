@@ -186,6 +186,31 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(andNode.Right.GetType() == typeof(NumericNode));
         }
 
+        [TestMethod]
+        public void RDLParser_ComplexQuery_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every days where 1 <> 2 start at '2012.01.11' stop at '2013.01.12'");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            Assert.AreEqual(4, node.Descendants.Length);
+
+            Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
+            Assert.AreEqual(typeof(WhereConditionsNode), node.Descendants[1].GetType());
+            Assert.AreEqual(typeof(StartAtNode), node.Descendants[2].GetType());
+            Assert.AreEqual(typeof(StopAtNode), node.Descendants[3].GetType());
+
+            Assert.IsTrue(node.Descendants[1].Descendants.OfType<DiffNode>().Any());
+            Assert.IsTrue(typeof(NumericNode) == node.Descendants[1].Descendants[0].Descendants[0].GetType());
+            Assert.IsTrue(typeof(NumericNode) == node.Descendants[1].Descendants[0].Descendants[1].GetType());
+
+            var startAt = node.Descendants[2] as StartAtNode;
+            Assert.IsTrue(DateTimeOffset.Parse("2012.01.11") == startAt.When);
+
+            var stopAt = node.Descendants[3] as StopAtNode;
+            Assert.IsTrue(DateTimeOffset.Parse("2013.01.12") == stopAt.Datetime);
+        }
+
         private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)
         {
             var lexer = new LexerComplexTokensDecorator(string.Format("repeat every seconds where {1} {0} {2}", op, left, right));

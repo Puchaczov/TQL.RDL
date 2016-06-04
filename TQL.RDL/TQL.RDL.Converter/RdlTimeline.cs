@@ -24,10 +24,10 @@ namespace TQL.RDL.Converter
             var visitor = new RDLCodeGenerationVisitor(manager);
 
             DefaultMethods methods = new DefaultMethods();
-            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(DateTimeOffset), typeof(int) }));
-            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(int) }));
-            manager.RegisterMethod(nameof(methods.IsEven), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsEven), new Type[] { typeof(int) }));
-            manager.RegisterMethod(nameof(methods.IsOdd), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsOdd), new Type[] { typeof(int) }));
+            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(DateTimeOffset), typeof(long) }));
+            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(long) }));
+            manager.RegisterMethod(nameof(methods.IsEven), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsEven), new Type[] { typeof(long) }));
+            manager.RegisterMethod(nameof(methods.IsOdd), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsOdd), new Type[] { typeof(long) }));
             manager.RegisterMethod(nameof(methods.IsWorkingDay), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsWorkingDay), new Type[] { }));
             manager.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { typeof(DateTimeOffset) }));
             manager.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { }));

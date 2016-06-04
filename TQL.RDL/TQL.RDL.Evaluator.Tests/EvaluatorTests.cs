@@ -17,14 +17,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every hours where @hour in (21,22,23,24) and 3 = 4 and @year < 2100");
-            var parser = new RDLParser(lexer);
-            var node = parser.ComposeRootComponents();
-
-            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor();
-
-            node.Accept(visitor);
-            var machine = visitor.VirtualMachine;
+            var machine = Parse("repeat every hours where @hour in (21,22,23,24) and 3 = 4 and @year < 2100");
 
             while (true)
             {
@@ -39,14 +32,7 @@ namespace TQL.RDL.Evaluator.Tests
             manager.RegisterMethod(nameof(TestMethodWithDateTimeOffset), null, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset) }));
             manager.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset), typeof(int) }));
 
-            var lexer = new LexerComplexTokensDecorator("repeat every hours where TestMethodWithDateTimeOffset(@current, @year) and TestMethodWithDateTimeOffset(@current)");
-            var parser = new RDLParser(lexer);
-            var node = parser.ComposeRootComponents();
-
-            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor(manager);
-
-            node.Accept(visitor);
-            var machine = visitor.VirtualMachine;
+            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(@current, @year) and TestMethodWithDateTimeOffset(@current)", manager);
             
             machine.NextFire();
 
@@ -57,15 +43,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateSimpleStartAtStopAt_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
-            var parser = new RDLParser(lexer);
-            var node = parser.ComposeRootComponents();
-
-            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor();
-
-            node.Accept(visitor);
-
-            var machine = visitor.VirtualMachine;
+            var machine = Parse("repeat every hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
 
             var refTime = machine.ReferenceTime;
             var datetime = default(DateTimeOffset?);
@@ -81,15 +59,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateSimpleWithModifiedRepetiotion_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every 2 hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
-            var parser = new RDLParser(lexer);
-            var node = parser.ComposeRootComponents();
-
-            RDLCodeGenerationVisitor visitor = new RDLCodeGenerationVisitor();
-
-            node.Accept(visitor);
-
-            var machine = visitor.VirtualMachine;
+            var machine = Parse("repeat every 2 hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
 
             var refTime = machine.ReferenceTime;
             var datetime = default(DateTimeOffset?);
@@ -102,6 +72,15 @@ namespace TQL.RDL.Evaluator.Tests
             Assert.AreEqual(null, datetime);
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateNullWhenStopAtReached_ShouldReturnNull()
+        {
+            var machine = Parse("repeat every 2 hours start at '21.05.2012 13:00:00' stop at '21.05.2012 12:00:00'");
+
+            Assert.AreEqual(null, machine.NextFire());
+            Assert.AreEqual(null, machine.NextFire());
+        }
+
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset date)
         {
             staticMethodCalled = true;
@@ -112,6 +91,23 @@ namespace TQL.RDL.Evaluator.Tests
         {
             methodCalled = true;
             return true;
+        }
+
+        public static RDLVirtualMachine Parse(string query, MethodManager manager = null)
+        {
+            var lexer = new LexerComplexTokensDecorator(query);
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            RDLCodeGenerationVisitor visitor;
+            if (manager == null)
+                visitor = new RDLCodeGenerationVisitor();
+            else
+                visitor = new RDLCodeGenerationVisitor(manager);
+
+            node.Accept(visitor);
+
+            return visitor.VirtualMachine;
         }
     }
 }

@@ -21,9 +21,7 @@ namespace TQL.RDL.Evaluator
             DayOfWeek.Tuesday,
             DayOfWeek.Wednesday,
             DayOfWeek.Thursday,
-            DayOfWeek.Friday,
-            DayOfWeek.Saturday,
-            DayOfWeek.Sunday
+            DayOfWeek.Friday
         };
 
         public void SetMachine(RDLVirtualMachine machine)
@@ -39,9 +37,9 @@ namespace TQL.RDL.Evaluator
             return datetime.HasValue && DateTime.DaysInMonth(datetime.Value.Year, datetime.Value.Month) == datetime.Value.Day;
         }
 
-        public static bool IsDayOfWeek(DateTimeOffset datetime, int dayOfWeek) => datetime.DayOfWeek == (DayOfWeek)dayOfWeek;
+        public static bool IsDayOfWeek(DateTimeOffset datetime, long dayOfWeek) => datetime.DayOfWeek == (DayOfWeek)dayOfWeek;
 
-        public bool IsDayOfWeek(int dayOfWeek)
+        public bool IsDayOfWeek(long dayOfWeek)
         {
             var datetime = machine.Datetimes.Peek();
             return datetime.HasValue && datetime.Value.DayOfWeek == (DayOfWeek)dayOfWeek;
@@ -53,8 +51,8 @@ namespace TQL.RDL.Evaluator
             return datetime.HasValue && workingDays.Contains(datetime.Value.DayOfWeek);
         }
 
-        public static bool IsEven(int number) => number % 2 == 0;
+        public static bool IsEven(long number) => number % 2 == 0;
 
-        public static bool IsOdd(int number) => !IsEven(number);
+        public static bool IsOdd(long number) => !IsEven(number);
     }
 }
