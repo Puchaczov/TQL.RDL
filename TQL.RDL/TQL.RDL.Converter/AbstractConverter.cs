@@ -10,6 +10,7 @@ namespace TQL.RDL.Converter
         protected bool throwOnError;
 
         protected AbstractConverter(bool throwOnError)
+            : base(throwOnError)
         {
             this.throwOnError = throwOnError;
         }
