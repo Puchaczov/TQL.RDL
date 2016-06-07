@@ -34,8 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="LexerEnumerator.cs" />
+    <Compile Include="GlobalMetadata.cs" />
     <Compile Include="Nodes\BinaryNode.cs" />
     <Compile Include="Nodes\ConstantNode.cs" />
     <Compile Include="Nodes\DateTimeNode.cs" />
@@ -87,11 +89,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="UsefullAlgorithms.Helpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.0\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Helpers.dll</HintPath>
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.1\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UsefullAlgorithms.Parsing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.0\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Parsing.dll</HintPath>
+    <Reference Include="UsefullAlgorithms.Parsing, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.1\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Parsing.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

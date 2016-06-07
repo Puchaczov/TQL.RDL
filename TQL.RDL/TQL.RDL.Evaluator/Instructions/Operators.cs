@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RDL.Parser.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -38,12 +39,12 @@ namespace TQL.RDL.Evaluator.Instructions
 
 
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
-    public class CallExternalInstruction : IRDLInstruction
+    public class CallExternalNumeric : IRDLInstruction
     {
-        private MethodInfo info;
-        private object obj;
+        protected MethodInfo info;
+        protected object obj;
 
-        public CallExternalInstruction(object obj, MethodInfo info)
+        public CallExternalNumeric(object obj, MethodInfo info)
         {
             this.obj = obj;
             this.info = info;
@@ -57,6 +58,26 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => string.Format("CALL");
+    }
+
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
+    public class CallExternalDatetime : IRDLInstruction
+    {
+        protected MethodInfo info;
+        protected object obj;
+
+        public CallExternalDatetime(object obj, MethodInfo info)
+        {
+            this.obj = obj;
+            this.info = info;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            var result = info.Invoke(obj, machine.CallArgs);
+            machine.Datetimes.Push((DateTimeOffset?)result);
+            machine.InstructionPointer += 1;
+        }
     }
 
 
@@ -402,11 +423,12 @@ namespace TQL.RDL.Evaluator.Instructions
         public void Run(RDLVirtualMachine machine)
         {
             object[] args = enumerable.Select(f => {
-                switch(f.Name)
+                switch(f.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
                         return (object)machine.Datetimes.Pop();
                     case nameof(Int64):
+                    case nameof(Boolean):
                         return (object)machine.Values.Pop();
                     default:
                         throw new Exception();

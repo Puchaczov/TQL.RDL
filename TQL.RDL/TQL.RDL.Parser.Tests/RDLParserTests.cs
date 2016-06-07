@@ -211,6 +211,20 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(DateTimeOffset.Parse("2013.01.12") == stopAt.Datetime);
         }
 
+        [TestMethod]
+        public void RDLParser_FunctionAsFunctionArgument_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat every days where A(B())");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+
+            Assert.AreEqual(2, node.Descendants.Length);
+
+            Assert.IsTrue(node.Descendants[1].Descendants.OfType<FunctionNode>().Any());
+            Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].GetType());
+            Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].Descendants[0].GetType());
+        }
+
         private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)
         {
             var lexer = new LexerComplexTokensDecorator(string.Format("repeat every seconds where {1} {0} {2}", op, left, right));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TQL.Common.Filters;
 using TQL.Common.Pipeline;
 
 namespace TQL.RDL.Preprocessor
@@ -10,6 +11,7 @@ namespace TQL.RDL.Preprocessor
     {
         public Preprocessor()
         {
+            base.Register(new Trim());
         }
     }
 }

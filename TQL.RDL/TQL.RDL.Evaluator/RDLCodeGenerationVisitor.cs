@@ -1,7 +1,9 @@
-﻿using System;
+﻿using RDL.Parser.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TQL.RDL.Evaluator.Instructions;
+using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
@@ -15,28 +17,26 @@ namespace TQL.RDL.Evaluator
         private Stack<IRDLInstruction> instructions;
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
-        private MethodManager bindableObjects;
+        private Dictionary<string, Type> bindableVariables;
 
-        public RDLCodeGenerationVisitor(MethodManager bindableObjects)
+        private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
+        private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
+        private static string nBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
+
+        private RDLVirtualMachine machine;
+
+        public RDLCodeGenerationVisitor()
         {
             variables = new MemoryVariables();
             instructions = new Stack<IRDLInstruction>();
             startAt = DateTimeOffset.Now;
             stopAt = null;
-            
-            this.bindableObjects = bindableObjects;
         }
-
-        public RDLCodeGenerationVisitor()
-            : this(new MethodManager())
-        { }
 
         public RDLVirtualMachine VirtualMachine
         {
             get
             {
-                var machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt);
-                machine.ReferenceTime = referenceTime;
                 return machine;
             }
         }
@@ -180,6 +180,11 @@ namespace TQL.RDL.Evaluator
             {
                 node.Descendants[i].Accept(this);
             }
+            
+            machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt);
+            if (referenceTime == default(DateTimeOffset))
+                referenceTime = DateTimeOffset.Now;
+            machine.ReferenceTime = referenceTime;
         }
 
         public void Visit(StartAtNode node)
@@ -195,8 +200,20 @@ namespace TQL.RDL.Evaluator
         public void Visit(FunctionNode node)
         {
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
-            var registeredFunction = bindableObjects.GetMethod(node.Name, argTypes);
-            instructions.Push(new CallExternalInstruction(registeredFunction.Item2, registeredFunction.Item1));
+            var registeredFunction = GlobalMetadata.GetMethod(node.Name, argTypes);
+            var returnName = registeredFunction.Item1.ReturnType.GetTypeName();
+            if (returnName == nDateTime)
+            {
+                instructions.Push(new CallExternalDatetime(registeredFunction.Item2, registeredFunction.Item1));
+            }
+            else if(returnName == nInt64)
+            {
+                instructions.Push(new CallExternalNumeric(registeredFunction.Item2, registeredFunction.Item1));
+            }
+            else if(returnName == nBoolean)
+            {
+                instructions.Push(new CallExternalNumeric(registeredFunction.Item2, registeredFunction.Item1));
+            }
             instructions.Push(new PrepareFunctionCall(argTypes));
             foreach (var arg in node.Descendants)
             {
@@ -255,7 +272,7 @@ namespace TQL.RDL.Evaluator
         {
             if (node.Left.IsLeaf)
             {
-                switch (node.Left.ReturnType.Name)
+                switch (node.Left.ReturnType.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
                         instructions.Push(new TDateTimeOp());
@@ -269,7 +286,7 @@ namespace TQL.RDL.Evaluator
             }
             else if (node.Right.IsLeaf)
             {
-                switch (node.Right.ReturnType.Name)
+                switch (node.Right.ReturnType.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
                         instructions.Push(new TDateTimeOp());

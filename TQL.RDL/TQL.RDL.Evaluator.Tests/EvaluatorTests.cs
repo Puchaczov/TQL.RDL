@@ -28,12 +28,10 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_ComposeFunctionCall_ShouldPass()
         {
-            var manager = new MethodManager();
-            manager.RegisterMethod(nameof(TestMethodWithDateTimeOffset), null, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset) }));
-            manager.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset), typeof(int) }));
+            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate())");
 
-            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(@current, @year) and TestMethodWithDateTimeOffset(@current)", manager);
-            
+            machine.ReferenceTime = new DateTimeOffset(2016, 6, 7, 22, 0, 0, new TimeSpan());
+
             machine.NextFire();
 
             Assert.IsTrue(staticMethodCalled);
@@ -81,33 +79,41 @@ namespace TQL.RDL.Evaluator.Tests
             Assert.AreEqual(null, machine.NextFire());
         }
 
-        public static bool TestMethodWithDateTimeOffset(DateTimeOffset date)
+        public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
             staticMethodCalled = true;
             return true;
         }
 
-        public bool TestMethodWithDateTimeOffset(DateTimeOffset date, long year)
+        public bool TestMethodWithDateTimeOffset(DateTimeOffset? date, long? year)
         {
             methodCalled = true;
             return true;
         }
 
-        public static RDLVirtualMachine Parse(string query, MethodManager manager = null)
+        public RDLVirtualMachine Parse(string query)
         {
             var lexer = new LexerComplexTokensDecorator(query);
             var parser = new RDLParser(lexer);
             var node = parser.ComposeRootComponents();
 
             RDLCodeGenerationVisitor visitor;
-            if (manager == null)
-                visitor = new RDLCodeGenerationVisitor();
-            else
-                visitor = new RDLCodeGenerationVisitor(manager);
+            visitor = new RDLCodeGenerationVisitor();
+
+            DefaultMethods methods = new DefaultMethods();
+
+            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), null, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
+            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
+            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods, methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods, methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
 
             node.Accept(visitor);
 
-            return visitor.VirtualMachine;
+            var machine = visitor.VirtualMachine;
+
+            methods.SetMachine(machine);
+
+            return machine;
         }
     }
 }

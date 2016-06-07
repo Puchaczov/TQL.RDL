@@ -38,7 +38,7 @@ namespace TQL.RDL.Converter.Tests
         [TestMethod]
         public void Converter_DefaultMethods_IsDayOfWeek_ShouldPass()
         {
-            TestDefaultMethods("repeat every days where IsDayOfWeek(@current, 2) start at '30.05.2016'", "31.05.2016");
+            TestDefaultMethods("repeat every days where IsDayOfWeek(GetDate(), 2) start at '30.05.2016'", "31.05.2016");
             TestDefaultMethods("repeat every days where IsDayOfWeek(2) start at '30.05.2016'", "31.05.2016");
         }
 

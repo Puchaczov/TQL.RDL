@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using TQL.Common.Converters;
-using TQL.Core.Converters;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator;
+using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Converter
@@ -16,22 +16,37 @@ namespace TQL.RDL.Converter
 
         private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest request)
         {
-            MethodManager manager = new MethodManager();
             foreach(var pair in request.MethodsToBind)
             {
-                manager.RegisterMethod(pair.Value.Name, pair.Key, pair.Value);
+                GlobalMetadata.RegisterMethod(pair.Value.Name, pair.Key, pair.Value);
             }
 
-            var visitor = new RDLCodeGenerationVisitor(manager);
+            var visitor = new RDLCodeGenerationVisitor();
 
             DefaultMethods methods = new DefaultMethods();
-            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(DateTimeOffset), typeof(long) }));
-            manager.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(long) }));
-            manager.RegisterMethod(nameof(methods.IsEven), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsEven), new Type[] { typeof(long) }));
-            manager.RegisterMethod(nameof(methods.IsOdd), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsOdd), new Type[] { typeof(long) }));
-            manager.RegisterMethod(nameof(methods.IsWorkingDay), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsWorkingDay), new Type[] { }));
-            manager.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { typeof(DateTimeOffset) }));
-            manager.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(DateTimeOffset?), typeof(long?) }));
+            GlobalMetadata.RegisterMethod(nameof(methods.IsDayOfWeek), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsDayOfWeek), new Type[] { typeof(long?) }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.IsEven), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsEven), new Type[] { typeof(long?) }));
+            GlobalMetadata.RegisterMethod(nameof(methods.IsOdd), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsOdd), new Type[] { typeof(long?) }));
+            GlobalMetadata.RegisterMethod(nameof(methods.IsWorkingDay), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsWorkingDay), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { typeof(DateTimeOffset?) }));
+            GlobalMetadata.RegisterMethod(nameof(methods.IsLastDayOfMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.IsLastDayOfMonth), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.GetDate), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetDate), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.GetYear), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetYear), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(methods.GetMonth), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetMonth), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(methods.GetDay), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetDate), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.GetHour), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetHour), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(methods.GetMinute), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetMinute), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(methods.GetSecond), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.GetSecond), new Type[] { }));
+
+            GlobalMetadata.RegisterMethod(nameof(methods.Now), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.Now), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(methods.UtcNow), methods, typeof(DefaultMethods).GetRuntimeMethod(nameof(methods.UtcNow), new Type[] { }));
 
             ast.Accept(visitor);
 
@@ -53,7 +68,7 @@ namespace TQL.RDL.Converter
 
         protected override ConvertionResponse<IFireTimeEvaluator> GetErrorResponse(Exception exc)
         {
-            throw new NotImplementedException();
+            throw exc;
         }
     }
 }

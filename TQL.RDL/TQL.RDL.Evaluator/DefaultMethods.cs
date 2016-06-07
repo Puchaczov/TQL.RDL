@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TQL.RDL.Evaluator
 {
-    public class DefaultMethods
+    public sealed class DefaultMethods
     {
         private RDLVirtualMachine machine;
 
@@ -14,6 +11,10 @@ namespace TQL.RDL.Evaluator
         {
             machine = null;
         }
+
+        private int inst = _instance++;
+
+        static int _instance = 0;
 
         private static DayOfWeek[] workingDays = new DayOfWeek[]
         {
@@ -29,7 +30,7 @@ namespace TQL.RDL.Evaluator
             this.machine = machine;
         }
 
-        public static bool IsLastDayOfMonth(DateTimeOffset datetime) => DateTime.DaysInMonth(datetime.Year, datetime.Month) == datetime.Day;
+        public static bool IsLastDayOfMonth(DateTimeOffset? datetime) => datetime.HasValue && DateTime.DaysInMonth(datetime.Value.Year, datetime.Value.Month) == datetime.Value.Day;
 
         public bool IsLastDayOfMonth()
         {
@@ -37,12 +38,12 @@ namespace TQL.RDL.Evaluator
             return datetime.HasValue && DateTime.DaysInMonth(datetime.Value.Year, datetime.Value.Month) == datetime.Value.Day;
         }
 
-        public static bool IsDayOfWeek(DateTimeOffset datetime, long dayOfWeek) => datetime.DayOfWeek == (DayOfWeek)dayOfWeek;
+        public static bool IsDayOfWeek(DateTimeOffset? datetime, long? dayOfWeek) => datetime.HasValue && dayOfWeek.HasValue && datetime.Value.DayOfWeek == (DayOfWeek)dayOfWeek.Value;
 
-        public bool IsDayOfWeek(long dayOfWeek)
+        public bool IsDayOfWeek(long? dayOfWeek)
         {
             var datetime = machine.Datetimes.Peek();
-            return datetime.HasValue && datetime.Value.DayOfWeek == (DayOfWeek)dayOfWeek;
+            return dayOfWeek.HasValue && datetime.HasValue && datetime.Value.DayOfWeek == (DayOfWeek)dayOfWeek;
         }
 
         public bool IsWorkingDay()
@@ -54,5 +55,16 @@ namespace TQL.RDL.Evaluator
         public static bool IsEven(long number) => number % 2 == 0;
 
         public static bool IsOdd(long number) => !IsEven(number);
+
+        public DateTimeOffset? GetDate() => machine.ReferenceTime;
+        public static DateTimeOffset Now() => DateTimeOffset.Now;
+        public static DateTimeOffset UtcNow() => DateTimeOffset.UtcNow;
+
+        public long? GetDay() => machine.Datetimes.Peek()?.Day;
+        public long? GetMonth() => machine.Datetimes.Peek()?.Month;
+        public long? GetYear() => machine.Datetimes.Peek()?.Year;
+        public long? GetSecond() => machine.Datetimes.Peek()?.Second;
+        public long? GetMinute() => machine.Datetimes.Peek()?.Minute;
+        public long? GetHour() => machine.Datetimes.Peek()?.Hour;
     }
 }

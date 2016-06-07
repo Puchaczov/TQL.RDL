@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TQL.Core.Tokens;
 using TQL.RDL.Parser.Tokens;
 
@@ -8,8 +9,9 @@ namespace TQL.RDL.Parser.Nodes
     {
         private ArgListNode args;
         private FunctionToken functionName;
+        private Type returnType;
 
-        public FunctionNode(FunctionToken functionName, ArgListNode args)
+        public FunctionNode(FunctionToken functionName, ArgListNode args, Type returnType = null)
             : base()
         {
             this.functionName = functionName;
@@ -30,7 +32,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public string Name => Token.Value;
 
-        public override Type ReturnType => typeof(Boolean);
+        public override Type ReturnType => returnType != null ? returnType : GlobalMetadata.GetReturnType(functionName.Value, Descendants.Select(f => f.ReturnType).ToArray());
 
         public ArgListNode Args => args;
     }
