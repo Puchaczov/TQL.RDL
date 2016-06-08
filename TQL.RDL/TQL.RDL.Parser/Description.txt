@@ -11,3 +11,6 @@ IsLastDayOfMonth();
 IsDayOfWeek();
 IsEven(GetDate()/GetDay()/GetMonth()/GetYear())
 IsOdd({day}/{month}/{year})
+
+@name - variable
+#param - parameter

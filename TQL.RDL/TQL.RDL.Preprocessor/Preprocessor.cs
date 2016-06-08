@@ -5,7 +5,7 @@ using System.Text;
 using TQL.Common.Filters;
 using TQL.Common.Pipeline;
 
-namespace TQL.RDL.Preprocessor
+namespace TQL.RDL
 {
     public class Preprocessor : Pipeline<string>
     {

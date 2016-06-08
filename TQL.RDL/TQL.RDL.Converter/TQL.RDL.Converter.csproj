@@ -66,6 +66,10 @@
       <Project>{12d9b4d8-333b-4630-a02e-2005a5814740}</Project>
       <Name>TQL.RDL.Parser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj">
+      <Project>{7c4be64e-1148-4ff5-9357-0837e0b67791}</Project>
+      <Name>TQL.RDL.Preprocessor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

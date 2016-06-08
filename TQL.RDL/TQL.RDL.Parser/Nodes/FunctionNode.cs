@@ -16,6 +16,7 @@ namespace TQL.RDL.Parser.Nodes
         {
             this.functionName = functionName;
             this.args = args;
+            this.returnType = returnType;
         }
 
         public override RdlSyntaxNode[] Descendants => args.Descendants;
