@@ -52,9 +52,9 @@ namespace TQL.RDL.Evaluator
             return datetime.HasValue && workingDays.Contains(datetime.Value.DayOfWeek);
         }
 
-        public static bool IsEven(long number) => number % 2 == 0;
+        public static bool IsEven(long? number) => number % 2 == 0;
 
-        public static bool IsOdd(long number) => !IsEven(number);
+        public static bool IsOdd(long? number) => !IsEven(number);
 
         public DateTimeOffset? GetDate() => machine.ReferenceTime;
         public static DateTimeOffset Now() => DateTimeOffset.Now;

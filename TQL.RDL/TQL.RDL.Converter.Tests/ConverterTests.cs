@@ -7,14 +7,14 @@ namespace TQL.RDL.Converter.Tests
     public class ConverterTests
     {
         private static bool testACalled = false;
-        private bool testBCalled = false;
+        private static bool testBCalled = false;
 
         [TestMethod]
         public void Converter_CheckIsMethodRegistered_ShouldPass()
         {
-            var methods = new System.Collections.Generic.KeyValuePair<object, System.Reflection.MethodInfo>[2] {
-                new System.Collections.Generic.KeyValuePair<object, System.Reflection.MethodInfo>(null, GetType().GetMethod(nameof(TestA), new Type[] { typeof(DateTimeOffset) })),
-                new System.Collections.Generic.KeyValuePair<object, System.Reflection.MethodInfo>(this, GetType().GetMethod(nameof(TestB), new Type[] { typeof(DateTimeOffset) }))
+            var methods = new System.Reflection.MethodInfo[2] {
+                GetType().GetMethod(nameof(TestA), new Type[] { typeof(DateTimeOffset?) }),
+                GetType().GetMethod(nameof(TestB), new Type[] { typeof(DateTimeOffset?) })
             };
             var request = new ConvertionRequest("repeat every 5 seconds where TestA(@current) and TestB(@current)", DateTimeOffset.UtcNow, methods);
 
@@ -67,13 +67,13 @@ namespace TQL.RDL.Converter.Tests
             Assert.AreEqual(DateTimeOffset.Parse(refTime), fire.Value);
         }
 
-        public static bool TestA(DateTimeOffset current)
+        public static bool TestA(DateTimeOffset? current)
         {
             testACalled = true;
             return true;
         }
 
-        public bool TestB(DateTimeOffset current)
+        public static bool TestB(DateTimeOffset? current)
         {
             testBCalled = true;
             return true;

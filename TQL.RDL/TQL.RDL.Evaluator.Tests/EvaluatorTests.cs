@@ -1,8 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using TQL.RDL.Parser;
 
 namespace TQL.RDL.Evaluator.Tests
@@ -10,19 +7,24 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class EvaluatorTests
     {
-        private static bool staticMethodCalled = false;
-        private bool methodCalled = false;
-
-        [Ignore()]
+        private static bool staticMethod1Called = false;
+        private static bool staticMethod2Called = false;
+        
         [TestMethod]
-        public void TestMethod1()
+        public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
-            var machine = Parse("repeat every hours where @hour in (21,22,23,24) and 3 = 4 and @year < 2100");
+            var machine = Parse("repeat every hours where @day in (21,22,23,24) and 3 = 4 and @year < 2100 stop at '2100/05/05'");
 
-            while (true)
+            var refTime = default(DateTimeOffset?);
+            var count = 0;
+            do
             {
-                var reftime = machine.NextFire();
+                refTime = machine.NextFire();
+                count += 1;
             }
+            while (refTime != null);
+
+            Assert.AreEqual(1, count);
         }
 
         [TestMethod]
@@ -34,8 +36,8 @@ namespace TQL.RDL.Evaluator.Tests
 
             machine.NextFire();
 
-            Assert.IsTrue(staticMethodCalled);
-            Assert.IsTrue(methodCalled);
+            Assert.IsTrue(staticMethod1Called);
+            Assert.IsTrue(staticMethod2Called);
         }
 
         [TestMethod]
@@ -61,6 +63,7 @@ namespace TQL.RDL.Evaluator.Tests
 
             var refTime = machine.ReferenceTime;
             var datetime = default(DateTimeOffset?);
+
             while ((datetime = machine.NextFire()).HasValue)
             {
                 Assert.AreEqual(refTime, datetime);
@@ -81,13 +84,13 @@ namespace TQL.RDL.Evaluator.Tests
 
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
-            staticMethodCalled = true;
+            staticMethod1Called = true;
             return true;
         }
 
-        public bool TestMethodWithDateTimeOffset(DateTimeOffset? date, long? year)
+        public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date, long? year)
         {
-            methodCalled = true;
+            staticMethod2Called = true;
             return true;
         }
 
@@ -97,20 +100,17 @@ namespace TQL.RDL.Evaluator.Tests
             var parser = new RDLParser(lexer);
             var node = parser.ComposeRootComponents();
 
-            RDLCodeGenerationVisitor visitor;
-            visitor = new RDLCodeGenerationVisitor();
+            var visitor = new RDLCodeGenerationVisitor();
+            var methods = new DefaultMethods();
 
-            DefaultMethods methods = new DefaultMethods();
-
-            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), null, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
-            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this, this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods, methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods, methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
+            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
+            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
 
             node.Accept(visitor);
 
             var machine = visitor.VirtualMachine;
-
             methods.SetMachine(machine);
 
             return machine;

@@ -18,6 +18,7 @@ namespace TQL.RDL.Evaluator
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
         private Dictionary<string, Type> bindableVariables;
+        private DefaultMethods methods;
 
         private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
         private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
@@ -27,19 +28,14 @@ namespace TQL.RDL.Evaluator
 
         public RDLCodeGenerationVisitor()
         {
+            methods = new DefaultMethods();
             variables = new MemoryVariables();
             instructions = new Stack<IRDLInstruction>();
             startAt = DateTimeOffset.Now;
             stopAt = null;
         }
 
-        public RDLVirtualMachine VirtualMachine
-        {
-            get
-            {
-                return machine;
-            }
-        }
+        public RDLVirtualMachine VirtualMachine => machine;
 
         public void Visit(WhereConditionsNode node)
         {
@@ -185,6 +181,7 @@ namespace TQL.RDL.Evaluator
             if (referenceTime == default(DateTimeOffset))
                 referenceTime = DateTimeOffset.Now;
             machine.ReferenceTime = referenceTime;
+            methods.SetMachine(machine);
         }
 
         public void Visit(StartAtNode node)
@@ -201,18 +198,25 @@ namespace TQL.RDL.Evaluator
         {
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
             var registeredFunction = GlobalMetadata.GetMethod(node.Name, argTypes);
-            var returnName = registeredFunction.Item1.ReturnType.GetTypeName();
+            var returnName = registeredFunction.ReturnType.GetTypeName();
+
+            object obj = null;
+            if (registeredFunction.DeclaringType.Name == nameof(DefaultMethods))
+            {
+                obj = methods;
+            }
+
             if (returnName == nDateTime)
             {
-                instructions.Push(new CallExternalDatetime(registeredFunction.Item2, registeredFunction.Item1));
+                instructions.Push(new CallExternalDatetime(obj, registeredFunction));
             }
             else if(returnName == nInt64)
             {
-                instructions.Push(new CallExternalNumeric(registeredFunction.Item2, registeredFunction.Item1));
+                instructions.Push(new CallExternalNumeric(obj, registeredFunction));
             }
             else if(returnName == nBoolean)
             {
-                instructions.Push(new CallExternalNumeric(registeredFunction.Item2, registeredFunction.Item1));
+                instructions.Push(new CallExternalNumeric(obj, registeredFunction));
             }
             instructions.Push(new PrepareFunctionCall(argTypes));
             foreach (var arg in node.Descendants)

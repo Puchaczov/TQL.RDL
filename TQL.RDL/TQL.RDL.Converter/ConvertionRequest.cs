@@ -9,9 +9,9 @@ namespace TQL.RDL.Converter
     {
         public DateTimeOffset? ReferenceTime { get; }
         public string Query { get; }
-        public IEnumerable<KeyValuePair<object, MethodInfo>> MethodsToBind { get; }
+        public IEnumerable<MethodInfo> MethodsToBind { get; }
 
-        public ConvertionRequest(string query, DateTimeOffset? referenceTime = null, params KeyValuePair<object, MethodInfo>[] methods)
+        public ConvertionRequest(string query, DateTimeOffset? referenceTime = null, params MethodInfo[] methods)
         {
             ReferenceTime = referenceTime;
             Query = query;
