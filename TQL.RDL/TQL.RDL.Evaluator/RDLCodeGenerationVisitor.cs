@@ -245,6 +245,31 @@ namespace TQL.RDL.Evaluator
             ExpressionGenerateInstructions<LessEqualDatetime, LessEqualNumeric>(node);
         }
 
+        public void Visit(PlusNode node)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(MinusNode node)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(ModuloNode node)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(StarNode node)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(SlashNode node)
+        {
+            throw new NotImplementedException();
+        }
+
         private void ExpressionGenerateIn<TOperator>(InNode node)
             where TOperator : IRDLInstruction, new()
         {

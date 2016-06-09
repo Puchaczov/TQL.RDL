@@ -1,16 +1,69 @@
 ﻿
-declare @current DateTimeOffset = `DateTimeOffset?`VirtualMachine.Stack.Peek();
-declare @day long = `long?`VirtualMachine.DateTimes.Day;
+Short specification:
 
-repeat every {n}/{month} {segment[seconds,[minutes,[...]]]} where [{segment} operator value,[{segment} not in (values)]]
+basic:
+	repeat every ([second/minute/hour/day/month/year] | nth [seconds/minutes/hours/days/months/years])
+optional:
+	where left [operators:+,-,*,/,%,in,not in] right
+optional:
+	start at 'date constant'
+	stop at 'date constant'
 
-repeat every {hour}/{month}/{year} seconds where day in (MON-FRI) and month <> january and fn(@datetime, @weekday) start from {date} end {date}
+left, right: [second/minute/hour/day/month/year/function()/constant]
 
-//functions
-IsLastDayOfMonth();
-IsDayOfWeek();
-IsEven(GetDate()/GetDay()/GetMonth()/GetYear())
-IsOdd({day}/{month}/{year})
+Note: left and right can contains subexpressions in any level.
 
-@name - variable
-#param - parameter
+Basic functions:
+	IsLastDayOfMonth(): bool
+	IsLastDayOfMonth(DateTimeOffset time): bool
+	IsDayOfWeek(DateTimeOffset time, long DayOfWeek): bool
+	IsDayOfWeek(long DayOfWeek): bool
+	IsWorkingDay(): bool
+	IsEven(long number): bool
+	IsOdd(long number): bool
+
+	GetDate(): DateTimeOffset
+	Now(): DateTimeOffset
+	UtcNow(): DateTimeOffset
+
+	GetDay(): long
+	GetMonth(): long
+	GetYear(): long
+
+	GetSecond(): long
+	GetMinute(): long
+	GetHour(): long
+
+	GetDayOfYear(): long
+
+How query can looks:
+
+repeat every day where (IsLastDayOfMonth() and GetDay() in (monday,friday)) or (IsLastDayOfMonth() and GetMonth() % 2 = 0)
+
+C# methods bindings:
+
+	You can bind static methods by registering it in GlobalMetadata manager. Allowed return type of methods is DateTimeOffset, 
+	allowed parameters of functions are DateTimeOffset? and long?. Parameters count aren't limited.
+
+RDL virtual machine (Expression evaluator engine):
+
+	+ Stack based (operate on two stacks: long? and DateTimeOffset?)
+	+ Specialized small assembler with instructions: 
+		GoTo, Break, Jump, CallExternal, CallExternal, Call, Ret, Push, Load, And, Or, GreaterOrEqual, 
+		LessOrEqual, Greater, Less, Equal, NotEqual, In, NotIn, Modify, PrepareFunctionCall
+	+ Less amount of instructions is better, specialized instructions with complex internals 
+	  are prefered over generate more set of instructions doing the same.
+	+ Query hints support
+
+Flow:
+
+	String expression convertion to evaluator object uses such stages:
+	"repeat where..." -> preprocessor -> lexer -> parser -> code generator -> RDL virtual machine.
+
+	Then, you can evaluate your next occurences.
+
+Notice:
+
+	Not every features pointed in this document are already supported!
+
+

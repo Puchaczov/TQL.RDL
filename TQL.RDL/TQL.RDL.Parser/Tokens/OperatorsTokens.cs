@@ -51,6 +51,27 @@ namespace TQL.RDL.Parser.Tokens
         { }
     }
 
+    public class ModuloToken : Token
+    {
+        public ModuloToken(TextSpan span)
+            : base("%", SyntaxType.Mod, span)
+        { }
+    }
+
+    public class StarToken : Token
+    {
+        public StarToken(TextSpan span)
+            : base("*", SyntaxType.Star, span)
+        { }
+    }
+
+    public class SlashToken : Token
+    {
+        public SlashToken(TextSpan span)
+            : base("*", SyntaxType.Slash, span)
+        { }
+    }
+
     public class GreaterToken : Token
     {
         public GreaterToken(TextSpan span)

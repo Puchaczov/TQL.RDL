@@ -118,6 +118,56 @@ namespace TQL.RDL.Parser.Nodes
         public override string ToString() => string.Format("not in {0}", base.Right);
     }
 
+    public class PlusNode : BinaryNode
+    {
+        public PlusNode(RdlSyntaxNode right, RdlSyntaxNode left)
+            : base(left, right)
+        { }
+
+        public override string ToString() => ToString("+");
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+    }
+
+    public class MinusNode : BinaryNode
+    {
+        public MinusNode(RdlSyntaxNode right, RdlSyntaxNode left)
+            : base(left, right)
+        { }
+
+        public override string ToString() => ToString("-");
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+    }
+
+    public class ModuloNode : BinaryNode
+    {
+        public ModuloNode(RdlSyntaxNode right, RdlSyntaxNode left)
+            : base(left, right)
+        { }
+
+        public override string ToString() => ToString("%");
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+    }
+
+    public class StarNode : BinaryNode
+    {
+        public StarNode(RdlSyntaxNode right, RdlSyntaxNode left)
+            : base(left, right)
+        { }
+
+        public override string ToString() => ToString("*");
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+    }
+
+    public class SlashNode : BinaryNode
+    {
+        public SlashNode(RdlSyntaxNode right, RdlSyntaxNode left)
+            : base(left, right)
+        { }
+
+        public override string ToString() => ToString("/");
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+    }
+
     public class ArgListNode : RdlSyntaxNode
     {
         private RdlSyntaxNode[] args;
@@ -176,7 +226,7 @@ namespace TQL.RDL.Parser.Nodes
         {
             get
             {
-                //temporary solution, it must be better way to specify return type
+                //TO DO: much better implementation of this: register variable in global metadata and use it here
                 if(token.Value != "current")
                 {
                     return typeof(long);
