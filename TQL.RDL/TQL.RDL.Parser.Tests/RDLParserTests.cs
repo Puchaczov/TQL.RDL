@@ -34,6 +34,10 @@ namespace TQL.RDL.Parser.Tests
             TestOperator_Simple<LessNode, NumericNode, NumericNode>("<", "1", "32");
             TestOperator_Simple<GreaterEqualNode, NumericNode, NumericNode>(">=", "1", "32");
             TestOperator_Simple<LessEqualNode, NumericNode, NumericNode>("<=", "1", "32");
+            TestOperator_Simple<AddNode, NumericNode, NumericNode>("+", "1", "32");
+            TestOperator_Simple<HyphenNode, NumericNode, NumericNode>("-", "1", "32");
+            TestOperator_Simple<FSlashNode, NumericNode, NumericNode>("/", "1", "32");
+            TestOperator_Simple<StarNode, NumericNode, NumericNode>("*", "1", "32");
         }
 
         [TestMethod]

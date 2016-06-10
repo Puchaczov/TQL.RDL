@@ -271,7 +271,7 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.InstructionPointer += 1;
         }
 
-        public override string ToString() => "MODIFY";
+        public override string ToString() => "LESSEQUAL";
     }
 
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
@@ -408,6 +408,54 @@ namespace TQL.RDL.Evaluator.Instructions
         public void Run(RDLVirtualMachine machine)
         {
             machine.Values.Push(~machine.Values.Pop().Value);
+            machine.InstructionPointer += 1;
+        }
+    }
+
+    public class AddNumericToDatetime : IRDLInstruction
+    {
+        public AddNumericToDatetime()
+        { }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AddNumericToNumeric : IRDLInstruction
+    {
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Values.Push(machine.Values.Pop() + machine.Values.Pop());
+            machine.InstructionPointer += 1;
+        }
+    }
+
+    public class MultiplyNumerics : IRDLInstruction
+    {
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Values.Push(machine.Values.Pop() * machine.Values.Pop());
+            machine.InstructionPointer += 1;
+        }
+    }
+
+    public class SubtractNumeric : IRDLInstruction
+    {
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Values.Push(machine.Values.Pop() - machine.Values.Pop());
+            machine.InstructionPointer += 1;
+        }
+    }
+
+    public class DivideNumeric : IRDLInstruction
+    {
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Values.Push(machine.Values.Pop() / machine.Values.Pop());
+            machine.InstructionPointer += 1;
         }
     }
 

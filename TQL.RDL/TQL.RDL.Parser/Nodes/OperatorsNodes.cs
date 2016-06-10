@@ -118,9 +118,9 @@ namespace TQL.RDL.Parser.Nodes
         public override string ToString() => string.Format("not in {0}", base.Right);
     }
 
-    public class PlusNode : BinaryNode
+    public class AddNode : BinaryNode
     {
-        public PlusNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public AddNode(RdlSyntaxNode right, RdlSyntaxNode left)
             : base(left, right)
         { }
 
@@ -128,9 +128,9 @@ namespace TQL.RDL.Parser.Nodes
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 
-    public class MinusNode : BinaryNode
+    public class HyphenNode : BinaryNode
     {
-        public MinusNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public HyphenNode(RdlSyntaxNode right, RdlSyntaxNode left)
             : base(left, right)
         { }
 
@@ -158,9 +158,9 @@ namespace TQL.RDL.Parser.Nodes
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 
-    public class SlashNode : BinaryNode
+    public class FSlashNode : BinaryNode
     {
-        public SlashNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public FSlashNode(RdlSyntaxNode right, RdlSyntaxNode left)
             : base(left, right)
         { }
 

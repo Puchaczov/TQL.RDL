@@ -113,7 +113,13 @@ namespace TQL.RDL.Parser
                     case '+':
                         return new PlusToken(new TextSpan(pos++, 1));
                     case '-':
-                        return new MinusToken(new TextSpan(pos++, 1));
+                        return new HyphenToken(new TextSpan(pos++, 1));
+                    case '%':
+                        return new ModuloToken(new TextSpan(pos++, 1));
+                    case '*':
+                        return new StarToken(new TextSpan(pos++, 1));
+                    case '/':
+                        return new FSlashToken(new TextSpan(pos++, 1));
                     case '=':
                         return new EqualityToken(new TextSpan(pos++, 1));
                     case '>':

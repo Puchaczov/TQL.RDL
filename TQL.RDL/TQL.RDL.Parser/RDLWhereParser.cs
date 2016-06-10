@@ -21,7 +21,12 @@ namespace TQL.RDL.Parser
             operators.Add(new Token(">=", SyntaxType.GreaterEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
             operators.Add(new Token("<", SyntaxType.Less, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
             operators.Add(new Token("<=", SyntaxType.LessEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("not", SyntaxType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Right));
+            operators.Add(new Token("*", SyntaxType.Star, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("%", SyntaxType.Mod, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("/", SyntaxType.FSlash, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("-", SyntaxType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("+", SyntaxType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
+            operators.Add(new Token("not", SyntaxType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
         }
 
         public override Token[] Parse(LexerComplexTokensDecorator expression) => InfixToPostfix(expression);

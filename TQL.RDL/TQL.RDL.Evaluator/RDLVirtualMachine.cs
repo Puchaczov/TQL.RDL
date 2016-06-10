@@ -20,6 +20,7 @@ namespace TQL.RDL.Evaluator
         private IRDLInstruction[] instructions;
         private int instrPtr;
         private DateTimeOffset? stopAt;
+        private DateTimeOffset startAt;
 
         public MemoryVariables Variables { get; }
         private Func<DateTimeOffset?, DateTimeOffset?> GenerateNext;
@@ -28,7 +29,7 @@ namespace TQL.RDL.Evaluator
         public Stack<DateTimeOffset?> Datetimes { get; }
         public object[] CallArgs { get; set; }
 
-        public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt)
+        public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
         {
             Values = new Stack<long?>();
             Datetimes = new Stack<DateTimeOffset?>();
@@ -37,13 +38,30 @@ namespace TQL.RDL.Evaluator
             Variables["current"] = DateTimeOffset.Now;
             this.instructions = instructions;
             this.stopAt = stopAt;
+            this.startAt = startAt;
+            ReferenceTime = startAt;
         }
 
         public DateTimeOffset? NextFire()
         {
+            if(ReferenceTime < startAt)
+            {
+                ReferenceTime = startAt;
+                return startAt;
+            }
+
+            if(ReferenceTime > stopAt)
+            {
+                ReferenceTime = null;
+                return null;
+            }
+
             while(true)
             {
                 if (Exit)
+                    return null;
+
+                if (!ReferenceTime.HasValue)
                     return null;
 
                 Break = false;
@@ -51,7 +69,8 @@ namespace TQL.RDL.Evaluator
                 instrPtr = 0;
 
                 IRDLInstruction instruction = null;
-                bool isRightTime = true;
+
+                var old = ReferenceTime;
 
                 Datetimes.Push(ReferenceTime);
 
@@ -60,24 +79,23 @@ namespace TQL.RDL.Evaluator
                     instruction = instructions[instrPtr];
                     instruction.Run(this);
                 }
-                
-                isRightTime = Values.Count == 0 || (Values.Count > 0 && Convert.ToBoolean(Values.Pop().Value));
-
-                if (isRightTime && (!stopAt.HasValue || stopAt.Value >= Datetimes.Peek()))
-                {
-                    var stored = Datetimes.Pop();
-                    var old = ReferenceTime;
-                    ReferenceTime = stored;
-                    return old;
-                }
-
-                if (stopAt.HasValue && Datetimes.Peek() > stopAt.Value)
-                    return null;
-
-                if (!ReferenceTime.HasValue)
-                    return null;
 
                 ReferenceTime = Datetimes.Pop();
+
+                if (stopAt.HasValue && old > stopAt.Value)
+                {
+                    ReferenceTime = null;
+                    return null;
+                }
+
+                bool cond = false;
+                if (Values.Count > 0)
+                    cond = Convert.ToBoolean(Values.Pop());
+                else
+                    cond = true;
+
+                if (cond)
+                    return old;
             }
         }
 

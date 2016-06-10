@@ -44,13 +44,6 @@ namespace TQL.RDL.Parser.Tokens
         { }
     }
 
-    public class MinusToken : Token
-    {
-        public MinusToken(TextSpan span)
-            : base("-", SyntaxType.Minus, span)
-        { }
-    }
-
     public class ModuloToken : Token
     {
         public ModuloToken(TextSpan span)
@@ -65,10 +58,17 @@ namespace TQL.RDL.Parser.Tokens
         { }
     }
 
-    public class SlashToken : Token
+    public class FSlashToken : Token
     {
-        public SlashToken(TextSpan span)
-            : base("*", SyntaxType.Slash, span)
+        public FSlashToken(TextSpan span)
+            : base("/", SyntaxType.FSlash, span)
+        { }
+    }
+
+    public class HyphenToken : Token
+    {
+        public HyphenToken(TextSpan span)
+            : base("-", SyntaxType.Hyphen, span)
         { }
     }
 

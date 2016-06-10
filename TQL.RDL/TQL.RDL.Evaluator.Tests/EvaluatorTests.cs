@@ -13,8 +13,9 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
-            var machine = Parse("repeat every hours where @day in (21,22,23,24) and 3 = 4 and @year < 2100 stop at '2100/05/05'");
+            var machine = Parse("repeat every hours where @day in (21,22,23,24) and 3 = 4 and @year < 2100 start at '2000/01/01' stop at '2100/05/05'");
 
+            machine.ReferenceTime = DateTimeOffset.Parse("2000/01/01");
             var refTime = default(DateTimeOffset?);
             var count = 0;
             do
@@ -30,8 +31,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_ComposeFunctionCall_ShouldPass()
         {
-            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate())");
-
+            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate()) start at '2016-06-07 22:00:00'");
             machine.ReferenceTime = new DateTimeOffset(2016, 6, 7, 22, 0, 0, new TimeSpan());
 
             machine.NextFire();
@@ -80,6 +80,52 @@ namespace TQL.RDL.Evaluator.Tests
 
             Assert.AreEqual(null, machine.NextFire());
             Assert.AreEqual(null, machine.NextFire());
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateBasicOperators_ShouldPass()
+        {
+            EvaluateQuery("repeat every hours where 1 + 2 = 3 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'", 
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+
+            EvaluateQuery("repeat every hours where 5 - 4 = 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+
+            EvaluateQuery("repeat every hours where 5 * 4 = 19 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+
+            EvaluateQuery("repeat every hours where 20 / 2 = 50 / 5 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+
+            EvaluateQuery("repeat every hours where 20 + (2 * 5) - 4 + 1 = 20 + 6 + 1  start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
+                (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+        }
+
+        public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
+        {
+
+            var machine = Parse(string.Format(query, startAt, stopAt));
+
+            var datetime = default(DateTimeOffset?);
+            var index = 0;
+
+            while((datetime = machine.NextFire()).HasValue && index < funcs.Length)
+            {
+                Assert.IsTrue(funcs[index](datetime));
+                index += 1;
+            }
+
+            Assert.IsTrue(index == funcs.Length);
         }
 
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)

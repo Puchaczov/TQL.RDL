@@ -24,7 +24,7 @@ namespace TQL.RDL.Parser.Tests
                 SyntaxType.In,
                 SyntaxType.LeftParenthesis,
                 SyntaxType.Word,
-                SyntaxType.Minus,
+                SyntaxType.Hyphen,
                 SyntaxType.Word,
                 SyntaxType.RightParenthesis,
                 SyntaxType.And,

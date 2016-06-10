@@ -11,7 +11,6 @@ namespace TQL.RDL.Evaluator
 
     public class RDLCodeGenerationVisitor : INodeVisitor
     {
-        private DateTimeOffset referenceTime;
         private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
         private Stack<IRDLInstruction> instructions;
@@ -171,22 +170,22 @@ namespace TQL.RDL.Evaluator
         public void Visit(RootScriptNode node)
         {
             instructions.Push(new BreakInstruction());
-            instructions.Push(new Modify((f) => f.Datetimes.Push(generateNext(f.Datetimes.Pop()))));
+
+            instructions.Push(new Modify(
+                (f) => f.Datetimes.Push(generateNext(f.Datetimes.Pop()))));
+
             for (int i = 0; i < node.Descendants.Length; ++i)
             {
                 node.Descendants[i].Accept(this);
             }
             
-            machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt);
-            if (referenceTime == default(DateTimeOffset))
-                referenceTime = DateTimeOffset.Now;
-            machine.ReferenceTime = referenceTime;
+            machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt, startAt);
             methods.SetMachine(machine);
         }
 
         public void Visit(StartAtNode node)
         {
-            referenceTime = node.When;
+            startAt = node.When;
         }
 
         public void Visit(WordNode node)
@@ -245,29 +244,43 @@ namespace TQL.RDL.Evaluator
             ExpressionGenerateInstructions<LessEqualDatetime, LessEqualNumeric>(node);
         }
 
-        public void Visit(PlusNode node)
+        public void Visit(AddNode node)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Visit(MinusNode node)
-        {
-            throw new NotImplementedException();
+            ExpressionGenerateInstructions<AddNumericToDatetime, AddNumericToNumeric>(node);
         }
 
         public void Visit(ModuloNode node)
         {
-            throw new NotImplementedException();
+            instructions.Push(new AddNumericToNumeric());
+            node.Left.Accept(this);
+            node.Right.Accept(this);
         }
 
         public void Visit(StarNode node)
         {
-            throw new NotImplementedException();
+            instructions.Push(new MultiplyNumerics());
+            node.Left.Accept(this);
+            node.Right.Accept(this);
         }
 
-        public void Visit(SlashNode node)
+        public void Visit(FSlashNode node)
         {
-            throw new NotImplementedException();
+            if(node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
+            {
+                instructions.Push(new DivideNumeric());
+                node.Left.Accept(this);
+                node.Right.Accept(this);
+            }
+        }
+
+        public void Visit(HyphenNode node)
+        {
+            if (node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
+            {
+                instructions.Push(new SubtractNumeric());
+                node.Left.Accept(this);
+                node.Right.Accept(this);
+            }
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)

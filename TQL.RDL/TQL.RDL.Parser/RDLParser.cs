@@ -101,6 +101,21 @@ namespace TQL.RDL.Parser
             {
                 switch (tokens[i].TokenType)
                 {
+                    case SyntaxType.Plus:
+                        nodes.Push(new AddNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.Hyphen:
+                        nodes.Push(new HyphenNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.Star:
+                        nodes.Push(new StarNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.Mod:
+                        nodes.Push(new ModuloNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.FSlash:
+                        nodes.Push(new FSlashNode(nodes.Pop(), nodes.Pop()));
+                        break;
                     case SyntaxType.And:
                         nodes.Push(new AndNode(nodes.Pop(), nodes.Pop()));
                         break;
@@ -110,35 +125,35 @@ namespace TQL.RDL.Parser
                     case SyntaxType.Equality:
                         nodes.Push(new EqualityNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Word:
-                        nodes.Push(new WordNode(tokens[i]));
-                        break;
-                    case SyntaxType.Numeric:
-                        nodes.Push(new NumericNode(tokens[i]));
-                        break;
                     case SyntaxType.Diff:
                         nodes.Push(new DiffNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.Greater:
+                        nodes.Push(new GreaterNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.GreaterEqual:
+                        nodes.Push(new GreaterEqualNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.Less:
+                        nodes.Push(new LessNode(nodes.Pop(), nodes.Pop()));
+                        break;
+                    case SyntaxType.LessEqual:
+                        nodes.Push(new LessEqualNode(nodes.Pop(), nodes.Pop()));
                         break;
                     case SyntaxType.In:
                     case SyntaxType.NotIn:
                         var args = nodes.Pop();
                         var partOfDate = nodes.Pop();
-                        if(tokens[i].TokenType == SyntaxType.In)
+                        if (tokens[i].TokenType == SyntaxType.In)
                             nodes.Push(new InNode(partOfDate, args));
                         else
                             nodes.Push(new NotInNode(partOfDate, args));
                         break;
-                    case SyntaxType.Greater:
-                        nodes.Push(new GreaterNode(nodes.Pop(), nodes.Pop()));
+                    case SyntaxType.Numeric:
+                        nodes.Push(new NumericNode(tokens[i]));
                         break;
-                    case SyntaxType.Less:
-                        nodes.Push(new LessNode(nodes.Pop(), nodes.Pop()));
-                        break;
-                    case SyntaxType.GreaterEqual:
-                        nodes.Push(new GreaterEqualNode(nodes.Pop(), nodes.Pop()));
-                        break;
-                    case SyntaxType.LessEqual:
-                        nodes.Push(new LessEqualNode(nodes.Pop(), nodes.Pop()));
+                    case SyntaxType.Word:
+                        nodes.Push(new WordNode(tokens[i]));
                         break;
                     case SyntaxType.Function:
                             nodes.Push(new FunctionNode(tokens[i] as FunctionToken, nodes.Pop() as ArgListNode));

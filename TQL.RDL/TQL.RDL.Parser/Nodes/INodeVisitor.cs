@@ -24,10 +24,10 @@
         void Visit(LessNode node);
         void Visit(LessEqualNode node);
         void Visit(NumericConsequentRepeatEveryNode node);
-        void Visit(PlusNode node);
-        void Visit(MinusNode node);
+        void Visit(AddNode node);
+        void Visit(HyphenNode node);
         void Visit(ModuloNode node);
         void Visit(StarNode node);
-        void Visit(SlashNode node);
+        void Visit(FSlashNode node);
     }
 }
