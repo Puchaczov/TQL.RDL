@@ -78,7 +78,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_WithInOperator_ShouldPass()
         {
-            var query = "repeat every day where @year in (@year, 2013, 'WORD')";
+            var query = "RePeat eVery dAy whEre @year IN (@year, 2013, 'WORD')";
             var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
@@ -118,7 +118,7 @@ namespace TQL.RDL.Parser.Tests
             {
                 var span = tokens[i].Span;
                 var substr = query.Substring(span.Start, span.Length);
-                Assert.AreEqual(tokens[i].ToString(), substr);
+                Assert.AreEqual(tokens[i].ToString().ToLowerInvariant(), substr.ToLowerInvariant());
                 Assert.IsTrue(tokens[i].TokenType == types[i]);
             }
         }

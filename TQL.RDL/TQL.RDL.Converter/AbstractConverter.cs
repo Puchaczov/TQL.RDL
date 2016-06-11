@@ -20,7 +20,9 @@ namespace TQL.RDL.Converter
 
         protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest request)
         {
-            var lexer = new LexerComplexTokensDecorator(request.Query);
+            var preprocessor = new Preprocessor();
+            var query = preprocessor.Execute(request.Query);
+            var lexer = new LexerComplexTokensDecorator(query);
             var parser = new RDLParser(lexer);
             return parser.ComposeRootComponents();
         }

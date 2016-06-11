@@ -7,7 +7,6 @@ using System.Reflection;
 
 namespace TQL.RDL.Evaluator.Instructions
 {
-
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class GoToInstruction : IRDLInstruction
     {
@@ -403,6 +402,7 @@ namespace TQL.RDL.Evaluator.Instructions
         public override string ToString() => "MODIFY";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class NotInstruction : IRDLInstruction
     {
         public void Run(RDLVirtualMachine machine)
@@ -410,8 +410,11 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(Convert.ToInt64(!Convert.ToBoolean(machine.Values.Pop())));
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "NOT";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class AddNumericToDatetime : IRDLInstruction
     {
         public AddNumericToDatetime()
@@ -421,8 +424,11 @@ namespace TQL.RDL.Evaluator.Instructions
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString() => "ADD";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class AddNumericToNumeric : IRDLInstruction
     {
         public void Run(RDLVirtualMachine machine)
@@ -430,8 +436,11 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(machine.Values.Pop() + machine.Values.Pop());
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "ADD";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class MultiplyNumerics : IRDLInstruction
     {
         public void Run(RDLVirtualMachine machine)
@@ -439,8 +448,11 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(machine.Values.Pop() * machine.Values.Pop());
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "MULTIPLY";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class SubtractNumeric : IRDLInstruction
     {
         public void Run(RDLVirtualMachine machine)
@@ -448,8 +460,11 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(machine.Values.Pop() - machine.Values.Pop());
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "SUBTRACT";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class DivideNumeric : IRDLInstruction
     {
         public void Run(RDLVirtualMachine machine)
@@ -457,8 +472,11 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(machine.Values.Pop() / machine.Values.Pop());
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "DIVIDE";
     }
 
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class PrepareFunctionCall : IRDLInstruction
     {
         private IEnumerable<Type> enumerable;
@@ -485,5 +503,7 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.CallArgs = args;
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "PREPARE FUNCTION CALL";
     }
 }

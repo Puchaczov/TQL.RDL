@@ -156,7 +156,8 @@ namespace TQL.RDL.Parser
             }
             this.pos = pos;
             var keywordCandidate = builder.ToString();
-            if(this.multiWordKeywords.ContainsKey(token.Value) && this.multiWordKeywords[token.Value] == keywordCandidate)
+            var value = token.Value.ToLowerInvariant();
+            if(multiWordKeywords.ContainsKey(value) && this.multiWordKeywords[value] == keywordCandidate)
             {
                 type = multiWordKeywordsSyntaxMapper[token.Value + ' ' + keywordCandidate];
                 keyword = token.Value + spaces + keywordCandidate;
@@ -167,7 +168,7 @@ namespace TQL.RDL.Parser
             return false;
         }
 
-        private bool IsMulitkeywordCandidate(WordToken token) => this.multiWordKeywords.ContainsKey(token.Value);
+        private bool IsMulitkeywordCandidate(WordToken token) => this.multiWordKeywords.ContainsKey(token.Value.ToLowerInvariant());
 
         private Token ConsumeGreateEqualOperator()
         {

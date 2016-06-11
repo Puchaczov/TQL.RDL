@@ -20,8 +20,6 @@ namespace TQL.RDL.Converter
             {
                 GlobalMetadata.RegisterMethod(method.Name, method);
             }
-
-            var preprocessor = new Preprocessor();
             var codeGenerator = new RDLCodeGenerationVisitor();
 
             ast.Accept(codeGenerator);
