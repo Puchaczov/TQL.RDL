@@ -53,7 +53,7 @@ namespace TQL.RDL.Evaluator.Instructions
         public void Run(RDLVirtualMachine machine)
         {
             var result = info.Invoke(obj, machine.CallArgs);
-            machine.Values.Push(Convert.ToBoolean(result) ? 1 : 0);
+            machine.Values.Push(Convert.ToInt64(result));
             machine.InstructionPointer += 1;
         }
 
@@ -407,7 +407,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push(~machine.Values.Pop().Value);
+            machine.Values.Push(Convert.ToInt64(!Convert.ToBoolean(machine.Values.Pop())));
             machine.InstructionPointer += 1;
         }
     }

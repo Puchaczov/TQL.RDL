@@ -13,7 +13,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
-            var machine = Parse("repeat every hours where @day in (21,22,23,24) and 3 = 4 and @year < 2100 start at '2000/01/01' stop at '2100/05/05'");
+            var machine = Parse("repeat every days where GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100 start at '2000/01/01' stop at '2100/05/05'");
 
             machine.ReferenceTime = DateTimeOffset.Parse("2000/01/01");
             var refTime = default(DateTimeOffset?);
@@ -105,10 +105,36 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every hours where 20 + (2 * 5) - 4 + 1 = 20 + 6 + 1  start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+            EvaluateQuery("repeat every hours where 20 + (2 * 5) - 4 + 1 = 20 + 6 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
+
+            EvaluateQuery("repeat every days where GetDay() in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("22.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("27.05.2012 13:00:00"));
+
+            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("24.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
+
+            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("24.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
+
+            EvaluateQuery("repeat every days where GetDay() * GetYear() = 29 * 2012 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("29.05.2012 13:00:00"));
+
+            EvaluateQuery("repeat every 2 days start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.06.2012 23:00:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("27.05.2012 13:00:00"));
         }
 
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
@@ -153,6 +179,7 @@ namespace TQL.RDL.Evaluator.Tests
             GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
             GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
             GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
+            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
 
             node.Accept(visitor);
 

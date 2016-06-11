@@ -19,9 +19,12 @@ namespace TQL.RDL.Parser
             multiWordKeywords = new Dictionary<string, string>();
             multiWordKeywords.Add("start", "at");
             multiWordKeywords.Add("stop", "at");
+            multiWordKeywords.Add("not", "in");
+
             multiWordKeywordsSyntaxMapper = new Dictionary<string, SyntaxType>();
             multiWordKeywordsSyntaxMapper.Add("start at", SyntaxType.StartAt);
             multiWordKeywordsSyntaxMapper.Add("stop at", SyntaxType.StopAt);
+            multiWordKeywordsSyntaxMapper.Add("not in", SyntaxType.NotIn);
         }
 
         public override Token NextToken()
@@ -73,6 +76,8 @@ namespace TQL.RDL.Parser
                                     return AssignTokenOfType(() => new StartAtToken(new TextSpan(pos, keyword.Length)));
                                 case SyntaxType.StopAt:
                                     return AssignTokenOfType(() => new StopAtToken(new TextSpan(pos, keyword.Length)));
+                                case SyntaxType.NotIn:
+                                    return AssignTokenOfType(() => new NotInToken(new TextSpan(pos, keyword.Length)));
                             }
                         }
                     }

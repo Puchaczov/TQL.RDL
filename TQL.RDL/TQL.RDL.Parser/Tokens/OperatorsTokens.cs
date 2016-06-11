@@ -30,6 +30,13 @@ namespace TQL.RDL.Parser.Tokens
         { }
     }
 
+    public class NotInToken : Token
+    {
+        public NotInToken(TextSpan span)
+            : base("not in", SyntaxType.NotIn, span)
+        { }
+    }
+
     public class EveryToken : Token
     {
         public EveryToken(TextSpan span)

@@ -47,7 +47,6 @@ namespace TQL.RDL.Evaluator
             if(ReferenceTime < startAt)
             {
                 ReferenceTime = startAt;
-                return startAt;
             }
 
             if(ReferenceTime > stopAt)

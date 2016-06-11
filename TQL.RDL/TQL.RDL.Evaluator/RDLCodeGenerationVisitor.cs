@@ -16,7 +16,6 @@ namespace TQL.RDL.Evaluator
         private Stack<IRDLInstruction> instructions;
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
-        private Dictionary<string, Type> bindableVariables;
         private DefaultMethods methods;
 
         private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
@@ -151,7 +150,7 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(InNode node)
         {
-            switch(node.ReturnType.Name)
+            switch(node.ReturnType.GetTypeName())
             {
                 case nameof(Int64):
                     ExpressionGenerateIn<InInstructionNumeric>(node);

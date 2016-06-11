@@ -12,6 +12,7 @@ namespace TQL.RDL
         public Preprocessor()
         {
             base.Register(new Trim());
+            base.Register(new MakeKeywordsToLower());
         }
     }
 }

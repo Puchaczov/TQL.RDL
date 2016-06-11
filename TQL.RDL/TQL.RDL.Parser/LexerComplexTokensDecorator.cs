@@ -13,11 +13,13 @@ namespace TQL.RDL.Parser
         public LexerComplexTokensDecorator(Lexer lexer)
         {
             this.lexer = lexer;
+            disableEnumerationForTokens = new SyntaxType[0];
         }
 
         public LexerComplexTokensDecorator(string input)
         {
-            this.lexer = new Lexer(input);
+            lexer = new Lexer(input);
+            disableEnumerationForTokens = new SyntaxType[0];
         }
 
         public int Position => lexer.Position;
