@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RDC.Parser.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TQL.RDL.Parser.Tests")]
+[assembly: AssemblyDescription("TQL.RDL.Parser.Tests")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RDC.Parser.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("Jakub Puchała")]
+[assembly: AssemblyProduct("TQL.RDL.Parser.Tests")]
+[assembly: AssemblyCopyright("Jakub Puchała ©  2016")]
+[assembly: AssemblyTrademark("TQL")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

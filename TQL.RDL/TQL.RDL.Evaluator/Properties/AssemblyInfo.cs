@@ -4,13 +4,13 @@ using System.Reflection;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RDL.Evaluator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TQL.RDL.Evaluator")]
+[assembly: AssemblyDescription("TQL.RDL.Evaluator")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RDL.Evaluator")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("Jakub Puchała")]
+[assembly: AssemblyProduct("TQL.RDL.Evaluator")]
+[assembly: AssemblyCopyright("Jakub Puchała ©  2016")]
+[assembly: AssemblyTrademark("TQL")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 

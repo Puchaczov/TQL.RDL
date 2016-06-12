@@ -66,9 +66,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TQL.RDL.Converter\TQL.RDL.Converter.csproj">
+    <ProjectReference Include="..\TQL.RDL.Converter\TQL.RDL.csproj">
       <Project>{d6a021b8-39cd-4153-97ec-ebff3c2e4c65}</Project>
-      <Name>TQL.RDL.Converter</Name>
+      <Name>TQL.RDL</Name>
     </ProjectReference>
     <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj">
       <Project>{44933415-5e61-4069-8e05-75145d365a90}</Project>

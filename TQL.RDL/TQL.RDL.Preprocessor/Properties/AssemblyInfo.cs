@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TQL.RDL.Preprocessor")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("TQL.RDL.Preprocessor")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Jakub Puchała")]
 [assembly: AssemblyProduct("TQL.RDL.Preprocessor")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Jakub Puchała ©  2016")]
+[assembly: AssemblyTrademark("TQL")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 
