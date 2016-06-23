@@ -41,6 +41,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeStack.cs" />
     <Compile Include="DefaultMethods.cs" />
     <Compile Include="Instructions\Operators.cs" />
     <Compile Include="RDLCodeGenerationVisitor.cs" />

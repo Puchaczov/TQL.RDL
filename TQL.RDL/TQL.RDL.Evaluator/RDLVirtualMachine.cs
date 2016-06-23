@@ -15,12 +15,21 @@ namespace TQL.RDL.Evaluator
         public int? Year => Current?.Year;
     }
 
+    public enum Registers : short
+    {
+        A,
+        B
+    }
+
     public class RDLVirtualMachine : IFireTimeEvaluator
     {
         private IRDLInstruction[] instructions;
         private int instrPtr;
         private DateTimeOffset? stopAt;
         private DateTimeOffset startAt;
+        private long[] regs = new long[2];
+
+        public Dictionary<string, int> RelativeLabels { get; }
 
         public MemoryVariables Variables { get; }
         private Func<DateTimeOffset?, DateTimeOffset?> GenerateNext;
@@ -29,7 +38,7 @@ namespace TQL.RDL.Evaluator
         public Stack<DateTimeOffset?> Datetimes { get; }
         public object[] CallArgs { get; set; }
 
-        public RDLVirtualMachine(Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
+        public RDLVirtualMachine(Dictionary<string, int> relativeLabels, Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
         {
             Values = new Stack<long?>();
             Datetimes = new Stack<DateTimeOffset?>();
@@ -40,6 +49,9 @@ namespace TQL.RDL.Evaluator
             this.stopAt = stopAt;
             this.startAt = startAt;
             ReferenceTime = startAt;
+            RelativeLabels = relativeLabels;
+            regs = new long[2];
+            LastlyFound = null;
         }
 
         public DateTimeOffset? NextFire()
@@ -110,6 +122,18 @@ namespace TQL.RDL.Evaluator
             }
         }
 
+        public DateTimeOffset? LastlyFound
+        {
+            get
+            {
+                return (DateTimeOffset?)Variables["lastlyFound"];
+            }
+            set
+            {
+                Variables["lastlyFound"] = value;
+            }
+        }
+
         public bool Break { get; set; }
 
         public bool Exit { get; set; }
@@ -125,5 +149,7 @@ namespace TQL.RDL.Evaluator
                 instrPtr = value;
             }
         }
+
+        public long[] Registers => regs;
     }
 }

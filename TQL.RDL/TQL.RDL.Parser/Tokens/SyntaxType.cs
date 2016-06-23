@@ -34,6 +34,11 @@
         GreaterEqual,
         Less,
         LessEqual,
-        NotIn
+        NotIn,
+        Case,
+        When,
+        Then,
+        Else,
+        CaseEnd
     }
 }

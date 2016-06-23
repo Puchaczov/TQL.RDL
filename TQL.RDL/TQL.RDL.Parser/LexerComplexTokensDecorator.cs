@@ -54,7 +54,8 @@ namespace TQL.RDL.Parser
 
         private Token DetectKeywords(Token token)
         {
-            switch(token.Value.ToLowerInvariant())
+            var value = token.Value.ToLowerInvariant();
+            switch(value)
             {
                 case "and":
                     return new AndToken(token.Span);
@@ -84,7 +85,17 @@ namespace TQL.RDL.Parser
                 case "minutes":
                 case "second":
                 case "seconds":
-                    return new WordToken(token.Value.ToLowerInvariant(), token.Span);
+                    return new WordToken(value, token.Span);
+                case "then":
+                    return new ThenToken(token.Span);
+                case "else":
+                    return new ElseToken(token.Span);
+                case "esac":
+                    return new CaseEndToken(token.Span);
+                case "when":
+                    return new WhenToken(token.Span);
+                case "case":
+                    return new CaseToken(token.Span);
                 default:
                     return token;
             }

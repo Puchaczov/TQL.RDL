@@ -13,24 +13,31 @@ namespace TQL.RDL.Evaluator
     {
         private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
-        private Stack<IRDLInstruction> instructions;
+        private Stack<List<IRDLInstruction>> functions;
         private MemoryVariables variables;
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
         private DefaultMethods methods;
+        private Dictionary<string, int> labels;
 
         private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
         private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
         private static string nBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
 
+        private static int numeric = 0;
+
         private RDLVirtualMachine machine;
+
+        private List<IRDLInstruction> instructions => functions.Peek();
 
         public RDLCodeGenerationVisitor()
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
-            instructions = new Stack<IRDLInstruction>();
+            functions = new Stack<List<IRDLInstruction>>();
+            functions.Push(new List<IRDLInstruction>());
             startAt = DateTimeOffset.Now;
             stopAt = null;
+            labels = new Dictionary<string, int>();
         }
 
         public RDLVirtualMachine VirtualMachine => machine;
@@ -85,13 +92,13 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(DateTimeNode node)
         {
-            instructions.Push(new PushDateTimeInstruction(node.DateTime));
+            instructions.Add(new PushDateTimeInstruction(node.DateTime));
         }
 
         public void Visit(NotInNode node)
         {
-            instructions.Push(new NotInstruction());
             Visit(node as InNode);
+            instructions.Add(new NotInstruction());
         }
 
         public void Visit(VarNode node)
@@ -99,35 +106,35 @@ namespace TQL.RDL.Evaluator
             switch(node.Token.Value)
             {
                 case "second":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Second));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Second));
                     break;
                 case "minute":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Minute));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Minute));
                     break;
                 case "hour":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Hour));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Hour));
                     break;
                 case "day":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Day));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Day));
                     break;
                 case "month":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Month));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Month));
                     break;
                 case "year":
-                    instructions.Push(new LoadNumericVariableInstruction(v => v.Year));
+                    instructions.Add(new LoadNumericVariableInstruction(v => v.Year));
                     break;
                 case "current":
-                    instructions.Push(new LoadDateTimeVariableInstruction(v => v.Current));
+                    instructions.Add(new LoadDateTimeVariableInstruction(v => v.Current));
                     break;
                 case "weekday":
-                    instructions.Push(new LoadNumericVariableInstruction(v => (int?)v.Current?.DayOfWeek));
+                    instructions.Add(new LoadNumericVariableInstruction(v => (int?)v.Current?.DayOfWeek));
                     break;
             }
         }
 
         public void Visit(NumericNode node)
         {
-            instructions.Push(new PushNumericInstruction(node.Value));
+            instructions.Add(new PushNumericInstruction(node.Value));
         }
 
         public void Visit(ArgListNode node)
@@ -168,17 +175,17 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(RootScriptNode node)
         {
-            instructions.Push(new BreakInstruction());
-
-            instructions.Push(new Modify(
-                (f) => f.Datetimes.Push(generateNext(f.Datetimes.Pop()))));
-
             for (int i = 0; i < node.Descendants.Length; ++i)
             {
                 node.Descendants[i].Accept(this);
             }
-            
-            machine = new RDLVirtualMachine(generateNext, instructions.ToArray(), stopAt, startAt);
+
+            instructions.Add(new Modify(
+                (f) => f.Datetimes.Push(generateNext(f.Datetimes.Pop()))));
+
+            instructions.Add(new BreakInstruction());
+
+            machine = new RDLVirtualMachine(labels, generateNext, instructions.ToArray(), stopAt, startAt);
             methods.SetMachine(machine);
         }
 
@@ -204,22 +211,24 @@ namespace TQL.RDL.Evaluator
                 obj = methods;
             }
 
-            if (returnName == nDateTime)
-            {
-                instructions.Push(new CallExternalDatetime(obj, registeredFunction));
-            }
-            else if(returnName == nInt64)
-            {
-                instructions.Push(new CallExternalNumeric(obj, registeredFunction));
-            }
-            else if(returnName == nBoolean)
-            {
-                instructions.Push(new CallExternalNumeric(obj, registeredFunction));
-            }
-            instructions.Push(new PrepareFunctionCall(argTypes));
             foreach (var arg in node.Descendants)
             {
                 arg.Accept(this);
+            }
+
+            instructions.Add(new PrepareFunctionCall(argTypes));
+
+            if (returnName == nDateTime)
+            {
+                instructions.Add(new CallExternalDatetime(obj, registeredFunction));
+            }
+            else if(returnName == nInt64)
+            {
+                instructions.Add(new CallExternalNumeric(obj, registeredFunction));
+            }
+            else if(returnName == nBoolean)
+            {
+                instructions.Add(new CallExternalNumeric(obj, registeredFunction));
             }
         }
 
@@ -250,25 +259,25 @@ namespace TQL.RDL.Evaluator
 
         public void Visit(ModuloNode node)
         {
-            instructions.Push(new AddNumericToNumeric());
-            node.Left.Accept(this);
             node.Right.Accept(this);
+            node.Left.Accept(this);
+            instructions.Add(new AddNumericToNumeric());
         }
 
         public void Visit(StarNode node)
         {
-            instructions.Push(new MultiplyNumerics());
-            node.Left.Accept(this);
             node.Right.Accept(this);
+            node.Left.Accept(this);
+            instructions.Add(new MultiplyNumerics());
         }
 
         public void Visit(FSlashNode node)
         {
             if(node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
             {
-                instructions.Push(new DivideNumeric());
-                node.Left.Accept(this);
                 node.Right.Accept(this);
+                node.Left.Accept(this);
+                instructions.Add(new DivideNumeric());
             }
         }
 
@@ -276,35 +285,88 @@ namespace TQL.RDL.Evaluator
         {
             if (node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
             {
-                instructions.Push(new SubtractNumeric());
-                node.Left.Accept(this);
                 node.Right.Accept(this);
+                node.Left.Accept(this);
+                instructions.Add(new SubtractNumeric());
             }
+        }
+
+        public void Visit(CaseNode node)
+        {
+            labels.Add($"case_when_label_start{numeric}", 0);
+            
+            for (int i = 0, j = node.Expressions.Length - 1; i < j; ++i)
+            {
+                Visit(node.Expressions[i], numeric + i, numeric, false);
+                labels.Add($"case_when_label_next{numeric + i}", instructions.Count);
+            }
+
+            Visit(node.Expressions[node.Expressions.Length - 1], numeric, numeric, true);
+
+            labels.Add($"case_when_label_else{numeric}", instructions.Count);
+            node.Else.Accept(this);
+
+            labels.Add($"case_when_label_exit{numeric}", instructions.Count);
+        }
+
+        public void Visit(WhenThenNode node)
+        {
+            throw new NotSupportedException();
+        }
+
+        private void Visit(WhenThenNode node, int labelNumber, int exitNumber, bool last)
+        {
+            node.When.Accept(this);
+            if (!last)
+            {
+                instructions.Add(new JumpToLabelNotEqual($"case_when_label_next{labelNumber}"));
+            }
+            else
+            {
+                instructions.Add(new JumpToLabelNotEqual($"case_when_label_else{labelNumber}"));
+            }
+            node.Then.Accept(this);
+            instructions.Add(new JumpToLabel($"case_when_label_exit{exitNumber}"));
+        }
+
+        public void Visit(WhenNode node)
+        {
+            node.Expression.Accept(this);
+        }
+
+        public void Visit(ThenNode node)
+        {
+            node.Descendant.Accept(this);
+        }
+
+        public void Visit(ElseNode node)
+        {
+            node.Descendant.Accept(this);
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)
             where TOperator : IRDLInstruction, new()
         {
-            instructions.Push(new TOperator());
-            instructions.Push(new PushNumericInstruction((node.Right as ArgListNode).Descendants.Length));
-            node.Left.Accept(this);
             node.Right.Accept(this);
+            node.Left.Accept(this);
+            instructions.Add(new PushNumericInstruction((node.Right as ArgListNode).Descendants.Length));
+            instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateLeftToRightInstructions<TOperator>(BinaryNode node)
             where TOperator: IRDLInstruction, new()
         {
-            instructions.Push(new TOperator());
-            node.Left.Accept(this);
             node.Right.Accept(this);
+            node.Left.Accept(this);
+            instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateRightToLeftInstructions<TOperator>(BinaryNode node)
             where TOperator : IRDLInstruction, new()
         {
-            instructions.Push(new TOperator());
             node.Right.Accept(this);
             node.Left.Accept(this);
+            instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateInstructions<TDateTimeOp, TNumericOp>(BinaryNode node)
@@ -313,37 +375,37 @@ namespace TQL.RDL.Evaluator
         {
             if (node.Left.IsLeaf)
             {
+                node.Right.Accept(this);
+                node.Left.Accept(this);
                 switch (node.Left.ReturnType.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
-                        instructions.Push(new TDateTimeOp());
+                        instructions.Add(new TDateTimeOp());
                         break;
                     case nameof(Int64):
-                        instructions.Push(new TNumericOp());
+                        instructions.Add(new TNumericOp());
                         break;
                 }
-                node.Left.Accept(this);
-                node.Right.Accept(this);
             }
             else if (node.Right.IsLeaf)
             {
+                node.Right.Accept(this);
+                node.Left.Accept(this);
                 switch (node.Right.ReturnType.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
-                        instructions.Push(new TDateTimeOp());
+                        instructions.Add(new TDateTimeOp());
                         break;
                     case nameof(Int64):
-                        instructions.Push(new TNumericOp());
+                        instructions.Add(new TNumericOp());
                         break;
                 }
-                node.Left.Accept(this);
-                node.Right.Accept(this);
             }
             else
             {
-                instructions.Push(new TNumericOp());
-                node.Left.Accept(this);
                 node.Right.Accept(this);
+                node.Left.Accept(this);
+                instructions.Add(new TNumericOp());
             }
         }
     }

@@ -160,4 +160,39 @@ namespace TQL.RDL.Parser.Tokens
 
         public override string ToString() => Value;
     }
+
+    public class CaseToken : Token
+    {
+        public CaseToken(TextSpan span)
+            : base("case", SyntaxType.Case, span)
+        { }
+    }
+
+    public class WhenToken : Token
+    {
+        public WhenToken(TextSpan span)
+            : base("when", SyntaxType.When, span)
+        { }
+    }
+
+    public class ThenToken : Token
+    {
+        public ThenToken(TextSpan span)
+            : base("then", SyntaxType.Then, span)
+        { }
+    }
+
+    public class ElseToken : Token
+    {
+        public ElseToken(TextSpan span)
+            : base("else", SyntaxType.Else, span)
+        { }
+    }
+
+    public class CaseEndToken : Token
+    {
+        public CaseEndToken(TextSpan span)
+            : base("esac", SyntaxType.CaseEnd, span)
+        { }
+    }
 }

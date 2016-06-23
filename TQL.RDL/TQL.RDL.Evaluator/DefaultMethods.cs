@@ -59,6 +59,7 @@ namespace TQL.RDL.Evaluator
         public DateTimeOffset? GetDate() => machine.ReferenceTime;
         public static DateTimeOffset Now() => DateTimeOffset.Now;
         public static DateTimeOffset UtcNow() => DateTimeOffset.UtcNow;
+        public DateTimeOffset? LastDate() => machine.LastlyFound;
 
         public long? GetDay() => machine.Datetimes.Peek()?.Day;
         public long? GetMonth() => machine.Datetimes.Peek()?.Month;

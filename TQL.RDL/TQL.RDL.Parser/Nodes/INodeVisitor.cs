@@ -29,5 +29,10 @@
         void Visit(ModuloNode node);
         void Visit(StarNode node);
         void Visit(FSlashNode node);
+        void Visit(WhenNode node);
+        void Visit(ThenNode node);
+        void Visit(ElseNode node);
+        void Visit(CaseNode node);
+        void Visit(WhenThenNode node);
     }
 }

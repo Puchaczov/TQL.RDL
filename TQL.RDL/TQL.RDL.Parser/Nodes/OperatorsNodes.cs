@@ -235,4 +235,106 @@ namespace TQL.RDL.Parser.Nodes
             }
         }
     }
+
+    public class ElseNode : UnaryNode
+    {
+        private Token token;
+
+        public ElseNode(Token token, RdlSyntaxNode node)
+            : base(node)
+        { }
+
+        public override Type ReturnType => Descendant.ReturnType;
+
+        public override Token Token => token;
+
+        public override void Accept(INodeVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
+
+    public class WhenNode : UnaryNode
+    {
+        private Token token;
+
+        public WhenNode(Token token, RdlSyntaxNode when) 
+            : base(when)
+        { }
+
+        public RdlSyntaxNode Expression => Descendant;
+
+        public override Type ReturnType => Descendant.ReturnType;
+
+        public override Token Token => token;
+
+        public override void Accept(INodeVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
+
+    public class ThenNode : UnaryNode
+    {
+        private Token token;
+
+        public ThenNode(Token token, RdlSyntaxNode then)
+            : base(then)
+        { }
+
+        public override Type ReturnType => Descendant.ReturnType;
+
+        public override Token Token => token;
+
+        public override void Accept(INodeVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
+
+    public class WhenThenNode : BinaryNode
+    {
+        public WhenThenNode(RdlSyntaxNode when, RdlSyntaxNode then) : base(when, then)
+        { }
+
+        public WhenNode When => Descendants[0] as WhenNode;
+        public ThenNode Then => Descendants[1] as ThenNode;
+
+        public override void Accept(INodeVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
+
+    public class CaseNode : RdlSyntaxNode
+    {
+        public CaseNode(WhenThenNode[] nodes, ElseNode node)
+        {
+            this.whenThenExpressions = nodes;
+            this.elseExpression = node;
+        }
+
+        private Token caseToken;
+
+        private WhenThenNode[] whenThenExpressions;
+        private ElseNode elseExpression;
+
+        public override RdlSyntaxNode[] Descendants => new List<RdlSyntaxNode>(whenThenExpressions).Concat(new RdlSyntaxNode[1] { elseExpression }).ToArray();
+
+        public override TextSpan FullSpan => new TextSpan(caseToken.Span.Start, elseExpression.FullSpan.End - caseToken.Span.Start);
+
+        public override bool IsLeaf => false;
+
+        public override Type ReturnType => whenThenExpressions[0].ReturnType;
+
+        public WhenThenNode[] Expressions => whenThenExpressions;
+        public ElseNode Else => elseExpression;
+
+        public override Token Token => caseToken;
+
+        public override void Accept(INodeVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
 }

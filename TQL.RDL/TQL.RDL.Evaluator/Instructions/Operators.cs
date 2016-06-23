@@ -34,6 +34,8 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Break = true;
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "BREAK";
     }
 
 
@@ -77,6 +79,8 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Datetimes.Push((DateTimeOffset?)result);
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => $"CALL EXTERNAL {info}";
     }
 
 
@@ -505,5 +509,64 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => "PREPARE FUNCTION CALL";
+    }
+
+    public class JumpNotEqual : IRDLInstruction
+    {
+        private int shift;
+
+        public JumpNotEqual(int shift)
+        {
+            this.shift = shift;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            if(machine.Values.Pop() != machine.Values.Pop())
+            {
+                machine.InstructionPointer += shift;
+                return;
+            }
+            machine.InstructionPointer += 1;
+        }
+    }
+
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
+    public class JumpToLabelNotEqual : IRDLInstruction
+    {
+        private string label;
+
+        public JumpToLabelNotEqual(string label)
+        {
+            this.label = label;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            if (!Convert.ToBoolean(machine.Values.Pop()))
+                machine.InstructionPointer = machine.RelativeLabels[label];
+            else
+                machine.InstructionPointer += 1;
+        }
+
+        public override string ToString() => $"JMPNE {label}";
+    }
+
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
+    public class JumpToLabel : IRDLInstruction
+    {
+        private string label;
+
+        public JumpToLabel(string label)
+        {
+            this.label = label;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.InstructionPointer = machine.RelativeLabels[label];
+        }
+
+        public override string ToString() => $"JMP {label}";
     }
 }

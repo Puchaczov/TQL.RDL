@@ -27,11 +27,14 @@ namespace TQL.RDL.Parser
             operators.Add(new Token("-", SyntaxType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
             operators.Add(new Token("+", SyntaxType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
             operators.Add(new Token("not", SyntaxType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
+            operators.Add(new WhenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
+            operators.Add(new ThenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
+            operators.Add(new ElseToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
         }
 
         public override Token[] Parse(LexerComplexTokensDecorator expression) => InfixToPostfix(expression);
-        protected override bool IsLeftParenthesis(Token token) => token.TokenType == SyntaxType.LeftParenthesis;
-        protected override bool IsRightParenthesis(Token token) => token.TokenType == SyntaxType.RightParenthesis;
+        protected override bool IsLeftParenthesis(Token token) => token.TokenType == SyntaxType.LeftParenthesis || token.TokenType == SyntaxType.Case;
+        protected override bool IsRightParenthesis(Token token) => token.TokenType == SyntaxType.RightParenthesis || token.TokenType == SyntaxType.CaseEnd;
         protected override bool IsSkippable(Token token) => token.TokenType == SyntaxType.WhiteSpace;
         protected override bool IsComma(Token token) => token.TokenType == SyntaxType.Comma;
         protected override bool IsWord(Token token) => token.TokenType == SyntaxType.Word;
@@ -39,8 +42,6 @@ namespace TQL.RDL.Parser
         protected override bool IsValue(Token token) => Regex.IsMatch("[a-Z1-9]+", token.Value) && !token.Value.Contains("@");
 
         protected override Token GenerateVarArgToken(int argsCount) => new VarArgToken(argsCount);
-
         protected override Token GenerateFunctionToken(Token oldToken) => new FunctionToken(oldToken.Value, oldToken.Span);
-
     }
 }

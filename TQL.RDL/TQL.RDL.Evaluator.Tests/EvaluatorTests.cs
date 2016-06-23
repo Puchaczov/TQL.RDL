@@ -74,6 +74,22 @@ namespace TQL.RDL.Evaluator.Tests
         }
 
         [TestMethod]
+        public void CodeGenerationVisitor_CaseWhen_ShouldPass()
+        {
+            EvaluateQuery("repeat every 1 days where 1 = (case when (GetDay() in (1,5)) then (1) when (GetDay() in (10,15)) then (1) else (0) esac) start at {0} stop at {1}", "'01.01.2012 00:00:00'", "'01.02.2012 00:00:00'",
+                (x) => x == DateTimeOffset.Parse("01.01.2012 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("05.01.2012 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("10.01.2012 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("15.01.2012 00:00:00"));
+
+            //always false query
+            EvaluateQuery("repeat every 1 days where 1 = (case when (3 = 4) then (1) when (3 = 4) then (1) else (0) esac) start at {0} stop at {1}", "'01.01.2012 00:00:00'", "'01.02.2012 00:00:00'");
+            EvaluateQuery("repeat every 1 days where 1 = (case when (GetDay() > 2 and GetDay() < 5) then (1) else (0) esac) start at {0} stop at {1}", "'01.01.2012 00:00:00'", "'01.02.2012 00:00:00'",
+                (x) => x == DateTimeOffset.Parse("03.01.2012 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("04.01.2012 00:00:00"));
+        }
+
+        [TestMethod]
         public void CodeGenerationVisitor_EvaluateNullWhenStopAtReached_ShouldReturnNull()
         {
             var machine = Parse("repeat every 2 hours start at '21.05.2012 13:00:00' stop at '21.05.2012 12:00:00'");

@@ -171,6 +171,22 @@ namespace TQL.RDL.Parser
                     case SyntaxType.Var:
                         nodes.Push(new VarNode(tokens[i] as VarToken));
                         break;
+                    case SyntaxType.Else:
+                        var elseNode = new ElseNode(tokens[i], nodes.Pop());
+                        var whenThenExpressions = new List<WhenThenNode>();
+                        while (nodes.Peek() is WhenThenNode)
+                        {
+                            whenThenExpressions.Add(nodes.Pop() as WhenThenNode);
+                        }
+                        nodes.Push(new CaseNode(whenThenExpressions.ToArray(), elseNode));
+                        break;
+                    case SyntaxType.When:
+                        nodes.Push(new WhenNode(tokens[i], nodes.Pop()));
+                        break;
+                    case SyntaxType.Then:
+                        var thenNode = new ThenNode(tokens[i], nodes.Pop());
+                        nodes.Push(new WhenThenNode(nodes.Pop(), thenNode));
+                        break;
                     default:
                         throw new NotSupportedException();
                 }

@@ -36,6 +36,41 @@ namespace TQL.RDL.Parser.Tests
                 SyntaxType.EndOfFile);
         }
 
+        [TestMethod] 
+        public void CheckProducedTokents_CaseWhenQuery_ShouldPass()
+        {
+            var query = "repeat every day where @a > (case when (1 <> 2) then (5) else (4) esac)";
+            var lexer = new LexerComplexTokensDecorator(query);
+            var tokens = Tokenize(lexer);
+
+            CheckTokenized_ShouldReturnOrderedToken(query, tokens,
+                SyntaxType.Repeat,
+                SyntaxType.Every,
+                SyntaxType.Word,
+                SyntaxType.Where,
+                SyntaxType.Var,
+                SyntaxType.Greater,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Case,
+                SyntaxType.When,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Numeric,
+                SyntaxType.Diff,
+                SyntaxType.Numeric,
+                SyntaxType.RightParenthesis,
+                SyntaxType.Then,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Numeric,
+                SyntaxType.RightParenthesis,
+                SyntaxType.Else,
+                SyntaxType.LeftParenthesis,
+                SyntaxType.Numeric,
+                SyntaxType.RightParenthesis,
+                SyntaxType.CaseEnd,
+                SyntaxType.RightParenthesis,
+                SyntaxType.EndOfFile);
+        }
+
         [TestMethod]
         public void CheckProducedTokens_WithMultiWordKeyword_ShouldPass()
         {
@@ -119,7 +154,7 @@ namespace TQL.RDL.Parser.Tests
                 var span = tokens[i].Span;
                 var substr = query.Substring(span.Start, span.Length);
                 Assert.AreEqual(tokens[i].ToString().ToLowerInvariant(), substr.ToLowerInvariant());
-                Assert.IsTrue(tokens[i].TokenType == types[i]);
+                Assert.AreEqual(types[i], tokens[i].TokenType);
             }
         }
     }

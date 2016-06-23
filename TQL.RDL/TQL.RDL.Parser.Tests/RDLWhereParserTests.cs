@@ -30,6 +30,60 @@ namespace TQL.RDL.Parser.Tests
             Assert.AreEqual(SyntaxType.And, tokens[16].TokenType);
         }
 
+        [TestMethod]
+        public void WhereConditions_ParseCaseWhenQuery()
+        {
+            var tokens = Parse("1 > (case when (1) then 5 else 4 esac)");
+
+            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[1].TokenType);
+            Assert.AreEqual(SyntaxType.When, tokens[2].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(SyntaxType.Then, tokens[4].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[5].TokenType);
+            Assert.AreEqual(SyntaxType.Else, tokens[6].TokenType);
+            Assert.AreEqual(SyntaxType.Greater, tokens[7].TokenType);
+        }
+
+        [TestMethod]
+        public void WhereConditions_ParseCaseWhenWithComplexWhen()
+        {
+            var tokens = Parse("1 > (case when (GetDay() <> (3 + 2)) then 5 else 4 esac)");
+
+            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(SyntaxType.VarArg, tokens[1].TokenType);
+            Assert.AreEqual(SyntaxType.Function, tokens[2].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[4].TokenType);
+            Assert.AreEqual(SyntaxType.Plus, tokens[5].TokenType);
+            Assert.AreEqual(SyntaxType.Diff, tokens[6].TokenType);
+            Assert.AreEqual(SyntaxType.When, tokens[7].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[8].TokenType);
+            Assert.AreEqual(SyntaxType.Then, tokens[9].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[10].TokenType);
+            Assert.AreEqual(SyntaxType.Else, tokens[11].TokenType);
+            Assert.AreEqual(SyntaxType.Greater, tokens[12].TokenType);
+        }
+
+        [TestMethod]
+        public void WhereConditions_ParseCaseWhenWithMultipleWhen_ShouldPass()
+        {
+            var tokens = Parse("1 > case when (1) then (2) when (3) then (4) else (5) esac");
+
+            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[1].TokenType);
+            Assert.AreEqual(SyntaxType.When, tokens[2].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(SyntaxType.Then, tokens[4].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[5].TokenType);
+            Assert.AreEqual(SyntaxType.When, tokens[6].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[7].TokenType);
+            Assert.AreEqual(SyntaxType.Then, tokens[8].TokenType);
+            Assert.AreEqual(SyntaxType.Numeric, tokens[9].TokenType);
+            Assert.AreEqual(SyntaxType.Else, tokens[10].TokenType);
+            Assert.AreEqual(SyntaxType.Greater, tokens[11].TokenType);
+        }
+
         private static Token[] Parse(string query)
         {
             RDLWhereParser parser = new RDLWhereParser();
