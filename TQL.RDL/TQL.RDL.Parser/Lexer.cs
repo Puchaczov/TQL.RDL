@@ -91,8 +91,9 @@ namespace TQL.RDL.Parser
 
         protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(input.Length, 0));
 
-        protected override Token GetToken(string tokenText, TokenDefinition matchedDefinition, int matchLength)
+        protected override Token GetToken(TokenDefinition matchedDefinition, Match match)
         {
+            string tokenText = match.Value;
             StatementType token = GetTokenCandidate(tokenText, matchedDefinition);
 
             switch(token)
