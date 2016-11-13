@@ -6,7 +6,7 @@ using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser
 {
-    public class RDLParser : ParserBase<Token, SyntaxType>
+    public class RDLParser : ParserBase<Token, StatementType>
     {
         private LexerComplexTokensDecorator cLexer;
 
@@ -22,11 +22,11 @@ namespace TQL.RDL.Parser
         {
             var rootComponents = new List<RdlSyntaxNode>();
             var i = 0;
-            for(; currentToken.TokenType != SyntaxType.EndOfFile; ++i)
+            for(; currentToken.TokenType != StatementType.EndOfFile; ++i)
             {
-                while(currentToken.TokenType == SyntaxType.WhiteSpace)
+                while(currentToken.TokenType == StatementType.WhiteSpace)
                 {
-                    Consume(SyntaxType.WhiteSpace);
+                    Consume(StatementType.WhiteSpace);
                 }
                 rootComponents.Add(ComposeNextComponents());
             }
@@ -37,18 +37,18 @@ namespace TQL.RDL.Parser
         {
             switch(currentToken.TokenType)
             {
-                case SyntaxType.Repeat:
-                    Consume(SyntaxType.Repeat);
+                case StatementType.Repeat:
+                    Consume(StatementType.Repeat);
                     return ComposeRepeat();
-                case SyntaxType.Where:
+                case StatementType.Where:
                     var where = ComposeWhere();
                     currentToken = lexer.CurrentToken();
                     return new WhereConditionsNode(where);
-                case SyntaxType.StartAt:
-                    Consume(SyntaxType.StartAt);
+                case StatementType.StartAt:
+                    Consume(StatementType.StartAt);
                     return ComposeStartAt();
-                case SyntaxType.StopAt:
-                    Consume(SyntaxType.StopAt);
+                case StatementType.StopAt:
+                    Consume(StatementType.StopAt);
                     return ComposeStopAt();
                 default:
                     throw new NotSupportedException();
@@ -62,9 +62,9 @@ namespace TQL.RDL.Parser
             Consume(currentToken.TokenType);
             switch(token.TokenType)
             {
-                case SyntaxType.Var:
+                case StatementType.Var:
                     return new StartAtNode(startAtToken, new VarNode(token as VarToken));
-                case SyntaxType.Word:
+                case StatementType.Word:
                     return new StartAtNode(startAtToken, new DateTimeNode(token));
             }
             throw new NotSupportedException();
@@ -77,9 +77,9 @@ namespace TQL.RDL.Parser
             Consume(currentToken.TokenType);
             switch (token.TokenType)
             {
-                case SyntaxType.Var:
+                case StatementType.Var:
                     throw new NotImplementedException();
-                case SyntaxType.Word:
+                case StatementType.Word:
                     return new StopAtNode(stopAtToken, new DateTimeNode(token));
             }
             throw new NotSupportedException();
@@ -88,7 +88,7 @@ namespace TQL.RDL.Parser
         private RdlSyntaxNode ComposeWhere()
         {
             RDLWhereParser parser = new RDLWhereParser();
-            cLexer.DisableEnumerationWhen(SyntaxType.StartAt, SyntaxType.StopAt);
+            cLexer.DisableEnumerationWhen(StatementType.StartAt, StatementType.StopAt);
             var tokens = parser.Parse(cLexer);
             cLexer.EnableEnumerationForAll();
             Stack<RdlSyntaxNode> nodes = new Stack<RdlSyntaxNode>();
@@ -101,64 +101,64 @@ namespace TQL.RDL.Parser
             {
                 switch (tokens[i].TokenType)
                 {
-                    case SyntaxType.Plus:
+                    case StatementType.Plus:
                         nodes.Push(new AddNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Hyphen:
+                    case StatementType.Hyphen:
                         nodes.Push(new HyphenNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Star:
+                    case StatementType.Star:
                         nodes.Push(new StarNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Mod:
+                    case StatementType.Mod:
                         nodes.Push(new ModuloNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.FSlash:
+                    case StatementType.FSlash:
                         nodes.Push(new FSlashNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.And:
+                    case StatementType.And:
                         nodes.Push(new AndNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Or:
+                    case StatementType.Or:
                         nodes.Push(new OrNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Equality:
+                    case StatementType.Equality:
                         nodes.Push(new EqualityNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Diff:
+                    case StatementType.Diff:
                         nodes.Push(new DiffNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Greater:
+                    case StatementType.Greater:
                         nodes.Push(new GreaterNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.GreaterEqual:
+                    case StatementType.GreaterEqual:
                         nodes.Push(new GreaterEqualNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.Less:
+                    case StatementType.Less:
                         nodes.Push(new LessNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.LessEqual:
+                    case StatementType.LessEqual:
                         nodes.Push(new LessEqualNode(nodes.Pop(), nodes.Pop()));
                         break;
-                    case SyntaxType.In:
-                    case SyntaxType.NotIn:
+                    case StatementType.In:
+                    case StatementType.NotIn:
                         var args = nodes.Pop();
                         var partOfDate = nodes.Pop();
-                        if (tokens[i].TokenType == SyntaxType.In)
+                        if (tokens[i].TokenType == StatementType.In)
                             nodes.Push(new InNode(partOfDate, args));
                         else
                             nodes.Push(new NotInNode(partOfDate, args));
                         break;
-                    case SyntaxType.Numeric:
+                    case StatementType.Numeric:
                         nodes.Push(new NumericNode(tokens[i]));
                         break;
-                    case SyntaxType.Word:
+                    case StatementType.Word:
                         nodes.Push(new WordNode(tokens[i]));
                         break;
-                    case SyntaxType.Function:
+                    case StatementType.Function:
                             nodes.Push(new FunctionNode(tokens[i] as FunctionToken, nodes.Pop() as ArgListNode));
                         break;
-                    case SyntaxType.VarArg:
+                    case StatementType.VarArg:
                         var varArg = tokens[i] as VarArgToken;
                         List<RdlSyntaxNode> arguments = new List<RdlSyntaxNode>();
                         for(int f = 0; f < varArg.Arguments; ++f)
@@ -168,10 +168,10 @@ namespace TQL.RDL.Parser
                         arguments.Reverse();
                         nodes.Push(new ArgListNode(arguments));
                         break;
-                    case SyntaxType.Var:
+                    case StatementType.Var:
                         nodes.Push(new VarNode(tokens[i] as VarToken));
                         break;
-                    case SyntaxType.Else:
+                    case StatementType.Else:
                         var elseNode = new ElseNode(tokens[i], nodes.Pop());
                         var whenThenExpressions = new List<WhenThenNode>();
                         while (nodes.Peek() is WhenThenNode)
@@ -180,10 +180,10 @@ namespace TQL.RDL.Parser
                         }
                         nodes.Push(new CaseNode(whenThenExpressions.ToArray(), elseNode));
                         break;
-                    case SyntaxType.When:
+                    case StatementType.When:
                         nodes.Push(new WhenNode(tokens[i], nodes.Pop()));
                         break;
-                    case SyntaxType.Then:
+                    case StatementType.Then:
                         var thenNode = new ThenNode(tokens[i], nodes.Pop());
                         nodes.Push(new WhenThenNode(nodes.Pop(), thenNode));
                         break;
@@ -200,15 +200,15 @@ namespace TQL.RDL.Parser
             var repeat = lastToken;
             switch(currentToken.TokenType)
             {
-                case SyntaxType.Every:
+                case StatementType.Every:
                     var every = currentToken;
-                    Consume(SyntaxType.Every);
-                    if(currentToken.TokenType == SyntaxType.Numeric)
+                    Consume(StatementType.Every);
+                    if(currentToken.TokenType == StatementType.Numeric)
                     {
                         var numeric = currentToken;
-                        Consume(SyntaxType.Numeric);
+                        Consume(StatementType.Numeric);
                         node = new NumericConsequentRepeatEveryNode(
-                            new Token("repeat every", SyntaxType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, currentToken.Span.End - repeat.Span.Start)), 
+                            new Token("repeat every", StatementType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, currentToken.Span.End - repeat.Span.Start)), 
                             numeric as NumericToken, 
                             currentToken as WordToken);
                     }
@@ -219,14 +219,15 @@ namespace TQL.RDL.Parser
                     Consume(currentToken.TokenType);
                     break;
                 default:
-                    throw new Exception("error");
+                    node = new RepeatEveryNode(repeat, currentToken);
+                    break;
             }
             return node;
         }
 
         private void EatWhiteSpaces()
         {
-            while(currentToken.TokenType == SyntaxType.WhiteSpace)
+            while(currentToken.TokenType == StatementType.WhiteSpace)
             {
                 Consume(currentToken.TokenType);
             }

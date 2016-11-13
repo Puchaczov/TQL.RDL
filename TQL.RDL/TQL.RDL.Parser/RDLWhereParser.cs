@@ -11,33 +11,33 @@ namespace TQL.RDL.Parser
         public RDLWhereParser()
             : base()
         {
-            operators.Add(new Token("or", SyntaxType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
-            operators.Add(new Token("and", SyntaxType.And, new TextSpan(0, 0)), new PrecedenceAssociativity(5, Associativity.Left));
-            operators.Add(new Token("in", SyntaxType.In, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("not in", SyntaxType.NotIn, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("=", SyntaxType.Equality, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("<>", SyntaxType.Diff, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token(">", SyntaxType.Greater, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token(">=", SyntaxType.GreaterEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("<", SyntaxType.Less, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("<=", SyntaxType.LessEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
-            operators.Add(new Token("*", SyntaxType.Star, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
-            operators.Add(new Token("%", SyntaxType.Mod, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
-            operators.Add(new Token("/", SyntaxType.FSlash, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
-            operators.Add(new Token("-", SyntaxType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
-            operators.Add(new Token("+", SyntaxType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
-            operators.Add(new Token("not", SyntaxType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
+            operators.Add(new Token("or", StatementType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
+            operators.Add(new Token("and", StatementType.And, new TextSpan(0, 0)), new PrecedenceAssociativity(5, Associativity.Left));
+            operators.Add(new Token("in", StatementType.In, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("not in", StatementType.NotIn, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("=", StatementType.Equality, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("<>", StatementType.Diff, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token(">", StatementType.Greater, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token(">=", StatementType.GreaterEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("<", StatementType.Less, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("<=", StatementType.LessEqual, new TextSpan(0, 0)), new PrecedenceAssociativity(10, Associativity.Left));
+            operators.Add(new Token("*", StatementType.Star, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("%", StatementType.Mod, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("/", StatementType.FSlash, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("-", StatementType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
+            operators.Add(new Token("+", StatementType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
+            operators.Add(new Token("not", StatementType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
             operators.Add(new WhenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
             operators.Add(new ThenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
             operators.Add(new ElseToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
         }
 
         public override Token[] Parse(LexerComplexTokensDecorator expression) => InfixToPostfix(expression);
-        protected override bool IsLeftParenthesis(Token token) => token.TokenType == SyntaxType.LeftParenthesis || token.TokenType == SyntaxType.Case;
-        protected override bool IsRightParenthesis(Token token) => token.TokenType == SyntaxType.RightParenthesis || token.TokenType == SyntaxType.CaseEnd;
-        protected override bool IsSkippable(Token token) => token.TokenType == SyntaxType.WhiteSpace;
-        protected override bool IsComma(Token token) => token.TokenType == SyntaxType.Comma;
-        protected override bool IsWord(Token token) => token.TokenType == SyntaxType.Word;
+        protected override bool IsLeftParenthesis(Token token) => token.TokenType == StatementType.LeftParenthesis || token.TokenType == StatementType.Case;
+        protected override bool IsRightParenthesis(Token token) => token.TokenType == StatementType.RightParenthesis || token.TokenType == StatementType.CaseEnd;
+        protected override bool IsSkippable(Token token) => token.TokenType == StatementType.WhiteSpace;
+        protected override bool IsComma(Token token) => token.TokenType == StatementType.Comma;
+        protected override bool IsWord(Token token) => token.TokenType == StatementType.Word;
         protected override bool IsOperator(Token token) => this.operators.ContainsKey(token);
         protected override bool IsValue(Token token) => Regex.IsMatch("[a-Z1-9]+", token.Value) && !token.Value.Contains("@");
 

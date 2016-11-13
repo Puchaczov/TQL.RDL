@@ -5,7 +5,9 @@ namespace TQL.RDL.Parser.Tokens
     public class DiffToken : Token
     {
         public DiffToken(TextSpan span)
-            : base("<>", SyntaxType.Diff, span)
+            : base(TokenText, StatementType.Diff, span)
         { }
+
+        public const string TokenText = "<>";
     }
 }

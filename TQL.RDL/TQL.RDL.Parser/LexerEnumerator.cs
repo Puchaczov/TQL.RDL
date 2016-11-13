@@ -10,9 +10,9 @@ namespace TQL.RDL.Parser
     {
         private ILexer<Token> lexer;
         private Token current;
-        private SyntaxType[] abortOnToken;
+        private StatementType[] abortOnToken;
 
-        public LexerEnumerator(ILexer<Token> lexer, params SyntaxType[] abortOnToken)
+        public LexerEnumerator(ILexer<Token> lexer, params StatementType[] abortOnToken)
         {
             this.lexer = lexer;
             this.abortOnToken = abortOnToken;
@@ -31,7 +31,7 @@ namespace TQL.RDL.Parser
 
             switch(current.TokenType)
             {
-                case SyntaxType.EndOfFile:
+                case StatementType.EndOfFile:
                     return false;
             }
             return true;

@@ -8,18 +8,21 @@ namespace TQL.RDL.Parser
     public class LexerComplexTokensDecorator : ILexer<Token>, IEnumerable<Token>
     {
         private Lexer lexer;
-        private SyntaxType[] disableEnumerationForTokens;
+        private StatementType[] disableEnumerationForTokens;
+        private bool skipWhiteSpaces;
 
         public LexerComplexTokensDecorator(Lexer lexer)
         {
             this.lexer = lexer;
-            disableEnumerationForTokens = new SyntaxType[0];
+            disableEnumerationForTokens = new StatementType[0];
+            skipWhiteSpaces = true;
         }
 
         public LexerComplexTokensDecorator(string input)
         {
             lexer = new Lexer(input);
-            disableEnumerationForTokens = new SyntaxType[0];
+            disableEnumerationForTokens = new StatementType[0];
+            skipWhiteSpaces = true;
         }
 
         public int Position => lexer.Position;
@@ -28,14 +31,14 @@ namespace TQL.RDL.Parser
 
         public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this, disableEnumerationForTokens);
 
-        public void DisableEnumerationWhen(params SyntaxType[] tokens)
+        public void DisableEnumerationWhen(params StatementType[] tokens)
         {
             disableEnumerationForTokens = tokens;
         }
 
         public void EnableEnumerationForAll()
         {
-            disableEnumerationForTokens = new SyntaxType[0];
+            disableEnumerationForTokens = new StatementType[0];
         }
 
         public Token LastToken() => lexer.LastToken();
@@ -43,62 +46,11 @@ namespace TQL.RDL.Parser
         public Token NextToken()
         {
             var token = lexer.NextToken();
-            switch(token.TokenType)
+            while(skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
             {
-                case SyntaxType.Word:
-                    return DetectKeywords(token);
-                default:
-                    return token;
+                token = lexer.NextToken();
             }
-        }
-
-        private Token DetectKeywords(Token token)
-        {
-            var value = token.Value.ToLowerInvariant();
-            switch(value)
-            {
-                case "and":
-                    return new AndToken(token.Span);
-                case "or":
-                    return new OrToken(token.Span);
-                case "in":
-                    return new InToken(token.Span);
-                case "where":
-                    return new WhereToken(token.Span);
-                case "every":
-                    return new EveryToken(token.Span);
-                case "repeat":
-                    return new RepeatToken(token.Span);
-                case "start at":
-                    return new StartAtToken(token.Span);
-                case "stop at":
-                    return new StopAtToken(token.Span);
-                case "day":
-                case "days":
-                case "month":
-                case "months":
-                case "year":
-                case "years":
-                case "hour":
-                case "hours":
-                case "minute":
-                case "minutes":
-                case "second":
-                case "seconds":
-                    return new WordToken(value, token.Span);
-                case "then":
-                    return new ThenToken(token.Span);
-                case "else":
-                    return new ElseToken(token.Span);
-                case "esac":
-                    return new CaseEndToken(token.Span);
-                case "when":
-                    return new WhenToken(token.Span);
-                case "case":
-                    return new CaseToken(token.Span);
-                default:
-                    return token;
-            }
+            return token;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -9,6 +9,14 @@ namespace TQL.RDL.Parser.Tests
     public class RDLParserTests
     {
         [TestMethod]
+        public void RDLParser_CheckIncompletedQuery_ShouldPass()
+        {
+            var lexer = new LexerComplexTokensDecorator("repeat");
+            var parser = new RDLParser(lexer);
+            var node = parser.ComposeRootComponents();
+        }
+
+        [TestMethod]
         public void RDLParser_ComposeRepeatAt_ShouldPass()
         {
             var lexer = new LexerComplexTokensDecorator("repeat every 5 seconds");
@@ -133,7 +141,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeStartAt_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every days `start at` @now");
+            var lexer = new LexerComplexTokensDecorator("repeat every days start at @now");
             var parser = new RDLParser(lexer);
             var node = parser.ComposeRootComponents();
 
@@ -147,7 +155,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeStopAt_ShouldPass()
         {
-            var lexer = new LexerComplexTokensDecorator("repeat every days `stop at` '2016.05.21'");
+            var lexer = new LexerComplexTokensDecorator("repeat every days stop at '2016.05.21'");
             var parser = new RDLParser(lexer);
             var node = parser.ComposeRootComponents();
 

@@ -11,23 +11,23 @@ namespace TQL.RDL.Parser.Tests
         {
             var tokens = Parse("GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100");
 
-            Assert.AreEqual(SyntaxType.VarArg, tokens[0].TokenType);
-            Assert.AreEqual(SyntaxType.Function, tokens[1].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[2].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[4].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[5].TokenType);
-            Assert.AreEqual(SyntaxType.VarArg, tokens[6].TokenType);
-            Assert.AreEqual(SyntaxType.In, tokens[7].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[8].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[9].TokenType);
-            Assert.AreEqual(SyntaxType.Equality, tokens[10].TokenType);
-            Assert.AreEqual(SyntaxType.And, tokens[11].TokenType);
-            Assert.AreEqual(SyntaxType.VarArg, tokens[12].TokenType);
-            Assert.AreEqual(SyntaxType.Function, tokens[13].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[14].TokenType);
-            Assert.AreEqual(SyntaxType.Less, tokens[15].TokenType);
-            Assert.AreEqual(SyntaxType.And, tokens[16].TokenType);
+            Assert.AreEqual(StatementType.VarArg, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.Function, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.VarArg, tokens[6].TokenType);
+            Assert.AreEqual(StatementType.In, tokens[7].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[8].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[9].TokenType);
+            Assert.AreEqual(StatementType.Equality, tokens[10].TokenType);
+            Assert.AreEqual(StatementType.And, tokens[11].TokenType);
+            Assert.AreEqual(StatementType.VarArg, tokens[12].TokenType);
+            Assert.AreEqual(StatementType.Function, tokens[13].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[14].TokenType);
+            Assert.AreEqual(StatementType.Less, tokens[15].TokenType);
+            Assert.AreEqual(StatementType.And, tokens[16].TokenType);
         }
 
         [TestMethod]
@@ -35,14 +35,14 @@ namespace TQL.RDL.Parser.Tests
         {
             var tokens = Parse("1 > (case when (1) then 5 else 4 esac)");
 
-            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[1].TokenType);
-            Assert.AreEqual(SyntaxType.When, tokens[2].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
-            Assert.AreEqual(SyntaxType.Then, tokens[4].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[5].TokenType);
-            Assert.AreEqual(SyntaxType.Else, tokens[6].TokenType);
-            Assert.AreEqual(SyntaxType.Greater, tokens[7].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.When, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Then, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.Else, tokens[6].TokenType);
+            Assert.AreEqual(StatementType.Greater, tokens[7].TokenType);
         }
 
         [TestMethod]
@@ -50,19 +50,19 @@ namespace TQL.RDL.Parser.Tests
         {
             var tokens = Parse("1 > (case when (GetDay() <> (3 + 2)) then 5 else 4 esac)");
 
-            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
-            Assert.AreEqual(SyntaxType.VarArg, tokens[1].TokenType);
-            Assert.AreEqual(SyntaxType.Function, tokens[2].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[4].TokenType);
-            Assert.AreEqual(SyntaxType.Plus, tokens[5].TokenType);
-            Assert.AreEqual(SyntaxType.Diff, tokens[6].TokenType);
-            Assert.AreEqual(SyntaxType.When, tokens[7].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[8].TokenType);
-            Assert.AreEqual(SyntaxType.Then, tokens[9].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[10].TokenType);
-            Assert.AreEqual(SyntaxType.Else, tokens[11].TokenType);
-            Assert.AreEqual(SyntaxType.Greater, tokens[12].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.VarArg, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.Function, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Plus, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.Diff, tokens[6].TokenType);
+            Assert.AreEqual(StatementType.When, tokens[7].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[8].TokenType);
+            Assert.AreEqual(StatementType.Then, tokens[9].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[10].TokenType);
+            Assert.AreEqual(StatementType.Else, tokens[11].TokenType);
+            Assert.AreEqual(StatementType.Greater, tokens[12].TokenType);
         }
 
         [TestMethod]
@@ -70,18 +70,18 @@ namespace TQL.RDL.Parser.Tests
         {
             var tokens = Parse("1 > case when (1) then (2) when (3) then (4) else (5) esac");
 
-            Assert.AreEqual(SyntaxType.Numeric, tokens[0].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[1].TokenType);
-            Assert.AreEqual(SyntaxType.When, tokens[2].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[3].TokenType);
-            Assert.AreEqual(SyntaxType.Then, tokens[4].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[5].TokenType);
-            Assert.AreEqual(SyntaxType.When, tokens[6].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[7].TokenType);
-            Assert.AreEqual(SyntaxType.Then, tokens[8].TokenType);
-            Assert.AreEqual(SyntaxType.Numeric, tokens[9].TokenType);
-            Assert.AreEqual(SyntaxType.Else, tokens[10].TokenType);
-            Assert.AreEqual(SyntaxType.Greater, tokens[11].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.When, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Then, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.When, tokens[6].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[7].TokenType);
+            Assert.AreEqual(StatementType.Then, tokens[8].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[9].TokenType);
+            Assert.AreEqual(StatementType.Else, tokens[10].TokenType);
+            Assert.AreEqual(StatementType.Greater, tokens[11].TokenType);
         }
 
         private static Token[] Parse(string query)

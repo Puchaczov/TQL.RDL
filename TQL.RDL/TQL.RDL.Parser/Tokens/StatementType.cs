@@ -1,6 +1,6 @@
 ﻿namespace TQL.RDL.Parser.Tokens
 {
-    public enum SyntaxType : short
+    public enum StatementType : short
     {
         Word,
         Numeric,

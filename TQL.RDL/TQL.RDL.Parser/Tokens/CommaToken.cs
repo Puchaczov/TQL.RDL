@@ -5,7 +5,9 @@ namespace TQL.RDL.Parser.Tokens
     public class CommaToken : Token
     {
         public CommaToken(TextSpan span)
-            : base(",", SyntaxType.Comma, span)
+            : base(TokenText, StatementType.Comma, span)
         { }
+
+        public const string TokenText = ",";
     }
 }

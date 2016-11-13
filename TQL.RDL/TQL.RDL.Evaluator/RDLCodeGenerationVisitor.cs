@@ -27,7 +27,7 @@ namespace TQL.RDL.Evaluator
 
         private RDLVirtualMachine machine;
 
-        private List<IRDLInstruction> instructions => functions.Peek();
+        protected List<IRDLInstruction> instructions => functions.Peek();
 
         public RDLCodeGenerationVisitor()
         {
@@ -42,7 +42,7 @@ namespace TQL.RDL.Evaluator
 
         public RDLVirtualMachine VirtualMachine => machine;
 
-        public void Visit(WhereConditionsNode node)
+        public virtual void Visit(WhereConditionsNode node)
         {
             for(int i = 0; i < node.Descendants.Length; ++i)
             {
@@ -50,12 +50,12 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(StopAtNode node)
+        public virtual void Visit(StopAtNode node)
         {
             stopAt = node.Datetime;
         }
 
-        public void Visit(RepeatEveryNode node)
+        public virtual void Visit(RepeatEveryNode node)
         {
             switch(node.DatePart)
             {
@@ -80,28 +80,28 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(NumericConsequentRepeatEveryNode node)
+        public virtual void Visit(NumericConsequentRepeatEveryNode node)
         {
             Visit(node as RepeatEveryNode);
         }
 
-        public void Visit(OrNode node)
+        public virtual void Visit(OrNode node)
         {
             ExpressionGenerateLeftToRightInstructions<OrInstruction>(node);
         }
 
-        public void Visit(DateTimeNode node)
+        public virtual void Visit(DateTimeNode node)
         {
             instructions.Add(new PushDateTimeInstruction(node.DateTime));
         }
 
-        public void Visit(NotInNode node)
+        public virtual void Visit(NotInNode node)
         {
             Visit(node as InNode);
             instructions.Add(new NotInstruction());
         }
 
-        public void Visit(VarNode node)
+        public virtual void Visit(VarNode node)
         {
             switch(node.Token.Value)
             {
@@ -132,12 +132,12 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(NumericNode node)
+        public virtual void Visit(NumericNode node)
         {
             instructions.Add(new PushNumericInstruction(node.Value));
         }
 
-        public void Visit(ArgListNode node)
+        public virtual void Visit(ArgListNode node)
         {
             for (int i = node.Descendants.Length - 1; i >= 0; --i)
             {
@@ -145,17 +145,17 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(EqualityNode node)
+        public virtual void Visit(EqualityNode node)
         {
             ExpressionGenerateInstructions<EqualityDatetime, EqualityNumeric>(node);
         }
 
-        public void Visit(DiffNode node)
+        public virtual void Visit(DiffNode node)
         {
             ExpressionGenerateInstructions<DiffDatetime, DiffNumeric>(node);
         }
 
-        public void Visit(InNode node)
+        public virtual void Visit(InNode node)
         {
             switch(node.ReturnType.GetTypeName())
             {
@@ -168,12 +168,12 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(AndNode node)
+        public virtual void Visit(AndNode node)
         {
             ExpressionGenerateLeftToRightInstructions<AndInstruction>(node);
         }
 
-        public void Visit(RootScriptNode node)
+        public virtual void Visit(RootScriptNode node)
         {
             for (int i = 0; i < node.Descendants.Length; ++i)
             {
@@ -189,17 +189,17 @@ namespace TQL.RDL.Evaluator
             methods.SetMachine(machine);
         }
 
-        public void Visit(StartAtNode node)
+        public virtual void Visit(StartAtNode node)
         {
             startAt = node.When;
         }
 
-        public void Visit(WordNode node)
+        public virtual void Visit(WordNode node)
         {
             throw new NotImplementedException();
         }
 
-        public void Visit(FunctionNode node)
+        public virtual void Visit(FunctionNode node)
         {
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
             var registeredFunction = GlobalMetadata.GetMethod(node.Name, argTypes);
@@ -232,46 +232,46 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(GreaterNode node)
+        public virtual void Visit(GreaterNode node)
         {
             ExpressionGenerateInstructions<GreaterDatetime, GreaterNumeric>(node);
         }
 
-        public void Visit(GreaterEqualNode node)
+        public virtual void Visit(GreaterEqualNode node)
         {
             ExpressionGenerateInstructions<GreaterEqualDatetime, GreaterEqualNumeric>(node);
         }
 
-        public void Visit(LessNode node)
+        public virtual void Visit(LessNode node)
         {
             ExpressionGenerateInstructions<LessDatetime, LessNumeric>(node);
         }
 
-        public void Visit(LessEqualNode node)
+        public virtual void Visit(LessEqualNode node)
         {
             ExpressionGenerateInstructions<LessEqualDatetime, LessEqualNumeric>(node);
         }
 
-        public void Visit(AddNode node)
+        public virtual void Visit(AddNode node)
         {
             ExpressionGenerateInstructions<AddNumericToDatetime, AddNumericToNumeric>(node);
         }
 
-        public void Visit(ModuloNode node)
+        public virtual void Visit(ModuloNode node)
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
             instructions.Add(new AddNumericToNumeric());
         }
 
-        public void Visit(StarNode node)
+        public virtual void Visit(StarNode node)
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
             instructions.Add(new MultiplyNumerics());
         }
 
-        public void Visit(FSlashNode node)
+        public virtual void Visit(FSlashNode node)
         {
             if(node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
             {
@@ -281,7 +281,7 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(HyphenNode node)
+        public virtual void Visit(HyphenNode node)
         {
             if (node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
             {
@@ -291,9 +291,9 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(CaseNode node)
+        public virtual void Visit(CaseNode node)
         {
-            labels.Add($"case_when_label_start{numeric}", 0);
+            labels.Add($"case_when_label_start{numeric}", 0); //TO DO, USE CASE: 2x case, chyba nie moze zostac 0
             
             for (int i = 0, j = node.Expressions.Length - 1; i < j; ++i)
             {
@@ -309,7 +309,7 @@ namespace TQL.RDL.Evaluator
             labels.Add($"case_when_label_exit{numeric}", instructions.Count);
         }
 
-        public void Visit(WhenThenNode node)
+        public virtual void Visit(WhenThenNode node)
         {
             throw new NotSupportedException();
         }
@@ -329,17 +329,17 @@ namespace TQL.RDL.Evaluator
             instructions.Add(new JumpToLabel($"case_when_label_exit{exitNumber}"));
         }
 
-        public void Visit(WhenNode node)
+        public virtual void Visit(WhenNode node)
         {
             node.Expression.Accept(this);
         }
 
-        public void Visit(ThenNode node)
+        public virtual void Visit(ThenNode node)
         {
             node.Descendant.Accept(this);
         }
 
-        public void Visit(ElseNode node)
+        public virtual void Visit(ElseNode node)
         {
             node.Descendant.Accept(this);
         }

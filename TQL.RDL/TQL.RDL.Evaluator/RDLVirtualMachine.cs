@@ -21,7 +21,30 @@ namespace TQL.RDL.Evaluator
         B
     }
 
-    public class RDLVirtualMachine : IFireTimeEvaluator
+    public class StackFrame
+    {
+        public Stack<long?> Values;
+        public Stack<DateTimeOffset?> Datetimes;
+        public object[] CallArgs { get; set; }
+        public long[] regs { get; set; }
+        public IRDLInstruction[] instructions;
+        public StackFrame()
+        {
+
+        }
+    }
+
+    public interface IVmTracker
+    {
+        DateTimeOffset StartAt { get; }
+        DateTimeOffset? StopAt { get; }
+        IRDLInstruction[] Instructions { get; }
+        Stack<long?> Values { get; }
+        Stack<DateTimeOffset?> Datetimes { get; }
+        object[] CallArgs { get; }
+    }
+
+    public class RDLVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
         private IRDLInstruction[] instructions;
         private int instrPtr;
@@ -151,5 +174,11 @@ namespace TQL.RDL.Evaluator
         }
 
         public long[] Registers => regs;
+
+        public DateTimeOffset StartAt => startAt;
+
+        public DateTimeOffset? StopAt => stopAt;
+
+        public IRDLInstruction[] Instructions => instructions;
     }
 }

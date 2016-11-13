@@ -7,7 +7,7 @@ using TQL.RDL.Parser.Tokens;
 namespace TQL.RDL.Parser.Nodes
 {
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
-    public abstract class RdlSyntaxNode : SyntaxNodeBase<INodeVisitor, SyntaxType>
+    public abstract class RdlSyntaxNode : SyntaxNodeBase<INodeVisitor, StatementType>
     {
         /// <summary>
         /// Get child items of node.

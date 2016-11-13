@@ -40,15 +40,22 @@
       <HintPath>..\packages\TQL.Common.1.0.1\lib\portable45-net45+win8+wp8+wpa81\TQL.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="TQL.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Core.1.0.1\lib\portable45-net45+win8+wp8+wpa81\TQL.Core.dll</HintPath>
+    <Reference Include="TQL.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TQL.Core.2.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TQL.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TQL.Interfaces.1.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UsefullAlgorithms.Parsing, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="UsefullAlgorithms.Helpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.1\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UsefullAlgorithms.Parsing, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UsefullAlgorithms.Parsing.1.0.1\lib\portable45-net45+win8+wp8+wpa81\UsefullAlgorithms.Parsing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">

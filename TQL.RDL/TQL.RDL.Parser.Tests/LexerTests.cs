@@ -11,29 +11,29 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void CheckProducedTokens_ShouldPass()
         {
-            var query = "repeat every seconds where day in (mon-fri) and month <> january `start at` @now";
+            var query = "repeat every seconds where day in (mon-fri) and month <> january start at @now";
             var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
-                SyntaxType.Repeat,
-                SyntaxType.Every,
-                SyntaxType.Word,
-                SyntaxType.Where,
-                SyntaxType.Word,
-                SyntaxType.In,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Word,
-                SyntaxType.Hyphen,
-                SyntaxType.Word,
-                SyntaxType.RightParenthesis,
-                SyntaxType.And,
-                SyntaxType.Word,
-                SyntaxType.Diff,
-                SyntaxType.Word,
-                SyntaxType.StartAt,
-                SyntaxType.Var,
-                SyntaxType.EndOfFile);
+                StatementType.Repeat,
+                StatementType.Every,
+                StatementType.Word,
+                StatementType.Where,
+                StatementType.Word,
+                StatementType.In,
+                StatementType.LeftParenthesis,
+                StatementType.Word,
+                StatementType.Hyphen,
+                StatementType.Word,
+                StatementType.RightParenthesis,
+                StatementType.And,
+                StatementType.Word,
+                StatementType.Diff,
+                StatementType.Word,
+                StatementType.StartAt,
+                StatementType.Var,
+                StatementType.EndOfFile);
         }
 
         [TestMethod] 
@@ -44,49 +44,49 @@ namespace TQL.RDL.Parser.Tests
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
-                SyntaxType.Repeat,
-                SyntaxType.Every,
-                SyntaxType.Word,
-                SyntaxType.Where,
-                SyntaxType.Var,
-                SyntaxType.Greater,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Case,
-                SyntaxType.When,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Numeric,
-                SyntaxType.Diff,
-                SyntaxType.Numeric,
-                SyntaxType.RightParenthesis,
-                SyntaxType.Then,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Numeric,
-                SyntaxType.RightParenthesis,
-                SyntaxType.Else,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Numeric,
-                SyntaxType.RightParenthesis,
-                SyntaxType.CaseEnd,
-                SyntaxType.RightParenthesis,
-                SyntaxType.EndOfFile);
+                StatementType.Repeat,
+                StatementType.Every,
+                StatementType.Word,
+                StatementType.Where,
+                StatementType.Var,
+                StatementType.Greater,
+                StatementType.LeftParenthesis,
+                StatementType.Case,
+                StatementType.When,
+                StatementType.LeftParenthesis,
+                StatementType.Numeric,
+                StatementType.Diff,
+                StatementType.Numeric,
+                StatementType.RightParenthesis,
+                StatementType.Then,
+                StatementType.LeftParenthesis,
+                StatementType.Numeric,
+                StatementType.RightParenthesis,
+                StatementType.Else,
+                StatementType.LeftParenthesis,
+                StatementType.Numeric,
+                StatementType.RightParenthesis,
+                StatementType.CaseEnd,
+                StatementType.RightParenthesis,
+                StatementType.EndOfFile);
         }
 
         [TestMethod]
         public void CheckProducedTokens_WithMultiWordKeyword_ShouldPass()
         {
-            var query = "repeat every day start at @var stop at '123213'";
+            var query = "repeat every day start at @var stop at 123213";
             var lexer = new LexerComplexTokensDecorator(query);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
-                SyntaxType.Repeat,
-                SyntaxType.Every,
-                SyntaxType.Word,
-                SyntaxType.StartAt,
-                SyntaxType.Var,
-                SyntaxType.StopAt,
-                SyntaxType.Word,
-                SyntaxType.EndOfFile);
+                StatementType.Repeat,
+                StatementType.Every,
+                StatementType.Word,
+                StatementType.StartAt,
+                StatementType.Var,
+                StatementType.StopAt,
+                StatementType.Numeric,
+                StatementType.EndOfFile);
         }
 
         [TestMethod]
@@ -97,17 +97,17 @@ namespace TQL.RDL.Parser.Tests
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
-                SyntaxType.Repeat,
-                SyntaxType.Every,
-                SyntaxType.Word,
-                SyntaxType.Where,
-                SyntaxType.Word,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Numeric,
-                SyntaxType.Comma,
-                SyntaxType.Numeric,
-                SyntaxType.RightParenthesis,
-                SyntaxType.EndOfFile);
+                StatementType.Repeat,
+                StatementType.Every,
+                StatementType.Word,
+                StatementType.Where,
+                StatementType.Word,
+                StatementType.LeftParenthesis,
+                StatementType.Numeric,
+                StatementType.Comma,
+                StatementType.Numeric,
+                StatementType.RightParenthesis,
+                StatementType.EndOfFile);
         }
 
         [TestMethod]
@@ -118,20 +118,20 @@ namespace TQL.RDL.Parser.Tests
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
-                SyntaxType.Repeat,
-                SyntaxType.Every,
-                SyntaxType.Word,
-                SyntaxType.Where,
-                SyntaxType.Var,
-                SyntaxType.In,
-                SyntaxType.LeftParenthesis,
-                SyntaxType.Var,
-                SyntaxType.Comma,
-                SyntaxType.Numeric,
-                SyntaxType.Comma,
-                SyntaxType.Word,
-                SyntaxType.RightParenthesis,
-                SyntaxType.EndOfFile);
+                StatementType.Repeat,
+                StatementType.Every,
+                StatementType.Word,
+                StatementType.Where,
+                StatementType.Var,
+                StatementType.In,
+                StatementType.LeftParenthesis,
+                StatementType.Var,
+                StatementType.Comma,
+                StatementType.Numeric,
+                StatementType.Comma,
+                StatementType.Word,
+                StatementType.RightParenthesis,
+                StatementType.EndOfFile);
         }
 
         private static Token[] Tokenize(ILexer<Token> lexer)
@@ -139,7 +139,7 @@ namespace TQL.RDL.Parser.Tests
             List<Token> lst = new List<Token>();
 
             Token current = null;
-            while ((current = lexer.NextToken()).TokenType != SyntaxType.EndOfFile)
+            while ((current = lexer.NextToken()).TokenType != StatementType.EndOfFile)
             {
                 lst.Add(current);
             }
@@ -147,7 +147,7 @@ namespace TQL.RDL.Parser.Tests
             return lst.ToArray();
         }
 
-        private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens, params SyntaxType[] types)
+        private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens, params StatementType[] types)
         {
             for(int i = 0; i < tokens.Length; ++i)
             {

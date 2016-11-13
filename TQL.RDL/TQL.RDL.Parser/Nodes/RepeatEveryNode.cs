@@ -7,7 +7,7 @@ namespace TQL.RDL.Parser.Nodes
     public class RepeatEveryNode : RdlSyntaxNode
     {
         protected Token repeatEvery;
-        protected Token currentToken;
+        protected Token timeToken;
 
         public enum PartOfDate
         {
@@ -21,16 +21,16 @@ namespace TQL.RDL.Parser.Nodes
 
         public RepeatEveryNode(Token repeatEvery, Token currentToken)
         {
-            this.currentToken = currentToken;
+            this.timeToken = currentToken;
         }
 
         public override RdlSyntaxNode[] Descendants => null;
 
-        public override TextSpan FullSpan => new TextSpan(repeatEvery.Span.Start, currentToken.Span.End - repeatEvery.Span.Start);
+        public override TextSpan FullSpan => new TextSpan(repeatEvery.Span.Start, timeToken.Span.End - repeatEvery.Span.Start);
 
         public override bool IsLeaf => true;
 
-        public override Token Token => currentToken;
+        public override Token Token => timeToken;
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
@@ -61,7 +61,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(long);
 
-        public override string ToString() => string.Format("{0} {1}", "repeat every", currentToken.Value);
+        public override string ToString() => string.Format("{0} {1}", "repeat every", timeToken.Value);
     }
 
     public class NumericConsequentRepeatEveryNode : RepeatEveryNode
@@ -74,7 +74,7 @@ namespace TQL.RDL.Parser.Nodes
             this.number = number;
         }
 
-        public override string ToString() => string.Format("{0} {1} {2}", "repeat every", number.Value, currentToken.Value);
+        public override string ToString() => string.Format("{0} {1} {2}", "repeat every", number.Value, timeToken.Value);
 
         public override int Value => int.Parse(number.Value);
     }

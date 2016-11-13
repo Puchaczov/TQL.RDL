@@ -20,7 +20,16 @@ namespace TQL.RDL.Converter
             {
                 GlobalMetadata.RegisterMethod(method.Name, method);
             }
-            var codeGenerator = new RDLCodeGenerationVisitor();
+
+            RDLCodeGenerationVisitor codeGenerator = null;
+            if(request.Debuggable)
+            {
+                codeGenerator = new RDLDebuggerSymbolGeneratorVisitor();
+            }
+            else
+            {
+                codeGenerator = new RDLCodeGenerationVisitor();
+            }
 
             ast.Accept(codeGenerator);
             var evaluator = codeGenerator.VirtualMachine;

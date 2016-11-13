@@ -5,7 +5,9 @@ namespace TQL.RDL.Parser.Tokens
     public class EqualityToken : Token
     {
         public EqualityToken(TextSpan span)
-            : base("=", SyntaxType.Equality, span)
+            : base(TokenText, StatementType.Equality, span)
         { }
+
+        public const string TokenText = "=";
     }
 }

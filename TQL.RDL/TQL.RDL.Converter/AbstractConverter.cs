@@ -8,7 +8,7 @@ using System;
 
 namespace TQL.RDL.Converter
 {
-    public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, SyntaxType, RootScriptNode, ConvertionRequest>
+    public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, StatementType, RootScriptNode, ConvertionRequest>
     {
         protected bool throwOnError;
 

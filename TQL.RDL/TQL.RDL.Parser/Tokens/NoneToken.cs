@@ -5,7 +5,9 @@ namespace TQL.RDL.Parser.Tokens
     public class NoneToken : Token
     {
         public NoneToken() 
-            : base(string.Empty, SyntaxType.None, new TextSpan(0,0))
+            : base(string.Empty, StatementType.None, new TextSpan(0,0))
         { }
+
+        public const string TokenText = "none";
     }
 }
