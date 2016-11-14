@@ -16,12 +16,13 @@ namespace TQL.RDL.Parser.Nodes
             Hours,
             DaysOfMonth,
             Months,
-            Years
+            Years,
+            Unknown
         }
 
-        public RepeatEveryNode(Token repeatEvery, Token currentToken)
+        public RepeatEveryNode(Token repeatEvery, Token timeToken)
         {
-            this.timeToken = currentToken;
+            this.timeToken = timeToken;
         }
 
         public override RdlSyntaxNode[] Descendants => null;
@@ -53,7 +54,7 @@ namespace TQL.RDL.Parser.Nodes
                     case "years":
                         return PartOfDate.Years;
                 }
-                throw new NotSupportedException();
+                return PartOfDate.Unknown;
             }
         }
 

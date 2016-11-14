@@ -183,7 +183,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override bool IsLeaf => false;
 
-        public override Type ReturnType => null;
+        public override Type ReturnType => typeof(ArgListNode);
 
         public override Token Token => null;
 

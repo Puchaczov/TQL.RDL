@@ -167,11 +167,9 @@ namespace TQL.RDL.Parser
                 case StatementType.WhiteSpace:
                     return new WhiteSpaceToken(new TextSpan(Position, tokenText.Length));
             }
-
-            var matched = Regex.Match(tokenText, TokenRegexDefinition.KWordBracketed);
-
-            if (matched.Success)
-                return new WordToken(matched.Groups[1].Value, new TextSpan(Position + 1, matched.Groups[1].Value.Length));
+            
+            if (matchedDefinition.Regex.ToString() == TokenRegexDefinition.KWordBracketed)
+                return new WordToken(match.Groups[1].Value, new TextSpan(Position + 1, match.Groups[1].Value.Length));
             return new WordToken(tokenText, new TextSpan(Position, tokenText.Length));
         }
 

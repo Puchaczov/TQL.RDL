@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using TQL.Common.Converters;
 using TQL.Interfaces;
@@ -21,26 +22,32 @@ namespace TQL.RDL.Converter
                 GlobalMetadata.RegisterMethod(method.Name, method);
             }
 
-            RDLCodeGenerationVisitor codeGenerator = null;
-            if(request.Debuggable)
-            {
-                codeGenerator = new RDLDebuggerSymbolGeneratorVisitor();
-            }
-            else
-            {
-                codeGenerator = new RDLCodeGenerationVisitor();
-            }
+            RDLQueryValidator coretnessChecker = new RDLQueryValidator();
+            ast.Accept(coretnessChecker);
 
-            ast.Accept(codeGenerator);
-            var evaluator = codeGenerator.VirtualMachine;
-
-            if (evaluator != null)
+            if(coretnessChecker.IsValid)
             {
-                if(!evaluator.ReferenceTime.HasValue)
-                    evaluator.ReferenceTime = request.ReferenceTime;
-                return new ConvertionResponse<IFireTimeEvaluator>(evaluator);
+                RDLCodeGenerator codeGenerator = null;
+                if (request.Debuggable)
+                {
+                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor();
+                }
+                else
+                {
+                    codeGenerator = new RDLCodeGenerator();
+                }
+
+                ast.Accept(codeGenerator);
+                var evaluator = codeGenerator.VirtualMachine;
+
+                if (evaluator != null)
+                {
+                    if (!evaluator.ReferenceTime.HasValue)
+                        evaluator.ReferenceTime = request.ReferenceTime;
+                    return new ConvertionResponse<IFireTimeEvaluator>(evaluator);
+                }
             }
-            return new ConvertionResponse<IFireTimeEvaluator>(null);
+            return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
         }
 
         public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, (ast) => this.Convert(ast, request));

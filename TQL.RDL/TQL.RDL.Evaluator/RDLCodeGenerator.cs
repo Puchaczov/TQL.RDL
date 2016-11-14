@@ -9,7 +9,7 @@ using TQL.RDL.Parser.Nodes;
 namespace TQL.RDL.Evaluator
 {
 
-    public class RDLCodeGenerationVisitor : INodeVisitor
+    public class RDLCodeGenerator : INodeVisitor
     {
         private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
@@ -29,7 +29,7 @@ namespace TQL.RDL.Evaluator
 
         protected List<IRDLInstruction> instructions => functions.Peek();
 
-        public RDLCodeGenerationVisitor()
+        public RDLCodeGenerator()
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();

@@ -15,7 +15,7 @@ namespace TQL.RDL.Parser.Nodes
             this.when = when;
         }
 
-        public override string ToString() => string.Format("`stop at` {0}", when);
+        public override string ToString() => string.Format("stop at '{0}'", when);
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 

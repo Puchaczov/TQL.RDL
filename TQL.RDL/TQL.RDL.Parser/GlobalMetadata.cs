@@ -22,6 +22,21 @@ namespace TQL.RDL.Parser
 
         public static MethodInfo GetMethod(string name, Type[] methodArgs)
         {
+            int index = -1;
+            if(!HasMethod(name, methodArgs, out index))
+                throw new Exception("Not matched");
+
+            return methods[name][index];
+        }
+
+        public static bool HasMethod(string name, Type[] methodArgs)
+        {
+            int index = 0;
+            return HasMethod(name, methodArgs, out index);
+        }
+
+        private static bool HasMethod(string name, Type[] methodArgs, out int index)
+        {
             if (!GlobalMetadata.methods.ContainsKey(name))
             {
                 throw new Exception(name);
@@ -52,10 +67,12 @@ namespace TQL.RDL.Parser
                 if (!hasMatchedArgTypes)
                     continue;
 
-                return methods[i];
+                index = i;
+                return true;
             }
 
-            throw new Exception("Not matched");
+            index = -1;
+            return false;
         }
 
         public static void RegisterMethod(string name, MethodInfo methodInfo)

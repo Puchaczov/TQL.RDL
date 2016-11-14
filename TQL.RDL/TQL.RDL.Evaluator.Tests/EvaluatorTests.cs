@@ -10,6 +10,7 @@ namespace TQL.RDL.Evaluator.Tests
         private static bool staticMethod1Called = false;
         private static bool staticMethod2Called = false;
         
+
         [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
@@ -188,7 +189,7 @@ namespace TQL.RDL.Evaluator.Tests
             var parser = new RDLParser(lexer);
             var node = parser.ComposeRootComponents();
 
-            var visitor = new RDLCodeGenerationVisitor();
+            var visitor = new RDLCodeGenerator();
             var methods = new DefaultMethods();
 
             GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));

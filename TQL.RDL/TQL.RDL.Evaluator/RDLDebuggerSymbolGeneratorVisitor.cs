@@ -8,7 +8,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public sealed class RDLDebuggerSymbolGeneratorVisitor : RDLCodeGenerationVisitor
+    public sealed class RDLDebuggerSymbolGeneratorVisitor : RDLCodeGenerator
     {
         public override void Visit(AddNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(OrNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
