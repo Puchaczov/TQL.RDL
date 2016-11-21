@@ -74,6 +74,7 @@ namespace TQL.RDL.Evaluator.Tests
             Assert.AreEqual(null, datetime);
         }
 
+        [Ignore]
         [TestMethod]
         public void CodeGenerationVisitor_CaseWhen_ShouldPass()
         {
@@ -127,6 +128,19 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
+            EvaluateQuery("repeat every days where GetDay() * GetYear() = 29 * 2012 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+                (x) => x == DateTimeOffset.Parse("29.05.2012 13:00:00"));
+
+            EvaluateQuery("repeat every 2 days start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.06.2012 23:00:00'",
+                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
+                (x) => x == DateTimeOffset.Parse("27.05.2012 13:00:00"));
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_InOperator_ShouldPass()
+        {
             EvaluateQuery("repeat every days where GetDay() in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
                 (x) => x == DateTimeOffset.Parse("22.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
@@ -143,15 +157,6 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("24.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
-
-            EvaluateQuery("repeat every days where GetDay() * GetYear() = 29 * 2012 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
-                (x) => x == DateTimeOffset.Parse("29.05.2012 13:00:00"));
-
-            EvaluateQuery("repeat every 2 days start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.06.2012 23:00:00'",
-                (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
-                (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
-                (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
-                (x) => x == DateTimeOffset.Parse("27.05.2012 13:00:00"));
         }
 
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
@@ -183,7 +188,7 @@ namespace TQL.RDL.Evaluator.Tests
             return true;
         }
 
-        public RDLVirtualMachine Parse(string query)
+        private RDLVirtualMachine Parse(string query)
         {
             var lexer = new LexerComplexTokensDecorator(query);
             var parser = new RDLParser(lexer);

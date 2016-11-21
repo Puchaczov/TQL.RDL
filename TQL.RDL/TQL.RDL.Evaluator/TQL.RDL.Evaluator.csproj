@@ -49,6 +49,7 @@
     <Compile Include="CodeStack.cs" />
     <Compile Include="DefaultMethods.cs" />
     <Compile Include="Instructions\Operators.cs" />
+    <Compile Include="RDLAnalyzerBase.cs" />
     <Compile Include="RDLQueryValidator.cs" />
     <Compile Include="RDLCodeGenerator.cs" />
     <Compile Include="RDLDebuggerSymbolGeneratorVisitor.cs" />

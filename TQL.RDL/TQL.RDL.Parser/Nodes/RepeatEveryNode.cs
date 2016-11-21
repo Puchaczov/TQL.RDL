@@ -22,10 +22,11 @@ namespace TQL.RDL.Parser.Nodes
 
         public RepeatEveryNode(Token repeatEvery, Token timeToken)
         {
+            this.repeatEvery = repeatEvery;
             this.timeToken = timeToken;
         }
 
-        public override RdlSyntaxNode[] Descendants => null;
+        public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
         public override TextSpan FullSpan => new TextSpan(repeatEvery.Span.Start, timeToken.Span.End - repeatEvery.Span.Start);
 

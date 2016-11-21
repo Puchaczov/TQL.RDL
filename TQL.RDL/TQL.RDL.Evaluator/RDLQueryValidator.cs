@@ -7,7 +7,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public class RDLQueryValidator : INodeVisitor
+    public class RDLQueryValidator : RDLAnalyzerBase
     {
         protected readonly List<Exception> criticalErrors;
         private readonly List<VisitationMessage> errors;
@@ -23,10 +23,10 @@ namespace TQL.RDL.Evaluator
             this.errors = new List<VisitationMessage>();
         }
 
-        public void Visit(WhereConditionsNode node)
+        public override void Visit(WhereConditionsNode node)
         { }
 
-        public void Visit(RepeatEveryNode node)
+        public override void Visit(RepeatEveryNode node)
         {
             try
             {
@@ -41,76 +41,76 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public void Visit(OrNode node)
+        public override void Visit(OrNode node)
         { }
 
-        public void Visit(DateTimeNode node)
+        public override void Visit(DateTimeNode node)
         { }
 
-        public void Visit(EqualityNode node)
+        public override void Visit(EqualityNode node)
         { }
 
-        public void Visit(ArgListNode node)
+        public override void Visit(ArgListNode node)
         { }
 
-        public void Visit(NumericNode node)
+        public override void Visit(NumericNode node)
         { }
 
-        public void Visit(GreaterEqualNode node)
+        public override void Visit(GreaterEqualNode node)
         { }
 
-        public void Visit(LessEqualNode node)
+        public override void Visit(LessEqualNode node)
         { }
 
-        public void Visit(AddNode node)
+        public override void Visit(AddNode node)
         { }
 
-        public void Visit(ModuloNode node)
+        public override void Visit(ModuloNode node)
         { }
 
-        public void Visit(FSlashNode node)
+        public override void Visit(FSlashNode node)
         { }
 
-        public void Visit(ThenNode node)
+        public override void Visit(ThenNode node)
         { }
 
-        public void Visit(CaseNode node)
+        public override void Visit(CaseNode node)
         { }
 
-        public void Visit(WhenThenNode node)
+        public override void Visit(WhenThenNode node)
         { }
 
-        public void Visit(ElseNode node)
+        public override void Visit(ElseNode node)
         { }
 
-        public void Visit(WhenNode node)
+        public override void Visit(WhenNode node)
         { }
 
-        public void Visit(StarNode node)
+        public override void Visit(StarNode node)
         { }
 
-        public void Visit(HyphenNode node)
+        public override void Visit(HyphenNode node)
         { }
 
-        public void Visit(NumericConsequentRepeatEveryNode node)
+        public override void Visit(NumericConsequentRepeatEveryNode node)
         { }
 
-        public void Visit(LessNode node)
+        public override void Visit(LessNode node)
         { }
 
-        public void Visit(GreaterNode node)
+        public override void Visit(GreaterNode node)
         { }
 
-        public void Visit(VarNode node)
+        public override void Visit(VarNode node)
         { }
 
-        public void Visit(NotInNode node)
+        public override void Visit(NotInNode node)
         { }
 
-        public void Visit(DiffNode node)
+        public override void Visit(DiffNode node)
         { }
 
-        public void Visit(InNode node)
+        public override void Visit(InNode node)
         {
             try
             {
@@ -137,27 +137,19 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        private void ReportHasMixedTypes(InNode node)
-        {
-            this.AddSemanticError(node.FullSpan, AnalysisMessage.MixedTypesNotAllowed, SemanticErrorKind.MixedValues);
-        }
-
-        public void Visit(AndNode node)
+        public override void Visit(AndNode node)
         { }
 
-        public void Visit(RootScriptNode node)
+        public override void Visit(StartAtNode node)
         { }
 
-        public void Visit(StartAtNode node)
+        public override void Visit(StopAtNode node)
         { }
 
-        public void Visit(StopAtNode node)
+        public override void Visit(WordNode node)
         { }
 
-        public void Visit(WordNode node)
-        { }
-
-        public void Visit(FunctionNode node)
+        public override void Visit(FunctionNode node)
         {
             try
             {
@@ -170,6 +162,11 @@ namespace TQL.RDL.Evaluator
             {
                 criticalErrors.Add(e);
             }
+        }
+
+        private void ReportHasMixedTypes(InNode node)
+        {
+            this.AddSemanticError(node.FullSpan, AnalysisMessage.MixedTypesNotAllowed, SemanticErrorKind.MixedValues);
         }
 
         private void ReportUnknownFunctionCall(FunctionNode node)

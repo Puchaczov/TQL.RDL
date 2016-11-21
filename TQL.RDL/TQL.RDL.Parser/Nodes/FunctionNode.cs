@@ -23,7 +23,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override TextSpan FullSpan => new TextSpan(functionName.Span.Start, args.Descendants[args.Descendants.Length - 1].FullSpan.End - functionName.Span.Start);
 
-        public override bool IsLeaf => false;
+        public override bool IsLeaf => Descendants.Count() == 0;
 
         public override Token Token => functionName;
 

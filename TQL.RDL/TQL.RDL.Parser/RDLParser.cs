@@ -176,9 +176,10 @@ namespace TQL.RDL.Parser
                         var whenThenExpressions = new List<WhenThenNode>();
                         while (nodes.Peek() is WhenThenNode)
                         {
-                            whenThenExpressions.Add(nodes.Pop() as WhenThenNode);
+                            var whenNode = nodes.Pop() as WhenThenNode;
+                            whenThenExpressions.Add(whenNode);
                         }
-                        nodes.Push(new CaseNode(whenThenExpressions.ToArray(), elseNode));
+                        nodes.Push(new CaseNode(tokens[i], whenThenExpressions.ToArray(), elseNode));
                         break;
                     case StatementType.When:
                         nodes.Push(new WhenNode(tokens[i], nodes.Pop()));
