@@ -80,6 +80,24 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid returning type in node {0} while returning type should be {1}. .
+        /// </summary>
+        internal static string ReturnTypesAreNotTheSame {
+            get {
+                return ResourceManager.GetString("ReturnTypesAreNotTheSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type {0} is not allowed (occured in {1} node)..
+        /// </summary>
+        internal static string TypeNotAllowed {
+            get {
+                return ResourceManager.GetString("TypeNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Function {0} with arguments of types {1} is unknown. Method cannot be invoked..
         /// </summary>
         internal static string UnknownFunctionCall {

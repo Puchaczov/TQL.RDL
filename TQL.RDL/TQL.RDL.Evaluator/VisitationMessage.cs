@@ -11,7 +11,8 @@ namespace TQL.RDL.Evaluator
     {
         MissingValue,
         WrongKeyword,
-        UnsupportedFunctionCall
+        UnsupportedFunctionCall,
+        ImproperType
     }
 
     public enum SemanticErrorKind

@@ -160,7 +160,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(InNode node)
         {
-            switch(node.ReturnType.GetTypeName())
+            switch(node.Left.ReturnType.GetTypeName())
             {
                 case nameof(Int64):
                     ExpressionGenerateIn<InInstructionNumeric>(node);

@@ -42,34 +42,63 @@ namespace TQL.RDL.Evaluator
         }
 
         public override void Visit(OrNode node)
-        { }
+        {
+            this.ReportTypeError(node, typeof(Boolean), "GreaterEqual");
+        }
 
         public override void Visit(DateTimeNode node)
-        { }
+        {
+            try
+            {
+                var temp = node.DateTime;
+            }
+            catch(Exception e)
+            {
+                this.criticalErrors.Add(e);
+            }
+        }
 
         public override void Visit(EqualityNode node)
-        { }
+        {
+            this.ReportTypeError(node, typeof(Boolean), "Equality");
+        }
 
         public override void Visit(ArgListNode node)
         { }
 
         public override void Visit(NumericNode node)
-        { }
+        {
+        }
 
         public override void Visit(GreaterEqualNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "GreaterEqual");
+            this.ReportTypeError(node.Right, typeof(Boolean), "GreaterEqual");
+        }
 
         public override void Visit(LessEqualNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "LessEqual");
+            this.ReportTypeError(node.Right, typeof(Boolean), "LessEqual");
+        }
 
         public override void Visit(AddNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Int64), "Add");
+            this.ReportTypeError(node.Right, typeof(Int64), "Add");
+        }
 
         public override void Visit(ModuloNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Int64), "Modulo");
+            this.ReportTypeError(node.Right, typeof(Int64), "Modulo");
+        }
 
         public override void Visit(FSlashNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Int64), "Divide");
+            this.ReportTypeError(node.Right, typeof(Int64), "Divide");
+        }
 
         public override void Visit(ThenNode node)
         { }
@@ -84,31 +113,50 @@ namespace TQL.RDL.Evaluator
         { }
 
         public override void Visit(WhenNode node)
-        { }
+        {
+            this.ReportTypeError(node, typeof(Boolean), "When");
+        }
 
         public override void Visit(StarNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Int64), "Star");
+            this.ReportTypeError(node.Right, typeof(Int64), "Star");
+        }
 
         public override void Visit(HyphenNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Int64), "Hyphen");
+            this.ReportTypeError(node.Right, typeof(Int64), "Hyphen");
+        }
 
         public override void Visit(NumericConsequentRepeatEveryNode node)
         { }
 
         public override void Visit(LessNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "Less");
+            this.ReportTypeError(node.Right, typeof(Boolean), "Less");
+        }
 
         public override void Visit(GreaterNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "Greater");
+            this.ReportTypeError(node.Right, typeof(Boolean), "Greater");
+        }
 
         public override void Visit(VarNode node)
         { }
 
         public override void Visit(NotInNode node)
-        { }
+        {
+            this.Visit(node);
+        }
 
         public override void Visit(DiffNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "Diff");
+            this.ReportTypeError(node.Right, typeof(Boolean), "Diff");
+        }
 
         public override void Visit(InNode node)
         {
@@ -138,13 +186,34 @@ namespace TQL.RDL.Evaluator
         }
 
         public override void Visit(AndNode node)
-        { }
+        {
+            this.ReportTypeError(node.Left, typeof(Boolean), "and");
+            this.ReportTypeError(node.Right, typeof(Boolean), "and");
+        }
 
         public override void Visit(StartAtNode node)
-        { }
+        {
+            try
+            {
+                var tmp = node.When;
+            }
+            catch(Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(StopAtNode node)
-        { }
+        {
+            try
+            {
+                var tmp = node.Datetime;
+            }
+            catch (Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(WordNode node)
         { }
@@ -192,6 +261,22 @@ namespace TQL.RDL.Evaluator
         private void AddSyntaxError(TextSpan fullSpan, string v, SyntaxErrorKind missingValue)
         {
             errors.Add(new SyntaxError(fullSpan, v, missingValue));
+        }
+
+        private void ReportTypeError(RdlSyntaxNode node, Type expectedType, string nodeName)
+        {
+            if (node.ReturnType != expectedType)
+            {
+                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.TypeNotAllowed, typeof(Boolean).Name, nodeName), SyntaxErrorKind.ImproperType);
+            }
+        }
+
+        private void ReportReturnTypesAreNotSame(BinaryNode node, string nodeName)
+        {
+            if(node.Left.ReturnType != node.Right.ReturnType)
+            {
+                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, node.Left.ReturnType.Name), SyntaxErrorKind.ImproperType);
+            }
         }
     }
 }

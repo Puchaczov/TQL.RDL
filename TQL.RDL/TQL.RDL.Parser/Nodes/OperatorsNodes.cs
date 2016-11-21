@@ -33,6 +33,8 @@ namespace TQL.RDL.Parser.Nodes
             : base(partOfDate, right)
         { }
 
+        public override Type ReturnType => typeof(Boolean);
+
         public override string ToString() => string.Format("{0} {1} ({2})", Left.ToString(), "in", Right.ToString());
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }

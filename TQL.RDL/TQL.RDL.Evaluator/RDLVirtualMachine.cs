@@ -128,6 +128,9 @@ namespace TQL.RDL.Evaluator
                 else
                     cond = true;
 
+                Values.Clear();
+                Datetimes.Clear();
+
                 if (cond)
                     return old;
             }
