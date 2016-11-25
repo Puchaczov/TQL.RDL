@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RDL.Parser.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TQL.Core.Tokens;
@@ -43,7 +44,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(OrNode node)
         {
-            this.ReportTypeError(node, typeof(Boolean), "GreaterEqual");
+            this.ReportReturnTypesAreNotSame(node, "Or");
         }
 
         public override void Visit(DateTimeNode node)
@@ -60,7 +61,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(EqualityNode node)
         {
-            this.ReportTypeError(node, typeof(Boolean), "Equality");
+            this.ReportReturnTypesAreNotSame(node, "Equality");
         }
 
         public override void Visit(ArgListNode node)
@@ -72,61 +73,97 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(GreaterEqualNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "GreaterEqual");
-            this.ReportTypeError(node.Right, typeof(Boolean), "GreaterEqual");
+            this.ReportReturnTypesAreNotSame(node, "GreaterEqual");
         }
 
         public override void Visit(LessEqualNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "LessEqual");
-            this.ReportTypeError(node.Right, typeof(Boolean), "LessEqual");
+            this.ReportReturnTypesAreNotSame(node, "LessEqual");
         }
 
         public override void Visit(AddNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Int64), "Add");
-            this.ReportTypeError(node.Right, typeof(Int64), "Add");
+            this.ReportReturnTypesAreNotSame(node, "Add");
         }
 
         public override void Visit(ModuloNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Int64), "Modulo");
-            this.ReportTypeError(node.Right, typeof(Int64), "Modulo");
+            this.ReportReturnTypesAreNotSame(node, "Modulo");
         }
 
         public override void Visit(FSlashNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Int64), "Divide");
-            this.ReportTypeError(node.Right, typeof(Int64), "Divide");
+            this.ReportReturnTypesAreNotSame(node, "Divide");
         }
 
         public override void Visit(ThenNode node)
-        { }
+        {
+            try
+            {
+                throw new NotImplementedException(nameof(ThenNode));
+            }
+            catch (Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(CaseNode node)
-        { }
+        {
+            try
+            {
+                throw new NotImplementedException(nameof(CaseNode));
+            }
+            catch(Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(WhenThenNode node)
-        { }
+        {
+            try
+            {
+                throw new NotImplementedException(nameof(WhenThenNode));
+            }
+            catch (Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(ElseNode node)
-        { }
+        {
+            try
+            {
+                throw new NotImplementedException(nameof(ElseNode));
+            }
+            catch (Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
+        }
 
         public override void Visit(WhenNode node)
         {
-            this.ReportTypeError(node, typeof(Boolean), "When");
+            try
+            {
+                throw new NotImplementedException(nameof(WhenNode));
+            }
+            catch (Exception exc)
+            {
+                criticalErrors.Add(exc);
+            }
         }
 
         public override void Visit(StarNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Int64), "Star");
-            this.ReportTypeError(node.Right, typeof(Int64), "Star");
+            this.ReportReturnTypesAreNotSame(node, "Star");
         }
 
         public override void Visit(HyphenNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Int64), "Hyphen");
-            this.ReportTypeError(node.Right, typeof(Int64), "Hyphen");
+            this.ReportReturnTypesAreNotSame(node, "Hyphen");
         }
 
         public override void Visit(NumericConsequentRepeatEveryNode node)
@@ -134,14 +171,12 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(LessNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "Less");
-            this.ReportTypeError(node.Right, typeof(Boolean), "Less");
+            this.ReportReturnTypesAreNotSame(node, "Less");
         }
 
         public override void Visit(GreaterNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "Greater");
-            this.ReportTypeError(node.Right, typeof(Boolean), "Greater");
+            this.ReportReturnTypesAreNotSame(node, "Greater");
         }
 
         public override void Visit(VarNode node)
@@ -154,8 +189,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(DiffNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "Diff");
-            this.ReportTypeError(node.Right, typeof(Boolean), "Diff");
+            this.ReportReturnTypesAreNotSame(node, "Diff");
         }
 
         public override void Visit(InNode node)
@@ -187,8 +221,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(AndNode node)
         {
-            this.ReportTypeError(node.Left, typeof(Boolean), "and");
-            this.ReportTypeError(node.Right, typeof(Boolean), "and");
+            this.ReportReturnTypesAreNotSame(node, "And");
         }
 
         public override void Visit(StartAtNode node)
@@ -263,19 +296,13 @@ namespace TQL.RDL.Evaluator
             errors.Add(new SyntaxError(fullSpan, v, missingValue));
         }
 
-        private void ReportTypeError(RdlSyntaxNode node, Type expectedType, string nodeName)
-        {
-            if (node.ReturnType != expectedType)
-            {
-                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.TypeNotAllowed, typeof(Boolean).Name, nodeName), SyntaxErrorKind.ImproperType);
-            }
-        }
-
         private void ReportReturnTypesAreNotSame(BinaryNode node, string nodeName)
         {
-            if(node.Left.ReturnType != node.Right.ReturnType)
+            var left = node.Left.ReturnType.GetUnderlyingNullable();
+            var right = node.Right.ReturnType.GetUnderlyingNullable();
+            if (left != right)
             {
-                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, node.Left.ReturnType.Name), SyntaxErrorKind.ImproperType);
+                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
             }
         }
     }

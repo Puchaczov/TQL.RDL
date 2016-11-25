@@ -62,6 +62,15 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expression &apos;{0}&apos; is not allowed (occured in &apos;{1}&apos; node). Expected type is {2}..
+        /// </summary>
+        internal static string ExpressionTypeNotAllowed {
+            get {
+                return ResourceManager.GetString("ExpressionTypeNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression contains unallowed mixing of types in operator &quot;IN&quot;.
         /// </summary>
         internal static string MixedTypesNotAllowed {
@@ -71,7 +80,7 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repeat every constains unsupported part of date fraction. Supported values are seconds, minutes, hours, daysofmonth, months, years. Founded value is &apos;{0}&apos;.
+        ///   Looks up a localized string similar to Repeat every contains unsupported part of date fraction. Supported values are seconds, minutes, hours, daysofmonth, months, years. Founded value is &apos;{0}&apos;.
         /// </summary>
         internal static string RepeateEveryContainsUnknownDatePartFraction {
             get {
@@ -80,7 +89,7 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid returning type in node {0} while returning type should be {1}. .
+        ///   Looks up a localized string similar to Usage of different types in &apos;{0}&apos; node is disallowed ({1}, {2}). .
         /// </summary>
         internal static string ReturnTypesAreNotTheSame {
             get {
@@ -89,11 +98,11 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type {0} is not allowed (occured in {1} node)..
+        ///   Looks up a localized string similar to Statement &apos;{0}&apos; is not allowed (occured in &apos;{1}&apos; node). Expected type is {2}..
         /// </summary>
-        internal static string TypeNotAllowed {
+        internal static string StatementTypeNotAllowed {
             get {
-                return ResourceManager.GetString("TypeNotAllowed", resourceCulture);
+                return ResourceManager.GetString("StatementTypeNotAllowed", resourceCulture);
             }
         }
         

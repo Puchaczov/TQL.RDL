@@ -22,6 +22,42 @@ namespace TQL.RDL.Evaluator.Tests
             Assert.AreEqual(MessageLevel.Error, validator.Errors.First().Level);
         }
 
+        [TestMethod]
+        public void QueryValidator_CheckReturnType_Or_ShouldPass()
+        {
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() or 4", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 or 2 = 2", 0);
+        }
+
+        [TestMethod]
+        public void QueryValidator_CheckReturnType_And_ShouldPass()
+        {
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() and 4", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2", 0);
+        }
+
+        [TestMethod]
+        public void QueryValidator_CheckReturnType_Equality_ShouldPass()
+        {
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() = 4", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2", 0);
+        }
+
+        private void QueryValidator_CheckReturnType(string query, int errorCount, params SyntaxErrorKind[] errorKinds)
+        {
+            //Binary nodes have to operate on the same types.
+            var validator = Parse(query);
+
+
+            Assert.AreEqual(errorCount, errorKinds.Length);
+            Assert.AreEqual(errorCount, validator.Errors.Count());
+
+            for(int i = 0; i < errorCount; ++i)
+            {
+                Assert.AreEqual(errorKinds[i], (validator.Errors.ElementAt(i) as SyntaxError).Kind);
+            }
+        }
+
         public RDLQueryValidator Parse(string query)
         {
             var lexer = new LexerComplexTokensDecorator(query);

@@ -15,6 +15,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("and");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class OrNode : BinaryNode
@@ -25,6 +27,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("or");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class InNode : BinaryNode
@@ -47,6 +51,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("<>");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class CommaNode : BinaryNode
@@ -67,6 +73,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class GreaterNode : BinaryNode
@@ -77,6 +85,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString(">");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class GreaterEqualNode : BinaryNode
@@ -87,6 +97,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString(">=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class LessNode : BinaryNode
@@ -97,6 +109,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("<");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class LessEqualNode : BinaryNode
@@ -107,6 +121,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString() => ToString("<=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class NotInNode : InNode
@@ -118,6 +134,8 @@ namespace TQL.RDL.Parser.Nodes
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
         public override string ToString() => string.Format("not in {0}", base.Right);
+
+        public override Type ReturnType => typeof(bool);
     }
 
     public class AddNode : BinaryNode
@@ -199,7 +217,8 @@ namespace TQL.RDL.Parser.Nodes
                 builder.Append(args[i].ToString());
                 builder.Append(", ");
             }
-            builder.Append(args[args.Length - 1].ToString());
+            if(args.Length > 0)
+                builder.Append(args[args.Length - 1].ToString());
             return builder.ToString();
         }
     }

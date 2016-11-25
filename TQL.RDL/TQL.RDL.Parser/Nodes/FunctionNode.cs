@@ -21,7 +21,15 @@ namespace TQL.RDL.Parser.Nodes
 
         public override RdlSyntaxNode[] Descendants => args.Descendants;
 
-        public override TextSpan FullSpan => new TextSpan(functionName.Span.Start, args.Descendants[args.Descendants.Length - 1].FullSpan.End - functionName.Span.Start);
+        public override TextSpan FullSpan
+        {
+            get
+            {
+                if (args.Descendants.Length == 0)
+                    return new TextSpan(functionName.Span.Start, functionName.Span.Length);
+                return new TextSpan(functionName.Span.Start, args.Descendants[args.Descendants.Length - 1].FullSpan.End - functionName.Span.Start);
+            }
+        }
 
         public override bool IsLeaf => Descendants.Count() == 0;
 

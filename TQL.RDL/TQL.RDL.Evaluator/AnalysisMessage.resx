@@ -117,17 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExpressionTypeNotAllowed" xml:space="preserve">
+    <value>Expression '{0}' is not allowed (occured in '{1}' node). Expected type is {2}.</value>
+  </data>
   <data name="MixedTypesNotAllowed" xml:space="preserve">
     <value>Expression contains unallowed mixing of types in operator "IN"</value>
   </data>
   <data name="RepeateEveryContainsUnknownDatePartFraction" xml:space="preserve">
-    <value>Repeat every constains unsupported part of date fraction. Supported values are seconds, minutes, hours, daysofmonth, months, years. Founded value is '{0}'</value>
+    <value>Repeat every contains unsupported part of date fraction. Supported values are seconds, minutes, hours, daysofmonth, months, years. Founded value is '{0}'</value>
   </data>
   <data name="ReturnTypesAreNotTheSame" xml:space="preserve">
-    <value>Invalid returning type in node {0} while returning type should be {1}. </value>
+    <value>Usage of different types in '{0}' node is disallowed ({1}, {2}). </value>
   </data>
-  <data name="TypeNotAllowed" xml:space="preserve">
-    <value>Type {0} is not allowed (occured in {1} node).</value>
+  <data name="StatementTypeNotAllowed" xml:space="preserve">
+    <value>Statement '{0}' is not allowed (occured in '{1}' node). Expected type is {2}.</value>
   </data>
   <data name="UnknownFunctionCall" xml:space="preserve">
     <value>Function {0} with arguments of types {1} is unknown. Method cannot be invoked.</value>
