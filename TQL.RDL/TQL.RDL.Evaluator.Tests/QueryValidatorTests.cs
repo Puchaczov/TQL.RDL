@@ -60,17 +60,18 @@ namespace TQL.RDL.Evaluator.Tests
 
         public RDLQueryValidator Parse(string query)
         {
+            var gm = new RdlMetadata();
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer);
+            var parser = new RDLParser(lexer, gm);
             var node = parser.ComposeRootComponents();
 
-            var validator = new RDLQueryValidator();
             var methods = new DefaultMethods();
 
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
 
+            var validator = new RDLQueryValidator(gm);
             node.Accept(validator);
 
             return validator;

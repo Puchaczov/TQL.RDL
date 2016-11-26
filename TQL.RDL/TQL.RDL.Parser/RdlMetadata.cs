@@ -5,22 +5,22 @@ using System.Reflection;
 
 namespace TQL.RDL.Parser
 {
-    public static class GlobalMetadata
+    public class RdlMetadata
     {
-        private static Dictionary<string, List<MethodInfo>> methods;
+        private Dictionary<string, List<MethodInfo>> methods;
 
-        static GlobalMetadata()
+        public RdlMetadata()
         {
             methods = new Dictionary<string, List<MethodInfo>>();
         }
 
-        public static Type GetReturnType(string function, Type[] args)
+        public Type GetReturnType(string function, Type[] args)
         {
             var method = GetMethod(function, args);
             return method.ReturnType;
         }
 
-        public static MethodInfo GetMethod(string name, Type[] methodArgs)
+        public MethodInfo GetMethod(string name, Type[] methodArgs)
         {
             int index = -1;
             if(!HasMethod(name, methodArgs, out index))
@@ -29,20 +29,20 @@ namespace TQL.RDL.Parser
             return methods[name][index];
         }
 
-        public static bool HasMethod(string name, Type[] methodArgs)
+        public bool HasMethod(string name, Type[] methodArgs)
         {
             int index = 0;
             return HasMethod(name, methodArgs, out index);
         }
 
-        private static bool HasMethod(string name, Type[] methodArgs, out int index)
+        private bool HasMethod(string name, Type[] methodArgs, out int index)
         {
-            if (!GlobalMetadata.methods.ContainsKey(name))
+            if (!this.methods.ContainsKey(name))
             {
                 throw new Exception(name);
             }
 
-            var methods = GlobalMetadata.methods[name];
+            var methods = this.methods[name];
 
             for (int i = 0, j = methods.Count; i < j; ++i)
             {
@@ -75,7 +75,7 @@ namespace TQL.RDL.Parser
             return false;
         }
 
-        public static void RegisterMethod(string name, MethodInfo methodInfo)
+        public void RegisterMethod(string name, MethodInfo methodInfo)
         {
             if (methods.ContainsKey(name))
                 methods[name].Add(methodInfo);

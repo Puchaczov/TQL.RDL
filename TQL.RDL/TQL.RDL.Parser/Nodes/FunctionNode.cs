@@ -9,14 +9,14 @@ namespace TQL.RDL.Parser.Nodes
     {
         private ArgListNode args;
         private FunctionToken functionName;
-        private Type returnType;
+        private Func<Type> getReturnType;
 
-        public FunctionNode(FunctionToken functionName, ArgListNode args, Type returnType = null)
+        public FunctionNode(FunctionToken functionName, ArgListNode args, Func<Type> getReturnType = null)
             : base()
         {
             this.functionName = functionName;
             this.args = args;
-            this.returnType = returnType;
+            this.getReturnType = getReturnType;
         }
 
         public override RdlSyntaxNode[] Descendants => args.Descendants;
@@ -41,7 +41,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public string Name => Token.Value;
 
-        public override Type ReturnType => returnType != null ? returnType : GlobalMetadata.GetReturnType(functionName.Value, Descendants.Select(f => f.ReturnType).ToArray());
+        public override Type ReturnType => getReturnType();
 
         public ArgListNode Args => args;
     }

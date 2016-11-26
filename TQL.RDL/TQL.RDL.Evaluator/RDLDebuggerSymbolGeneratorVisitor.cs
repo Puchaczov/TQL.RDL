@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TQL.RDL.Evaluator.Instructions;
+using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
@@ -34,6 +35,10 @@ namespace TQL.RDL.Evaluator
         public override void Visit(WhenThenNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(NotInNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(LessNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
+
+        public RDLDebuggerSymbolGeneratorVisitor(RdlMetadata gm)
+            : base(gm)
+        { }
 
         private void ProduceDebuggerInstructions<Node>(Node node, Action<Node> visit)
             where Node : RdlSyntaxNode

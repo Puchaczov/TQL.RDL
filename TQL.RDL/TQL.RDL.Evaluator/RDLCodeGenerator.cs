@@ -24,6 +24,7 @@ namespace TQL.RDL.Evaluator
         private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
         private DefaultMethods methods;
         private Dictionary<string, int> labels;
+        private RdlMetadata metadatas;
 
         private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
         private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
@@ -38,7 +39,7 @@ namespace TQL.RDL.Evaluator
 
         protected List<IRDLInstruction> instructions => functions.Peek();
 
-        public RDLCodeGenerator()
+        public RDLCodeGenerator(RdlMetadata metadatas)
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
@@ -47,6 +48,7 @@ namespace TQL.RDL.Evaluator
             startAt = DateTimeOffset.Now;
             stopAt = null;
             labels = new Dictionary<string, int>();
+            this.metadatas = metadatas;
         }
 
         public RDLVirtualMachine VirtualMachine => machine;
@@ -202,7 +204,7 @@ namespace TQL.RDL.Evaluator
         public override void Visit(FunctionNode node)
         {
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
-            var registeredFunction = GlobalMetadata.GetMethod(node.Name, argTypes);
+            var registeredFunction = metadatas.GetMethod(node.Name, argTypes);
             var returnName = registeredFunction.ReturnType.GetTypeName();
 
             object obj = null;

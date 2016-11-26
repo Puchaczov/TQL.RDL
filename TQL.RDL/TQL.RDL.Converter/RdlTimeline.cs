@@ -12,17 +12,17 @@ namespace TQL.RDL.Converter
     public class RdlTimeline : AbstractConverter<IFireTimeEvaluator>, IConvertible<ConvertionRequest, ConvertionResponse<IFireTimeEvaluator>>
     {
         public RdlTimeline(bool throwOnError = false)
-            : base(throwOnError)
+            : base(throwOnError, new RdlMetadata())
         { }
 
         private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest request)
         {
             foreach(var method in request.MethodsToBind)
             {
-                GlobalMetadata.RegisterMethod(method.Name, method);
+                metadatas.RegisterMethod(method.Name, method);
             }
 
-            RDLQueryValidator coretnessChecker = new RDLQueryValidator();
+            RDLQueryValidator coretnessChecker = new RDLQueryValidator(metadatas);
             ast.Accept(coretnessChecker);
 
             if(coretnessChecker.IsValid)
@@ -30,11 +30,11 @@ namespace TQL.RDL.Converter
                 RDLCodeGenerator codeGenerator = null;
                 if (request.Debuggable)
                 {
-                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor();
+                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas);
                 }
                 else
                 {
-                    codeGenerator = new RDLCodeGenerator();
+                    codeGenerator = new RDLCodeGenerator(metadatas);
                 }
 
                 ast.Accept(codeGenerator);

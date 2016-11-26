@@ -16,12 +16,15 @@ namespace TQL.RDL.Evaluator
         public virtual IEnumerable<VisitationMessage> Errors => e;
         protected IReadOnlyList<VisitationMessage> e => errors.Concat(criticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
+        private RdlMetadata metadatas;
+
         public virtual bool IsValid => criticalErrors.Count == 0 && errors.Count == 0;
 
-        public RDLQueryValidator()
+        public RDLQueryValidator(RdlMetadata metadatas)
         {
             this.criticalErrors = new List<Exception>();
             this.errors = new List<VisitationMessage>();
+            this.metadatas = metadatas;
         }
 
         public override void Visit(WhereConditionsNode node)
@@ -255,7 +258,7 @@ namespace TQL.RDL.Evaluator
         {
             try
             {
-                if (!GlobalMetadata.HasMethod(node.Name, node.Args.Descendants.Select(f => f.ReturnType).ToArray()))
+                if (!metadatas.HasMethod(node.Name, node.Args.Descendants.Select(f => f.ReturnType).ToArray()))
                 {
                     ReportUnknownFunctionCall(node);
                 }

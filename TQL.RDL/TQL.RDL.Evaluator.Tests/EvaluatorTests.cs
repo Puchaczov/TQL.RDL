@@ -190,19 +190,22 @@ namespace TQL.RDL.Evaluator.Tests
 
         private RDLVirtualMachine Parse(string query)
         {
-            var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer);
-            var node = parser.ComposeRootComponents();
+            var gm = new RdlMetadata();
 
-            var visitor = new RDLCodeGenerator();
+            var lexer = new LexerComplexTokensDecorator(query);
+            var parser = new RDLParser(lexer, gm);
+
             var methods = new DefaultMethods();
 
-            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
-            GlobalMetadata.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
-            GlobalMetadata.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
+            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
+            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
 
+            var visitor = new RDLCodeGenerator(gm);
+
+            var node = parser.ComposeRootComponents();
             node.Accept(visitor);
 
             var machine = visitor.VirtualMachine;

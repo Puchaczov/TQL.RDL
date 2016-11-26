@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Nodes;
 using TQL.RDL.Parser.Tokens;
@@ -9,13 +10,19 @@ namespace TQL.RDL.Parser
     public class RDLParser : ParserBase<Token, StatementType>
     {
         private LexerComplexTokensDecorator cLexer;
+        private RdlMetadata metadatas;
 
-        public RDLParser(LexerComplexTokensDecorator lexer)
+        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas)
             : base(lexer)
         {
             lastToken = new NoneToken();
             currentToken = lexer.NextToken();
             cLexer = lexer;
+
+            if (metadatas == null)
+                throw new ArgumentNullException(nameof(RdlMetadata));
+
+            this.metadatas = metadatas;
         }
 
         public RootScriptNode ComposeRootComponents()
@@ -156,7 +163,9 @@ namespace TQL.RDL.Parser
                         nodes.Push(new WordNode(tokens[i]));
                         break;
                     case StatementType.Function:
-                            nodes.Push(new FunctionNode(tokens[i] as FunctionToken, nodes.Pop() as ArgListNode));
+                        var functionToken = tokens[i] as FunctionToken;
+                        var argsNode = nodes.Pop() as ArgListNode;
+                        nodes.Push(new FunctionNode(functionToken, argsNode, () => metadatas.GetReturnType(functionToken.Value, argsNode.Descendants.Select(f => f.ReturnType).ToArray())));
                         break;
                     case StatementType.VarArg:
                         var varArg = tokens[i] as VarArgToken;

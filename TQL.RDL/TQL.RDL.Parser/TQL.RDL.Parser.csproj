@@ -37,7 +37,7 @@
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="LexerEnumerator.cs" />
-    <Compile Include="GlobalMetadata.cs" />
+    <Compile Include="RdlMetadata.cs" />
     <Compile Include="Nodes\BinaryNode.cs" />
     <Compile Include="Nodes\ConstantNode.cs" />
     <Compile Include="Nodes\DateTimeNode.cs" />
