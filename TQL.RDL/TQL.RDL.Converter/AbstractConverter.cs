@@ -31,7 +31,7 @@ namespace TQL.RDL.Converter
             return parser.ComposeRootComponents();
         }
 
-        protected override bool IsValid(ConvertionRequest request) => true;
+        protected override bool IsValid(ConvertionRequest request) => request.Query != null && request.Query != string.Empty;
 
         private void RegisterDefaultMethods()
         {

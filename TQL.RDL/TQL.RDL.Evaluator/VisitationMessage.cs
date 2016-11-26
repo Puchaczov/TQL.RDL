@@ -66,6 +66,9 @@ namespace TQL.RDL.Evaluator
         {
             codes = new Dictionary<SyntaxErrorKind, Codes>();
             codes.Add(SyntaxErrorKind.MissingValue, Codes.C02);
+            codes.Add(SyntaxErrorKind.ImproperType, Codes.C02);
+            codes.Add(SyntaxErrorKind.UnsupportedFunctionCall, Codes.C02);
+            codes.Add(SyntaxErrorKind.WrongKeyword, Codes.C02);
         }
 
         public SyntaxError(TextSpan[] spans, string message, SyntaxErrorKind kind)
