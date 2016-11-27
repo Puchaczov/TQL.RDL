@@ -199,7 +199,7 @@ namespace TQL.RDL.Evaluator
         {
             try
             {
-                var dstType = node.Left.ReturnType;
+                var dstType = node.Left.ReturnType.GetUnderlyingNullable();
 
                 bool hasMixedTypes = false;
                 foreach (var desc in node.Right.Descendants)

@@ -54,6 +54,12 @@ namespace TQL.RDL.Converter.Tests
             TestDefaultMethods("repeat every days where IsWorkingDay() start at '29.05.2016'", "30.05.2016");
         }
 
+        [TestMethod]
+        public void Converter_IsConvertible_ShouldBe()
+        {
+            TestDefaultMethods("repeat every days where GetDay() in (21) and GetMonth() = 5 start at '21.05.1991 00:04:24'", "21.05.1991 00:04:24");
+        }
+
         
         private void TestDefaultMethods(string query, string refTime)
         {

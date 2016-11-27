@@ -150,6 +150,14 @@ namespace TQL.RDL.Parser
                     case StatementType.In:
                     case StatementType.NotIn:
                         var args = nodes.Pop();
+
+                        //handling cases when there is only one argument (ie. "@a in (21)"). In such case, 
+                        //ShuntingYard algorithm won't know if it point to casual expression or 'special' vararg expression (1,2,...).
+                        if(!(args is ArgListNode))
+                        {
+                            args = new ArgListNode(new RdlSyntaxNode[] { args });
+                        }
+
                         var partOfDate = nodes.Pop();
                         if (tokens[i].TokenType == StatementType.In)
                             nodes.Push(new InNode(partOfDate, args));
