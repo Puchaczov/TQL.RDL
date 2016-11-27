@@ -16,7 +16,7 @@ namespace TQL.RDL.Converter.Tests
                 GetType().GetMethod(nameof(TestA), new Type[] { typeof(DateTimeOffset?) }),
                 GetType().GetMethod(nameof(TestB), new Type[] { typeof(DateTimeOffset?) })
             };
-            var request = new ConvertionRequest("repeat every 5 seconds where TestA(@current) and TestB(@current) start at '2016/06/06 14:00:00'", DateTimeOffset.Parse("2016/06/06 14:00:00"), false, methods);
+            var request = new ConvertionRequest("repeat every 5 seconds where TestA(@current) and TestB(@current) start at '2016/06/06 14:00:00'", DateTimeOffset.Parse("2016/06/06 14:00:00"), false, null, null, methods);
 
             RdlTimeline timeline = new RdlTimeline(false);
 

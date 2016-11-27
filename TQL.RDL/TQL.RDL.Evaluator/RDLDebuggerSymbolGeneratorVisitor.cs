@@ -36,8 +36,8 @@ namespace TQL.RDL.Evaluator
         public override void Visit(NotInNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(LessNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
 
-        public RDLDebuggerSymbolGeneratorVisitor(RdlMetadata gm)
-            : base(gm)
+        public RDLDebuggerSymbolGeneratorVisitor(RdlMetadata gm, DateTimeOffset? minDate, DateTimeOffset? maxDate)
+            : base(gm, minDate, maxDate)
         { }
 
         private void ProduceDebuggerInstructions<Node>(Node node, Action<Node> visit)

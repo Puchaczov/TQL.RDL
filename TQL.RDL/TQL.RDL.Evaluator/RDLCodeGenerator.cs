@@ -26,6 +26,9 @@ namespace TQL.RDL.Evaluator
         private Dictionary<string, int> labels;
         private RdlMetadata metadatas;
 
+        private DateTimeOffset? minDate;
+        private DateTimeOffset? maxDate;
+
         private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
         private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
         private static string nBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
@@ -39,7 +42,7 @@ namespace TQL.RDL.Evaluator
 
         protected List<IRDLInstruction> instructions => functions.Peek();
 
-        public RDLCodeGenerator(RdlMetadata metadatas)
+        public RDLCodeGenerator(RdlMetadata metadatas, DateTimeOffset? minDate, DateTimeOffset? maxDate)
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
@@ -49,6 +52,9 @@ namespace TQL.RDL.Evaluator
             stopAt = null;
             labels = new Dictionary<string, int>();
             this.metadatas = metadatas;
+
+            this.minDate = minDate;
+            this.maxDate = maxDate;
         }
 
         public RDLVirtualMachine VirtualMachine => machine;
@@ -58,9 +64,20 @@ namespace TQL.RDL.Evaluator
 
         }
 
+        public override void Visit(StartAtNode node)
+        {
+            if (minDate.HasValue && minDate.Value > node.When)
+                startAt = minDate.Value;
+            else
+                startAt = node.When;
+        }
+
         public override void Visit(StopAtNode node)
         {
-            stopAt = node.Datetime;
+            if (maxDate.HasValue && maxDate.Value < node.Datetime)
+                stopAt = maxDate.Value;
+            else
+                stopAt = node.Datetime;
         }
 
         public override void Visit(RepeatEveryNode node)
@@ -187,13 +204,18 @@ namespace TQL.RDL.Evaluator
 
             instructions.Add(new BreakInstruction());
 
+            if (!node.Descendants.OfType<StartAtNode>().Any() && minDate.HasValue)
+            {
+                startAt = minDate.Value;
+            }
+
+            if (!node.Descendants.OfType<StopAtNode>().Any() && maxDate.HasValue)
+            {
+                stopAt = maxDate;
+            }
+
             machine = new RDLVirtualMachine(labels, generateNext, instructions.ToArray(), stopAt, startAt);
             methods.SetMachine(machine);
-        }
-
-        public override void Visit(StartAtNode node)
-        {
-            startAt = node.When;
         }
 
         public override void Visit(WordNode node)

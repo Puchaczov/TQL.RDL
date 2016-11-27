@@ -30,11 +30,11 @@ namespace TQL.RDL.Converter
                 RDLCodeGenerator codeGenerator = null;
                 if (request.Debuggable)
                 {
-                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas);
+                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas, request.MinDate, request.MaxDate);
                 }
                 else
                 {
-                    codeGenerator = new RDLCodeGenerator(metadatas);
+                    codeGenerator = new RDLCodeGenerator(metadatas, request.MinDate, request.MaxDate);
                 }
 
                 ast.Accept(codeGenerator);

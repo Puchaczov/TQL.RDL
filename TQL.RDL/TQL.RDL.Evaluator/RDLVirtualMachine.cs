@@ -118,6 +118,9 @@ namespace TQL.RDL.Evaluator
 
                 if (stopAt.HasValue && old > stopAt.Value)
                 {
+                    Values.Clear();
+                    Datetimes.Clear();
+
                     ReferenceTime = null;
                     return null;
                 }

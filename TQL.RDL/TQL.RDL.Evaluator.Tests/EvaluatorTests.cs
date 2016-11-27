@@ -159,10 +159,37 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_MinDate_ShouldPass()
+        {
+            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'15.11.2011'",
+                DateTimeOffset.Parse("14.11.2011"), null, null,
+                (x) => x == DateTimeOffset.Parse("14.11.2011"),
+                (x) => x == DateTimeOffset.Parse("15.11.2011"));
+
+            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
+                DateTimeOffset.Parse("14.11.2011"), DateTimeOffset.Parse("15.11.2011"), null,
+                (x) => x == DateTimeOffset.Parse("14.11.2011"),
+                (x) => x == DateTimeOffset.Parse("15.11.2011"));
+
+            EvaluateQuery("repeat every days stop at {0}", "'16.11.2011'", string.Empty,
+                (DateTimeOffset?)DateTimeOffset.Parse("14.11.2011"), null, DateTimeOffset.Parse("11.11.2011"),
+                (x) => x == DateTimeOffset.Parse("14.11.2011"),
+                (x) => x == DateTimeOffset.Parse("15.11.2011"));
+        }
+
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
+            EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, (DateTimeOffset?)null, (DateTimeOffset?)null, funcs);
+        }
 
-            var machine = Parse(string.Format(query, startAt, stopAt));
+        public void EvaluateQuery(string query, string startAt, string stopAt, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null, DateTimeOffset? referenceTime = null, params Func<DateTimeOffset?, bool>[] funcs)
+        {
+
+            var machine = Parse(string.Format(query, startAt, stopAt), minDate, maxDate);
+
+            if (referenceTime.HasValue)
+                machine.ReferenceTime = referenceTime.Value;
 
             var datetime = default(DateTimeOffset?);
             var index = 0;
@@ -188,7 +215,7 @@ namespace TQL.RDL.Evaluator.Tests
             return true;
         }
 
-        private RDLVirtualMachine Parse(string query)
+        private RDLVirtualMachine Parse(string query, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null)
         {
             var gm = new RdlMetadata();
 
@@ -203,7 +230,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
 
-            var visitor = new RDLCodeGenerator(gm);
+            var visitor = new RDLCodeGenerator(gm, minDate, maxDate);
 
             var node = parser.ComposeRootComponents();
             node.Accept(visitor);
