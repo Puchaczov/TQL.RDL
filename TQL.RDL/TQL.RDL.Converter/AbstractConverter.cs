@@ -49,7 +49,7 @@ namespace TQL.RDL.Converter
 
             metadatas.RegisterMethod(nameof(DefaultMethods.GetYear), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             metadatas.RegisterMethod(nameof(DefaultMethods.GetMonth), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetMonth), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetDay), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
+            metadatas.RegisterMethod(nameof(DefaultMethods.GetDay), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
 
             metadatas.RegisterMethod(nameof(DefaultMethods.GetHour), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetHour), new Type[] { }));
             metadatas.RegisterMethod(nameof(DefaultMethods.GetMinute), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetMinute), new Type[] { }));

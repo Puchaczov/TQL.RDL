@@ -43,6 +43,12 @@ namespace TQL.RDL.Evaluator.Tests
             QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2", 0);
         }
 
+        [TestMethod]
+        public void QueryValidator_CheckInOperator_ShouldPass()
+        {
+            QueryValidator_CheckReturnType("repeat every days where GetDay() in (21)", 0);
+        }
+
         private void QueryValidator_CheckReturnType(string query, int errorCount, params SyntaxErrorKind[] errorKinds)
         {
             //Binary nodes have to operate on the same types.
