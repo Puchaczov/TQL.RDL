@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using TQL.Common.Converters;
+using TQL.Common.Evaluators;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator;
 using TQL.RDL.Parser;
@@ -44,7 +45,8 @@ namespace TQL.RDL.Converter
                 {
                     if (!evaluator.ReferenceTime.HasValue)
                         evaluator.ReferenceTime = request.ReferenceTime;
-                    return new ConvertionResponse<IFireTimeEvaluator>(evaluator);
+
+                    return new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
                 }
             }
             return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());

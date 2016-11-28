@@ -13,8 +13,9 @@ namespace TQL.RDL.Converter
         public bool Debuggable { get; }
         public DateTimeOffset? MinDate { get; }
         public DateTimeOffset? MaxDate { get; }
+        public TimeZoneInfo Target { get; }
 
-        public ConvertionRequest(string query, DateTimeOffset? referenceTime = null, bool debuggable = false, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null, params MethodInfo[] methods)
+        public ConvertionRequest(string query, TimeZoneInfo target, DateTimeOffset? referenceTime = null, bool debuggable = false, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null, params MethodInfo[] methods)
         {
             ReferenceTime = referenceTime;
             Query = query;
@@ -22,6 +23,7 @@ namespace TQL.RDL.Converter
             Debuggable = debuggable;
             MinDate = minDate;
             MaxDate = maxDate;
+            Target = target;
         }
     }
 }
