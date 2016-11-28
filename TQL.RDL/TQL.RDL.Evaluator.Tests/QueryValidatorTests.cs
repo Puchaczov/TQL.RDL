@@ -15,7 +15,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void QueryValidator_RepeatEveryWithBadDatePartFrac_ShouldPass()
         {
-            var validator = Parse("repeat every 4 seecondsds");
+            var validator = Parse("repeat every 4 seecondsds start at '21.04.2013'");
 
 
             Assert.AreEqual(1, validator.Errors.Count());
@@ -25,28 +25,34 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void QueryValidator_CheckReturnType_Or_ShouldPass()
         {
-            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() or 4", 1, SyntaxErrorKind.ImproperType);
-            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 or 2 = 2", 0);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() or 4 start at '21.04.2013'", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 or 2 = 2 start at '21.04.2013'", 0);
         }
 
         [TestMethod]
         public void QueryValidator_CheckReturnType_And_ShouldPass()
         {
-            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() and 4", 1, SyntaxErrorKind.ImproperType);
-            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2", 0);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() and 4 start at '21.04.2013'", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2 start at '21.04.2013'", 0);
         }
 
         [TestMethod]
         public void QueryValidator_CheckReturnType_Equality_ShouldPass()
         {
-            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() = 4", 1, SyntaxErrorKind.ImproperType);
-            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2", 0);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where GetDate() = 4 start at '21.04.2013'", 1, SyntaxErrorKind.ImproperType);
+            QueryValidator_CheckReturnType("repeat every 1 seconds where 1 = 1 and 2 = 2 start at '21.04.2013'", 0);
         }
 
         [TestMethod]
         public void QueryValidator_CheckInOperator_ShouldPass()
         {
-            QueryValidator_CheckReturnType("repeat every days where GetDay() in (21)", 0);
+            QueryValidator_CheckReturnType("repeat every days where GetDay() in (21) start at '21.04.2013'", 0);
+        }
+
+        [TestMethod]
+        public void QueryValidator_RequiredStartAtNotAppeared_ShouldPass()
+        {
+            QueryValidator_CheckReturnType("repeat every days", 1,  SyntaxErrorKind.MissingValue);
         }
 
         private void QueryValidator_CheckReturnType(string query, int errorCount, params SyntaxErrorKind[] errorKinds)

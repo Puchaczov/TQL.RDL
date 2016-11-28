@@ -175,7 +175,20 @@ namespace TQL.RDL.Evaluator.Tests
             EvaluateQuery("repeat every days stop at {0}", "'16.11.2011'", string.Empty,
                 (DateTimeOffset?)DateTimeOffset.Parse("14.11.2011"), null, DateTimeOffset.Parse("11.11.2011"),
                 (x) => x == DateTimeOffset.Parse("14.11.2011"),
-                (x) => x == DateTimeOffset.Parse("15.11.2011"));
+                (x) => x == DateTimeOffset.Parse("15.11.2011"),
+                (x) => x == DateTimeOffset.Parse("16.11.2011"));
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_MaxDate_ShouldPass()
+        {
+            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
+                null, DateTimeOffset.Parse("15.11.2011"), null,
+                (x) => x == DateTimeOffset.Parse("13.11.2011"),
+                (x) => x == DateTimeOffset.Parse("14.11.2011"));
+
+            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
+                null, DateTimeOffset.Parse("12.11.2011"), null);
         }
 
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)

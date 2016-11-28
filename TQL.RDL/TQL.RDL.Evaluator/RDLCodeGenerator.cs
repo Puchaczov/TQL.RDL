@@ -43,18 +43,23 @@ namespace TQL.RDL.Evaluator
         protected List<IRDLInstruction> instructions => functions.Peek();
 
         public RDLCodeGenerator(RdlMetadata metadatas, DateTimeOffset? minDate, DateTimeOffset? maxDate)
+            : this(metadatas, minDate, maxDate, DateTimeOffset.UtcNow)
+        {
+        }
+
+        public RDLCodeGenerator(RdlMetadata metadatas, DateTimeOffset? minDate, DateTimeOffset? maxDate, DateTimeOffset startAt)
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
             functions = new Stack<List<IRDLInstruction>>();
             functions.Push(new List<IRDLInstruction>());
-            startAt = DateTimeOffset.Now;
             stopAt = null;
             labels = new Dictionary<string, int>();
             this.metadatas = metadatas;
 
             this.minDate = minDate;
             this.maxDate = maxDate;
+            this.startAt = startAt;
         }
 
         public RDLVirtualMachine VirtualMachine => machine;

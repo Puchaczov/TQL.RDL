@@ -20,6 +20,8 @@ namespace TQL.RDL.Evaluator
 
         public virtual bool IsValid => criticalErrors.Count == 0 && errors.Count == 0;
 
+        private bool startAtOccured = false;
+
         public RDLQueryValidator(RdlMetadata metadatas)
         {
             this.criticalErrors = new List<Exception>();
@@ -231,7 +233,7 @@ namespace TQL.RDL.Evaluator
         {
             try
             {
-                var tmp = node.When;
+                startAtOccured = true;
             }
             catch(Exception exc)
             {
@@ -267,6 +269,21 @@ namespace TQL.RDL.Evaluator
             {
                 criticalErrors.Add(e);
             }
+        }
+
+        public override void Visit(RootScriptNode node)
+        {
+            base.Visit(node);
+
+            if(!startAtOccured)
+            {
+                ReportStartAtRequired();
+            }
+        }
+
+        private void ReportStartAtRequired()
+        {
+            this.AddSyntaxError(new TextSpan(-1, 0), AnalysisMessage.StartAtRequired, SyntaxErrorKind.MissingValue);
         }
 
         private void ReportHasMixedTypes(InNode node)

@@ -129,6 +129,9 @@
   <data name="ReturnTypesAreNotTheSame" xml:space="preserve">
     <value>Usage of different types in '{0}' node is disallowed ({1}, {2}). </value>
   </data>
+  <data name="StartAtRequired" xml:space="preserve">
+    <value>Start at clause is required</value>
+  </data>
   <data name="StatementTypeNotAllowed" xml:space="preserve">
     <value>Statement '{0}' is not allowed (occured in '{1}' node). Expected type is {2}.</value>
   </data>

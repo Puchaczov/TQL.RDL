@@ -98,6 +98,15 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start at clause is required.
+        /// </summary>
+        internal static string StartAtRequired {
+            get {
+                return ResourceManager.GetString("StartAtRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Statement &apos;{0}&apos; is not allowed (occured in &apos;{1}&apos; node). Expected type is {2}..
         /// </summary>
         internal static string StatementTypeNotAllowed {
