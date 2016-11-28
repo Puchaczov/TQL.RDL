@@ -11,5 +11,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("TQL")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: AssemblyVersion("0.5.0.3")]
-[assembly: AssemblyFileVersion("0.5.0.3")]
+[assembly: AssemblyVersion("0.5.0.4")]
+[assembly: AssemblyFileVersion("0.5.0.4")]
