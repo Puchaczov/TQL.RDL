@@ -67,5 +67,25 @@ namespace TQL.RDL.Evaluator
         public long? GetSecond() => machine.Datetimes.Peek()?.Second;
         public long? GetMinute() => machine.Datetimes.Peek()?.Minute;
         public long? GetHour() => machine.Datetimes.Peek()?.Hour;
+        public long? GetWeekOfMonth()
+        {
+            var time = machine.Datetimes.Peek();
+            if(time.HasValue)
+            {
+                var day = time.Value.Day;
+
+                if (day <= 7)
+                    return 1;
+                else if (day <= 14)
+                    return 2;
+                else if (day <= 21)
+                    return 3;
+                else if (day <= 28)
+                    return 4;
+                else
+                    return 5;
+            }
+            return null;
+        }
     }
 }
