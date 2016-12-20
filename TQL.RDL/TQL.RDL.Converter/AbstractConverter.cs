@@ -19,15 +19,28 @@ namespace TQL.RDL.Converter
             this.throwOnError = throwOnError;
             this.metadatas = metadatas;
 
-            this.RegisterDefaultMethods();
+            RegisterDefaultMethods();
         }
+
+        private string[] defaultFormats = new string[] {
+            "dd/M/yyyy H:m:s",
+            "dd/M/yyyy h:m:s tt",
+            "dd.M.yyyy H:m:s",
+            "dd.M.yyyy h:m:s tt"
+        };
 
         protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest request)
         {
             var preprocessor = new Preprocessor();
             var query = preprocessor.Execute(request.Query);
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer, metadatas);
+            RDLParser parser = null;
+
+            if (request.Formats == null || request.Formats.Length == 0)
+                parser = new RDLParser(lexer, metadatas, request.Source.BaseUtcOffset, defaultFormats, request.CultureInfo);
+            else
+                parser = new RDLParser(lexer, metadatas, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo);
+
             return parser.ComposeRootComponents();
         }
 

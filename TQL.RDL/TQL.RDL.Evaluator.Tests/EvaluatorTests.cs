@@ -14,9 +14,9 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
-            var machine = Parse("repeat every days where GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100 start at '2000/01/01' stop at '2100/05/05'");
+            var machine = Parse("repeat every days where GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100 start at '01.01.2000' stop at '05.05.2100'");
 
-            machine.ReferenceTime = DateTimeOffset.Parse("2000/01/01");
+            machine.ReferenceTime = DateTimeOffset.Parse("01.01.2000");
             var refTime = default(DateTimeOffset?);
             var count = 0;
             do
@@ -32,7 +32,7 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_ComposeFunctionCall_ShouldPass()
         {
-            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate()) start at '2016-06-07 22:00:00'");
+            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate()) start at '07.06.2016 22:00:00'");
             machine.ReferenceTime = new DateTimeOffset(2016, 6, 7, 22, 0, 0, new TimeSpan());
 
             machine.NextFire();
@@ -77,11 +77,11 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_RunsAfterEveryTwoWeeks()
         {
-            EvaluateQuery("repeat every days where (GetDay() >= 1 and GetDay() <= 7) or (GetDay() > 14 and GetDay() <= 21) start at '2016/12/11 20:17:57'", string.Empty, string.Empty,
-                (x) => x == DateTimeOffset.Parse("2016/12/15 20:17:57"));
+            EvaluateQuery("repeat every days where (GetDay() >= 1 and GetDay() <= 7) or (GetDay() > 14 and GetDay() <= 21) start at '11.12.2016 20:17:57'", string.Empty, string.Empty,
+                (x) => x == DateTimeOffset.Parse("15.12.2016 20:17:57"));
             
-            EvaluateQuery("repeat every days where GetWeekOfMonth() in (1,3) start at '2016/12/11 20:17:57'", string.Empty, string.Empty,
-                (x) => x == DateTimeOffset.Parse("2016/12/15 20:17:57")); //GetWeekOfMonth() in (1,3)
+            EvaluateQuery("repeat every days where GetWeekOfMonth() in (1,3) start at '11.12.2016 20:17:57'", string.Empty, string.Empty,
+                (x) => x == DateTimeOffset.Parse("15.12.2016 20:17:57")); //GetWeekOfMonth() in (1,3)
         }
 
         [Ignore]
@@ -113,32 +113,32 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateBasicOperators_ShouldPass()
         {
-            EvaluateQuery("repeat every hours where 1 + 2 = 3 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'", 
+            EvaluateQuery("repeat every hours where 1 + 2 = 3 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00:00'", 
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every hours where 5 - 4 = 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+            EvaluateQuery("repeat every hours where 5 - 4 = 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every hours where 5 * 4 = 19 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+            EvaluateQuery("repeat every hours where 5 * 4 = 19 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every hours where 20 / 2 = 50 / 5 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+            EvaluateQuery("repeat every hours where 20 / 2 = 50 / 5 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every hours where 20 + (2 * 5) - 4 + 1 = 20 + 6 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00'",
+            EvaluateQuery("repeat every hours where 20 + (2 * 5) - 4 + 1 = 20 + 6 + 1 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 14:00:00"),
                 (x) => x == DateTimeOffset.Parse("21.05.2012 15:00:00"));
 
-            EvaluateQuery("repeat every days where GetDay() * GetYear() = 29 * 2012 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+            EvaluateQuery("repeat every days where GetDay() * GetYear() = 29 * 2012 start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("29.05.2012 13:00:00"));
 
             EvaluateQuery("repeat every 2 days start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'21.06.2012 23:00:00'",
@@ -151,65 +151,33 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_InOperator_ShouldPass()
         {
-            EvaluateQuery("repeat every days where GetDay() in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+            EvaluateQuery("repeat every days where GetDay() in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("22.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("25.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("27.05.2012 13:00:00"));
 
-            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("24.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
 
-            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00'",
+            EvaluateQuery("repeat every days where GetDay() not in (22,25,27) start at {0} stop at {1}", "'21.05.2012 13:00:00'", "'31.05.2012 15:00:00'",
                 (x) => x == DateTimeOffset.Parse("21.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("23.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("24.05.2012 13:00:00"),
                 (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
-        }
-
-        [TestMethod]
-        public void CodeGenerationVisitor_MinDate_ShouldPass()
-        {
-            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'15.11.2011'",
-                DateTimeOffset.Parse("14.11.2011"), null, null,
-                (x) => x == DateTimeOffset.Parse("14.11.2011"),
-                (x) => x == DateTimeOffset.Parse("15.11.2011"));
-
-            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
-                DateTimeOffset.Parse("14.11.2011"), DateTimeOffset.Parse("15.11.2011"), null,
-                (x) => x == DateTimeOffset.Parse("14.11.2011"),
-                (x) => x == DateTimeOffset.Parse("15.11.2011"));
-
-            EvaluateQuery("repeat every days stop at {0}", "'16.11.2011'", string.Empty,
-                (DateTimeOffset?)DateTimeOffset.Parse("14.11.2011"), null, DateTimeOffset.Parse("11.11.2011"),
-                (x) => x == DateTimeOffset.Parse("14.11.2011"),
-                (x) => x == DateTimeOffset.Parse("15.11.2011"),
-                (x) => x == DateTimeOffset.Parse("16.11.2011"));
-        }
-
-        [TestMethod]
-        public void CodeGenerationVisitor_MaxDate_ShouldPass()
-        {
-            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
-                null, DateTimeOffset.Parse("15.11.2011"), null,
-                (x) => x == DateTimeOffset.Parse("13.11.2011"),
-                (x) => x == DateTimeOffset.Parse("14.11.2011"));
-
-            EvaluateQuery("repeat every days start at {0} stop at {1}", "'13.11.2011'", "'16.11.2011'",
-                null, DateTimeOffset.Parse("12.11.2011"), null);
         }
 
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
-            EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, (DateTimeOffset?)null, (DateTimeOffset?)null, funcs);
+            EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, funcs);
         }
 
-        public void EvaluateQuery(string query, string startAt, string stopAt, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null, DateTimeOffset? referenceTime = null, params Func<DateTimeOffset?, bool>[] funcs)
+        public void EvaluateQuery(string query, string startAt, string stopAt, DateTimeOffset? referenceTime = null, params Func<DateTimeOffset?, bool>[] funcs)
         {
 
-            var machine = Parse(string.Format(query, startAt, stopAt), minDate, maxDate);
+            var machine = Parse(string.Format(query, startAt, stopAt));
 
             if (referenceTime.HasValue)
                 machine.ReferenceTime = referenceTime.Value;
@@ -238,12 +206,20 @@ namespace TQL.RDL.Evaluator.Tests
             return true;
         }
 
-        private RDLVirtualMachine Parse(string query, DateTimeOffset? minDate = null, DateTimeOffset? maxDate = null)
+        private RDLVirtualMachine Parse(string query)
         {
             var gm = new RdlMetadata();
 
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer, gm);
+            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[] {
+                "dd/M/yyyy H:m:s",
+                "dd/M/yyyy h:m:s tt",
+                "dd.M.yyyy H:m:s",
+                "dd.M.yyyy h:m:s tt",
+                "yyyy-mm.dd HH:mm:ss",
+                "yyyy/mm/dd H:m:s",
+                "dd.M.yyyy"
+            }, new System.Globalization.CultureInfo("en-US"));
 
             var methods = new DefaultMethods();
 
@@ -254,7 +230,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
 
-            var visitor = new RDLCodeGenerator(gm, minDate, maxDate);
+            var visitor = new RDLCodeGenerator(gm);
 
             var node = parser.ComposeRootComponents();
             node.Accept(visitor);

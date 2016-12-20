@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Nodes;
@@ -11,8 +12,11 @@ namespace TQL.RDL.Parser
     {
         private LexerComplexTokensDecorator cLexer;
         private RdlMetadata metadatas;
+        private TimeSpan zone;
+        private string[] formats;
+        private CultureInfo ci;
 
-        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas)
+        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
             : base(lexer)
         {
             lastToken = new NoneToken();
@@ -23,6 +27,10 @@ namespace TQL.RDL.Parser
                 throw new ArgumentNullException(nameof(RdlMetadata));
 
             this.metadatas = metadatas;
+
+            this.zone = zone;
+            this.formats = formats;
+            this.ci = ci;
         }
 
         public RootScriptNode ComposeRootComponents()
@@ -72,7 +80,7 @@ namespace TQL.RDL.Parser
                 case StatementType.Var:
                     return new StartAtNode(startAtToken, new VarNode(token as VarToken));
                 case StatementType.Word:
-                    return new StartAtNode(startAtToken, new DateTimeNode(token));
+                    return new StartAtNode(startAtToken, new DateTimeNode(token, zone, formats, ci));
             }
             throw new NotSupportedException();
         }
@@ -87,7 +95,7 @@ namespace TQL.RDL.Parser
                 case StatementType.Var:
                     throw new NotImplementedException();
                 case StatementType.Word:
-                    return new StopAtNode(stopAtToken, new DateTimeNode(token));
+                    return new StopAtNode(stopAtToken, new DateTimeNode(token, zone, formats, ci));
             }
             throw new NotSupportedException();
         }

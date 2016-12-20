@@ -21,19 +21,6 @@ namespace TQL.RDL.Evaluator
         B
     }
 
-    public class StackFrame
-    {
-        public Stack<long?> Values;
-        public Stack<DateTimeOffset?> Datetimes;
-        public object[] CallArgs { get; set; }
-        public long[] regs { get; set; }
-        public IRDLInstruction[] instructions;
-        public StackFrame()
-        {
-
-        }
-    }
-
     public interface IVmTracker
     {
         DateTimeOffset StartAt { get; }

@@ -21,7 +21,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(DateTimeOffset);
 
-        public DateTimeOffset Datetime => when.DateTime;
+        public DateTimeOffset When => when.DateTime;
 
     }
 }

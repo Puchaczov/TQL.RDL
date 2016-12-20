@@ -245,7 +245,7 @@ namespace TQL.RDL.Evaluator
         {
             try
             {
-                var tmp = node.Datetime;
+                var tmp = node.When;
             }
             catch (Exception exc)
             {

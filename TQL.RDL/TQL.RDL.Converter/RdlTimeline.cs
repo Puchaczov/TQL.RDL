@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Interfaces;
@@ -31,11 +30,11 @@ namespace TQL.RDL.Converter
                 RDLCodeGenerator codeGenerator = null;
                 if (request.Debuggable)
                 {
-                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas, request.MinDate, request.MaxDate);
+                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas);
                 }
                 else
                 {
-                    codeGenerator = new RDLCodeGenerator(metadatas, request.MinDate, request.MaxDate);
+                    codeGenerator = new RDLCodeGenerator(metadatas);
                 }
 
                 ast.Accept(codeGenerator);
@@ -43,8 +42,8 @@ namespace TQL.RDL.Converter
 
                 if (evaluator != null)
                 {
-                    if (!evaluator.ReferenceTime.HasValue)
-                        evaluator.ReferenceTime = request.ReferenceTime;
+                    if (request.Source == request.Target)
+                        return new ConvertionResponse<IFireTimeEvaluator>(evaluator);
 
                     return new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
                 }
