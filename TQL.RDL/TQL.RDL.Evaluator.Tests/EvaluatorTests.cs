@@ -102,6 +102,12 @@ namespace TQL.RDL.Evaluator.Tests
         }
 
         [TestMethod]
+        public void CodeGenerationVisitor_ModuloOp_ShouldPass()
+        {
+            EvaluateQuery("repeat every days where GetDay() % 3 = 0 and GetDayOfYear() % 3 = 0 start at '23.12.2016 00:00:00'", string.Empty, string.Empty);
+        }
+
+        [TestMethod]
         public void CodeGenerationVisitor_EvaluateNullWhenStopAtReached_ShouldReturnNull()
         {
             var machine = Parse("repeat every 2 hours start at '21.05.2012 13:00:00' stop at '21.05.2012 12:00:00'");
@@ -229,6 +235,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
 
             var visitor = new RDLCodeGenerator(gm);
 

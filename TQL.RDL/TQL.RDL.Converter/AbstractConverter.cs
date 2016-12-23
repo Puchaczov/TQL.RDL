@@ -71,6 +71,8 @@ namespace TQL.RDL.Converter
 
             metadatas.RegisterMethod(nameof(DefaultMethods.Now), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.Now), new Type[] { }));
             metadatas.RegisterMethod(nameof(DefaultMethods.UtcNow), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.UtcNow), new Type[] { }));
+
+            metadatas.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
         }
     }
 }

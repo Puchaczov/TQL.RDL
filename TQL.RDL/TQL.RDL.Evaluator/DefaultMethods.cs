@@ -87,5 +87,6 @@ namespace TQL.RDL.Evaluator
             }
             return null;
         }
+        public long? GetDayOfYear() => machine.Datetimes.Peek()?.DayOfYear;
     }
 }

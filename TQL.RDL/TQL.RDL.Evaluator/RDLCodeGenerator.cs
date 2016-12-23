@@ -261,7 +261,7 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(ModuloNode node)
         {
-            instructions.Add(new AddNumericToNumeric());
+            ExpressionGenerateInstructions<ModuloNumericToNumeric, ModuloNumericToNumeric>(node);
         }
 
         public override void Visit(StarNode node)
