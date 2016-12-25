@@ -80,6 +80,15 @@ namespace TQL.RDL.Parser.Tests
         }
 
         [TestMethod]
+        public void RDLParser_ComposeCaseWhen_ShouldPass()
+        {
+            var gm = new RdlMetadata();
+            var lexer = new LexerComplexTokensDecorator("repeat every days where case when 1 > 2 and 2 > 1 then GetDay() > 1 else GetDay() < 5 esac");
+            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
+            var node = parser.ComposeRootComponents();
+        }
+
+        [TestMethod]
         public void RDLParser_ComposeWhereWithInCondition_ShouldPass()
         {
             var gm = new RdlMetadata();

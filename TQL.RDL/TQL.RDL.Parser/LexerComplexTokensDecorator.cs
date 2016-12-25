@@ -2,6 +2,7 @@
 using System.Collections;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Tokens;
+using static TQL.RDL.Parser.Lexer;
 
 namespace TQL.RDL.Parser
 {
@@ -18,14 +19,21 @@ namespace TQL.RDL.Parser
             skipWhiteSpaces = true;
         }
 
-        public LexerComplexTokensDecorator(string input)
+        public LexerComplexTokensDecorator(string input, DefinitionSet ds = DefinitionSet.Query)
         {
-            lexer = new Lexer(input);
+            lexer = new Lexer(input, ds);
             disableEnumerationForTokens = new StatementType[0];
             skipWhiteSpaces = true;
         }
 
         public int Position => lexer.Position;
+
+        public string Query => lexer.Query;
+
+        public void ChangePosition(int newPosition)
+        {
+            lexer.ChangePosition(newPosition);
+        }
 
         public Token CurrentToken() => lexer.CurrentToken();
 

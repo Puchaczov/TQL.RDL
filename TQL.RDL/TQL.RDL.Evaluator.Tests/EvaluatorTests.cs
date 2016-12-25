@@ -101,6 +101,26 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("04.01.2012 00:00:00"));
         }
 
+        [Ignore]
+        [TestMethod]
+        public void CodeGenerationVisitor_CaseWhen_EvaluationDependsOnWeekOfMonth_ShouldPass()
+        {
+            EvaluateQuery("repeat every days where 1 = (case when GetWeekOfMonth() = 1 and GetDayOfWeek() in (2,3) then 1 when GetWeekOfMonth() = 3 and GetDayOfWeek() in (4,5) then 1 else 0 esac) start at {0}",
+                "'01.12.2016 00:00:00'",
+                string.Empty,
+                (x) => x == DateTimeOffset.Parse("04.12.2016 00:00:00"));
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void CodeGenerationVisitor_CaseWhen_Simple_ShouldPass()
+        {
+            EvaluateQuery("repeat every days where 1 = (case when GetDay() < 15 then 1 when GetMonth() = 1 then 1 else 0 esac) start at {0}",
+                "'01.12.2016 00:00:00'",
+                string.Empty,
+                (x) => x == DateTimeOffset.Parse("04.12.2016 00:00:00"));
+        }
+
         [TestMethod]
         public void CodeGenerationVisitor_ModuloOp_ShouldPass()
         {
@@ -236,6 +256,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
 
             var visitor = new RDLCodeGenerator(gm);
 

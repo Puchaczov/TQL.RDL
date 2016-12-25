@@ -73,6 +73,7 @@ namespace TQL.RDL.Converter
             metadatas.RegisterMethod(nameof(DefaultMethods.UtcNow), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.UtcNow), new Type[] { }));
 
             metadatas.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
+            metadatas.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), typeof(DefaultMethods).GetType().GetRuntimeMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
         }
     }
 }

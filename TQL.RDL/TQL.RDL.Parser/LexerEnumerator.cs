@@ -11,11 +11,13 @@ namespace TQL.RDL.Parser
         private ILexer<Token> lexer;
         private Token current;
         private StatementType[] abortOnToken;
+        private bool firstValueEnumerated = false;
 
         public LexerEnumerator(ILexer<Token> lexer, params StatementType[] abortOnToken)
         {
             this.lexer = lexer;
             this.abortOnToken = abortOnToken;
+            this.current = lexer.CurrentToken();
         }
 
         public object Current => current;
@@ -24,6 +26,15 @@ namespace TQL.RDL.Parser
 
         public bool MoveNext()
         {
+            if (!firstValueEnumerated && current.TokenType != StatementType.None)
+            {
+                if (abortOnToken.Contains(current.TokenType))
+                    return false;
+                firstValueEnumerated = true;
+                return true;
+            }
+
+            firstValueEnumerated = true;
             current = lexer.NextToken();
 
             if (abortOnToken.Contains(current.TokenType))

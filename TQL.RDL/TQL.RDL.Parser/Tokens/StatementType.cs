@@ -39,6 +39,7 @@
         When,
         Then,
         Else,
+        CaseWhenEsac,
         CaseEnd
     }
 }

@@ -27,14 +27,12 @@ namespace TQL.RDL.Parser
             operators.Add(new Token("-", StatementType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
             operators.Add(new Token("+", StatementType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
             operators.Add(new Token("not", StatementType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
-            operators.Add(new WhenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
-            operators.Add(new ThenToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
-            operators.Add(new ElseToken(new TextSpan()), new PrecedenceAssociativity(20, Associativity.Left));
         }
 
         public override Token[] Parse(LexerComplexTokensDecorator expression) => InfixToPostfix(expression);
-        protected override bool IsLeftParenthesis(Token token) => token.TokenType == StatementType.LeftParenthesis || token.TokenType == StatementType.Case;
-        protected override bool IsRightParenthesis(Token token) => token.TokenType == StatementType.RightParenthesis || token.TokenType == StatementType.CaseEnd;
+
+        protected override bool IsLeftParenthesis(Token token) => token.TokenType == StatementType.LeftParenthesis;
+        protected override bool IsRightParenthesis(Token token) => token.TokenType == StatementType.RightParenthesis;
         protected override bool IsSkippable(Token token) => token.TokenType == StatementType.WhiteSpace;
         protected override bool IsComma(Token token) => token.TokenType == StatementType.Comma;
         protected override bool IsWord(Token token) => token.TokenType == StatementType.Word;

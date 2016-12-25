@@ -30,7 +30,7 @@ namespace TQL.RDL.Converter
                 RDLCodeGenerator codeGenerator = null;
                 if (request.Debuggable)
                 {
-                    codeGenerator = new RDLDebuggerSymbolGeneratorVisitor(metadatas);
+                    codeGenerator = new RDLDebuggerSymbolGenerator(metadatas);
                 }
                 else
                 {

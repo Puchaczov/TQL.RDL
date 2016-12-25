@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public sealed class RDLDebuggerSymbolGeneratorVisitor : RDLCodeGenerator
+    public sealed class RDLDebuggerSymbolGenerator : RDLCodeGenerator
     {
         public override void Visit(AddNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(OrNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
@@ -36,7 +32,7 @@ namespace TQL.RDL.Evaluator
         public override void Visit(NotInNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public override void Visit(LessNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
 
-        public RDLDebuggerSymbolGeneratorVisitor(RdlMetadata gm)
+        public RDLDebuggerSymbolGenerator(RdlMetadata gm)
             : base(gm)
         { }
 

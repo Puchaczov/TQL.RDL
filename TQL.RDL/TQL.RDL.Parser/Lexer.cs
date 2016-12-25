@@ -14,8 +14,6 @@ namespace TQL.RDL.Parser
             public static string Function = @"[a-zA-Z_-]{1,}[\d]*(?=[\(])";
 
             public static string KAnd = string.Format(Keyword, AndToken.TokenText);
-            public static string KCase = string.Format(Keyword, CaseToken.TokenText);
-            public static string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
             public static string KComma = CommaToken.TokenText;
             public static string KDiff = DiffToken.TokenText;
             public static string KElse = string.Format(Keyword, ElseToken.TokenText);
@@ -40,19 +38,61 @@ namespace TQL.RDL.Parser
             public static string KStartAt = @"(?<=[\s]{1,}|^)start[\s]{1,}at(?=[\s]{1,}|$)";
             public static string KStopAt = @"(?<=[\s]{1,}|^)stop[\s]{1,}at(?=[\s]{1,}|$)";
             public static string KThen = string.Format(Keyword, ThenToken.TokenText);
-            public static string KWhen = string.Format(Keyword, WhenToken.TokenText);
             public static string KWhere = string.Format(Keyword, WhereToken.TokenText);
             public static string KWhiteSpace = @"[\s]{1,}";
             public static string KVar = @"@(?<varname>(?<=@)((\w{1,})))(?<=\s{0,}|$)";
             public static string KWord = @"[\w*?_]{1,}";
             public static string KWordBracketed = @"'(.*?[^\\])'";
             public static string KEqual = string.Format(Keyword, EqualityToken.TokenText);
+            public static string KCaseWhenEsac = @"case.*esac";
+            public static string KCase = string.Format(Keyword, CaseToken.TokenText);
+            public static string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
+            public static string KWhen = string.Format(Keyword, WhenToken.TokenText);
         }
 
-        public Lexer(string input) : 
-            base(input, new NoneToken(),
+        protected static class DefinitionSets
+        {
+            public static TokenDefinition[] CasualQuery => new TokenDefinition[] {
+                new TokenDefinition(TokenRegexDefinition.KAnd),
+                new TokenDefinition(TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline),
+                new TokenDefinition(TokenRegexDefinition.KComma),
+                new TokenDefinition(TokenRegexDefinition.KDiff),
+                new TokenDefinition(TokenRegexDefinition.KElse),
+                new TokenDefinition(TokenRegexDefinition.KEvery),
+                new TokenDefinition(TokenRegexDefinition.KFSlashToken),
+                new TokenDefinition(TokenRegexDefinition.KGreater),
+                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
+                new TokenDefinition(TokenRegexDefinition.KHyphen),
+                new TokenDefinition(TokenRegexDefinition.KIn),
+                new TokenDefinition(TokenRegexDefinition.KIs),
+                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KLess),
+                new TokenDefinition(TokenRegexDefinition.KLessEqual),
+                new TokenDefinition(TokenRegexDefinition.KEqual),
+                new TokenDefinition(TokenRegexDefinition.KModulo),
+                new TokenDefinition(TokenRegexDefinition.KNotIn),
+                new TokenDefinition(TokenRegexDefinition.KNot),
+                new TokenDefinition(TokenRegexDefinition.KOr),
+                new TokenDefinition(TokenRegexDefinition.KPlus),
+                new TokenDefinition(TokenRegexDefinition.KRepeat),
+                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KStartAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KWhere),
+                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
+                new TokenDefinition(TokenRegexDefinition.KVar),
+                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
+                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
+            };
+
+            public static TokenDefinition[] CaseWhenQuery => new TokenDefinition[] {
                 new TokenDefinition(TokenRegexDefinition.KAnd),
                 new TokenDefinition(TokenRegexDefinition.KCase),
+                new TokenDefinition(TokenRegexDefinition.KWhen),
+                new TokenDefinition(TokenRegexDefinition.KThen),
                 new TokenDefinition(TokenRegexDefinition.KCaseEnd),
                 new TokenDefinition(TokenRegexDefinition.KComma),
                 new TokenDefinition(TokenRegexDefinition.KDiff),
@@ -79,15 +119,32 @@ namespace TQL.RDL.Parser
                 new TokenDefinition(TokenRegexDefinition.KStartAt),
                 new TokenDefinition(TokenRegexDefinition.KStopAt),
                 new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KThen),
-                new TokenDefinition(TokenRegexDefinition.KWhen),
                 new TokenDefinition(TokenRegexDefinition.KStar),
                 new TokenDefinition(TokenRegexDefinition.KWhere),
                 new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
                 new TokenDefinition(TokenRegexDefinition.KVar),
                 new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
-                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline))
+                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
+            };
+        }
+
+        public enum DefinitionSet
+        {
+            Query,
+            CaseWhen
+        }
+
+        public Lexer(string input, DefinitionSet ds) : 
+            base(input, new NoneToken(),
+                ds == DefinitionSet.Query ? DefinitionSets.CasualQuery : DefinitionSets.CaseWhenQuery)
         { }
+
+        public void ChangePosition(int newPosition)
+        {
+            Position = newPosition;
+        }
+
+        public string Query => input;
 
         protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(input.Length, 0));
 
@@ -100,6 +157,8 @@ namespace TQL.RDL.Parser
             {
                 case StatementType.And:
                     return new AndToken(new TextSpan(Position, tokenText.Length));
+                case StatementType.CaseWhenEsac:
+                    return new CaseWhenEsacToken(tokenText, new TextSpan(Position, tokenText.Length));
                 case StatementType.Case:
                     return new CaseToken(new TextSpan(Position, tokenText.Length));
                 case StatementType.CaseEnd:
@@ -240,19 +299,26 @@ namespace TQL.RDL.Parser
                 case WhiteSpaceToken.TokenText:
                     return StatementType.WhiteSpace;
             }
-            
+
+
+            var fMatch = Regex.Match(tokenText, TokenRegexDefinition.Function);
+
             int number = 0;
             if (int.TryParse(tokenText, out number) && !tokenText.Contains(" "))
             {
                 return StatementType.Numeric;
             }
-            else if(Regex.IsMatch(tokenText, TokenRegexDefinition.Function))
+            else if(fMatch.Success && fMatch.Index == 0)
             {
                 return StatementType.Function;
             }
             else if(matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
             {
                 return StatementType.Var;
+            }
+            else if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac))
+            {
+                return StatementType.CaseWhenEsac;
             }
 
             return StatementType.Word;

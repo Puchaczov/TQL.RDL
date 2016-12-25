@@ -263,7 +263,9 @@ namespace TQL.RDL.Parser.Nodes
 
         public ElseNode(Token token, RdlSyntaxNode node)
             : base(node)
-        { }
+        {
+            this.token = token;
+        }
 
         public override Type ReturnType => Descendant.ReturnType;
 
@@ -280,6 +282,8 @@ namespace TQL.RDL.Parser.Nodes
         {
             visitor.Visit(this);
         }
+
+        public override string ToString() => string.Format("else {0}", Descendants[0]);
     }
 
     public class WhenNode : UnaryNode
@@ -309,6 +313,8 @@ namespace TQL.RDL.Parser.Nodes
         {
             this.Parent = node;
         }
+
+        public override string ToString() => string.Format("when {0}", Expression);
     }
 
     public class ThenNode : UnaryNode
@@ -334,28 +340,37 @@ namespace TQL.RDL.Parser.Nodes
         {
             visitor.Visit(this);
         }
+
+        public override string ToString() => string.Format("then {0}", Descendants[0]);
     }
 
     public class WhenThenNode : BinaryNode
     {
+        private RdlSyntaxNode[] descs;
+
         public WhenThenNode(RdlSyntaxNode when, RdlSyntaxNode then) : base(when, then)
         {
+            this.descs = base.Descendants.Reverse().ToArray();
+
             When.SetParent(this);
             Then.SetParent(this);
+
         }
 
-        public WhenNode When => Descendants[0] as WhenNode;
-        public ThenNode Then => Descendants[1] as ThenNode;
+        public WhenNode When => Descendants[1] as WhenNode;
+        public ThenNode Then => Descendants[0] as ThenNode;
+
+        public override RdlSyntaxNode[] Descendants => descs;
 
         public CaseNode Parent { get; private set; }
 
         public int ArrayOrder {
             get
             {
-                for(int i = 0; i < Parent.Descendants.Count(); ++i)
+                for(int i = 0, j = Parent.Descendants.Count(); i < j; ++i)
                 {
                     if (Parent.Descendants[i] == this)
-                        return i;
+                        return j - i;
                 }
                 return -1;
             }
@@ -372,10 +387,14 @@ namespace TQL.RDL.Parser.Nodes
         {
             visitor.Visit(this);
         }
+
+        public override string ToString() => string.Format("{1} {0}", When, Then);
     }
 
     public class CaseNode : RdlSyntaxNode
     {
+        private RdlSyntaxNode[] descs;
+
         public CaseNode(Token caseToken, WhenThenNode[] nodes, ElseNode node)
         {
             node.SetParent(this);
@@ -389,6 +408,8 @@ namespace TQL.RDL.Parser.Nodes
             }
 
             this.caseToken = caseToken;
+
+            this.descs = whenThenExpressions.Concat(new RdlSyntaxNode[1] { elseExpression }).Reverse().ToArray();
         }
 
         private Token caseToken;
@@ -396,7 +417,8 @@ namespace TQL.RDL.Parser.Nodes
         private WhenThenNode[] whenThenExpressions;
         private ElseNode elseExpression;
 
-        public override RdlSyntaxNode[] Descendants => new List<RdlSyntaxNode>(whenThenExpressions).Concat(new RdlSyntaxNode[1] { elseExpression }).ToArray();
+        public override RdlSyntaxNode[] Descendants => descs;
+
         public RdlSyntaxNode[] WhenThenExpressions => whenThenExpressions;
 
         public override TextSpan FullSpan => new TextSpan(caseToken.Span.Start, elseExpression.FullSpan.End - caseToken.Span.Start);
@@ -414,5 +436,7 @@ namespace TQL.RDL.Parser.Nodes
         {
             visitor.Visit(this);
         }
+
+        public override int GetHashCode() => ToString().GetHashCode();
     }
 }

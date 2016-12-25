@@ -16,12 +16,25 @@ namespace TQL.RDL.Parser
         private string[] formats;
         private CultureInfo ci;
 
-        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
-            : base(lexer)
+        public override Token CurrentToken
         {
-            lastToken = new NoneToken();
-            currentToken = lexer.NextToken();
+            get;
+            protected set;
+        }
+
+        public override Token LastToken
+        {
+            get;
+            protected set;
+        }
+
+        protected override ILexer<Token> Lexer => cLexer;
+
+        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
+        {
             cLexer = lexer;
+            LastToken = new NoneToken();
+            CurrentToken = lexer.NextToken();
 
             if (metadatas == null)
                 throw new ArgumentNullException(nameof(RdlMetadata));
@@ -37,9 +50,9 @@ namespace TQL.RDL.Parser
         {
             var rootComponents = new List<RdlSyntaxNode>();
             var i = 0;
-            for(; currentToken.TokenType != StatementType.EndOfFile; ++i)
+            for(; CurrentToken.TokenType != StatementType.EndOfFile; ++i)
             {
-                while(currentToken.TokenType == StatementType.WhiteSpace)
+                while(CurrentToken.TokenType == StatementType.WhiteSpace)
                 {
                     Consume(StatementType.WhiteSpace);
                 }
@@ -50,14 +63,14 @@ namespace TQL.RDL.Parser
 
         private RdlSyntaxNode ComposeNextComponents()
         {
-            switch(currentToken.TokenType)
+            switch(CurrentToken.TokenType)
             {
                 case StatementType.Repeat:
                     Consume(StatementType.Repeat);
                     return ComposeRepeat();
                 case StatementType.Where:
                     var where = ComposeWhere();
-                    currentToken = lexer.CurrentToken();
+                    CurrentToken = Lexer.CurrentToken();
                     return new WhereConditionsNode(where);
                 case StatementType.StartAt:
                     Consume(StatementType.StartAt);
@@ -72,9 +85,9 @@ namespace TQL.RDL.Parser
 
         private StartAtNode ComposeStartAt()
         {
-            var startAtToken = lastToken;
-            var token = currentToken;
-            Consume(currentToken.TokenType);
+            var startAtToken = LastToken;
+            var token = CurrentToken;
+            Consume(CurrentToken.TokenType);
             switch(token.TokenType)
             {
                 case StatementType.Var:
@@ -87,9 +100,9 @@ namespace TQL.RDL.Parser
 
         private RdlSyntaxNode ComposeStopAt()
         {
-            var stopAtToken = lastToken;
-            var token = currentToken;
-            Consume(currentToken.TokenType);
+            var stopAtToken = LastToken;
+            var token = CurrentToken;
+            Consume(CurrentToken.TokenType);
             switch (token.TokenType)
             {
                 case StatementType.Var:
@@ -102,6 +115,7 @@ namespace TQL.RDL.Parser
 
         private RdlSyntaxNode ComposeWhere()
         {
+            Consume(StatementType.Where);
             RDLWhereParser parser = new RDLWhereParser();
             cLexer.DisableEnumerationWhen(StatementType.StartAt, StatementType.StopAt);
             var tokens = parser.Parse(cLexer);
@@ -109,6 +123,8 @@ namespace TQL.RDL.Parser
             Stack<RdlSyntaxNode> nodes = new Stack<RdlSyntaxNode>();
             return ComposePostfix(nodes, tokens);
         }
+
+        private RdlSyntaxNode ComposePostfix(Token[] tokens) => ComposePostfix(new Stack<RdlSyntaxNode>(), tokens);
 
         private RdlSyntaxNode ComposePostfix(Stack<RdlSyntaxNode> nodes, Token[] tokens)
         {
@@ -213,6 +229,13 @@ namespace TQL.RDL.Parser
                         var thenNode = new ThenNode(tokens[i], nodes.Pop());
                         nodes.Push(new WhenThenNode(nodes.Pop(), thenNode));
                         break;
+                    case StatementType.CaseWhenEsac:
+                        var oldLexer = cLexer;
+                        cLexer = new LexerComplexTokensDecorator(new Lexer(cLexer.Query, Parser.Lexer.DefinitionSet.CaseWhen));
+                        cLexer.ChangePosition(tokens[i].Span.Start);
+                        nodes.Push(ComposeCaseWhenEsac());
+                        cLexer = oldLexer;
+                        break;
                     default:
                         throw new NotSupportedException();
                 }
@@ -220,32 +243,81 @@ namespace TQL.RDL.Parser
             return nodes.Pop();
         }
 
+        private RdlSyntaxNode ComposeCaseWhenEsac()
+        {
+            Consume(CurrentToken.TokenType);
+            switch(CurrentToken.TokenType)
+            {
+                case StatementType.Case:
+                    Consume(CurrentToken.TokenType);
+                    return new CaseNode(LastToken, ConsumeWhenNodes(), ConsumeEndNode());
+            }
+            throw new NotSupportedException();
+        }
+
+        private WhenThenNode[] ConsumeWhenNodes()
+        {
+            List<WhenThenNode> nodes = new List<WhenThenNode>();
+            RDLWhereParser parser = new RDLWhereParser();
+            while (CurrentToken.TokenType == StatementType.When)
+            {
+                Consume(StatementType.When);
+                var whenToken = LastToken;
+                cLexer.DisableEnumerationWhen(StatementType.Then);
+                var whenNode = parser.Parse(cLexer);
+                CurrentToken = cLexer.CurrentToken();
+                LastToken = cLexer.LastToken();
+                var thenToken = CurrentToken;
+                Consume(StatementType.Then);
+                cLexer.DisableEnumerationWhen(StatementType.When, StatementType.Else);
+                var thenNode = parser.Parse(cLexer);
+                CurrentToken = cLexer.CurrentToken();
+                LastToken = cLexer.LastToken();
+                nodes.Add(new WhenThenNode(new WhenNode(whenToken, ComposePostfix(whenNode)), new ThenNode(thenToken, ComposePostfix(thenNode))));
+            }
+
+            return nodes.ToArray();
+        }
+
+        private ElseNode ConsumeEndNode()
+        {
+            Consume(StatementType.Else);
+            cLexer.DisableEnumerationWhen(StatementType.CaseEnd);
+            RDLWhereParser parser = new RDLWhereParser();
+            var elseNode = parser.Parse(cLexer);
+            CurrentToken = cLexer.CurrentToken();
+            LastToken = cLexer.LastToken();
+            Consume(StatementType.CaseEnd);
+            return new ElseNode(LastToken, ComposePostfix(elseNode));
+        }
+
+
         private RdlSyntaxNode ComposeRepeat()
         {
             RepeatEveryNode node = null;
-            var repeat = lastToken;
-            switch(currentToken.TokenType)
+            var repeat = LastToken;
+            switch(CurrentToken.TokenType)
             {
                 case StatementType.Every:
-                    var every = currentToken;
+                    var every = CurrentToken;
                     Consume(StatementType.Every);
-                    if(currentToken.TokenType == StatementType.Numeric)
+                    if(CurrentToken.TokenType == StatementType.Numeric)
                     {
-                        var numeric = currentToken;
+                        var numeric = CurrentToken;
                         Consume(StatementType.Numeric);
                         node = new NumericConsequentRepeatEveryNode(
-                            new Token("repeat every", StatementType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, currentToken.Span.End - repeat.Span.Start)), 
-                            numeric as NumericToken, 
-                            currentToken as WordToken);
+                            new Token("repeat every", StatementType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, CurrentToken.Span.End - repeat.Span.Start)), 
+                            numeric as NumericToken,
+                            CurrentToken as WordToken);
                     }
                     else
                     {
-                        node = new RepeatEveryNode(lastToken, currentToken);
+                        node = new RepeatEveryNode(LastToken, CurrentToken);
                     }
-                    Consume(currentToken.TokenType);
+                    Consume(CurrentToken.TokenType);
                     break;
                 default:
-                    node = new RepeatEveryNode(repeat, currentToken);
+                    node = new RepeatEveryNode(repeat, CurrentToken);
                     break;
             }
             return node;
@@ -253,9 +325,9 @@ namespace TQL.RDL.Parser
 
         private void EatWhiteSpaces()
         {
-            while(currentToken.TokenType == StatementType.WhiteSpace)
+            while(CurrentToken.TokenType == StatementType.WhiteSpace)
             {
-                Consume(currentToken.TokenType);
+                Consume(CurrentToken.TokenType);
             }
         }
     }

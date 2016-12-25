@@ -453,6 +453,8 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(machine.Values.Pop() % machine.Values.Pop());
             machine.InstructionPointer += 1;
         }
+
+        public override string ToString() => "MOD";
     }
 
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
