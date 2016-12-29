@@ -46,17 +46,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AnalysisMessage.resx</DependentUpon>
     </Compile>
-    <Compile Include="CodeStack.cs" />
+    <Compile Include="Enumerators\ArythmeticEnumerator.cs" />
     <Compile Include="DefaultMethods.cs" />
+    <Compile Include="Enumerators\EnumeratorBase.cs" />
+    <Compile Include="Enumerators\KeywordEnumerator.cs" />
+    <Compile Include="Enumerators\VisitationState.cs" />
     <Compile Include="Instructions\Operators.cs" />
-    <Compile Include="RDLAnalyzerBase.cs" />
-    <Compile Include="RDLQueryValidator.cs" />
-    <Compile Include="RDLCodeGenerator.cs" />
-    <Compile Include="RDLDebuggerSymbolGenerator.cs" />
+    <Compile Include="Visitors\AnalyzerBase.cs" />
+    <Compile Include="Visitors\RDLQueryValidator.cs" />
+    <Compile Include="Visitors\RDLCodeGenerator.cs" />
+    <Compile Include="Visitors\RDLDebuggerSymbolGenerator.cs" />
     <Compile Include="RDLVirtualMachine.cs" />
     <Compile Include="IInstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisitationMessage.cs" />
+    <Compile Include="Visitors\CodeGenerationTraverser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="TQL.Common, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">

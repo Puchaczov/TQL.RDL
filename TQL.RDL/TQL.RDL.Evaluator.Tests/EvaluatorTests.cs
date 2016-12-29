@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using TQL.RDL.Evaluator.Enumerators;
+using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 
 namespace TQL.RDL.Evaluator.Tests
@@ -83,12 +85,17 @@ namespace TQL.RDL.Evaluator.Tests
             EvaluateQuery("repeat every days where GetWeekOfMonth() in (1,3) start at '11.12.2016 20:17:57'", string.Empty, string.Empty,
                 (x) => x == DateTimeOffset.Parse("15.12.2016 20:17:57")); //GetWeekOfMonth() in (1,3)
         }
-
-        [Ignore]
+        
         [TestMethod]
         public void CodeGenerationVisitor_CaseWhen_ShouldPass()
         {
-            EvaluateQuery("repeat every 1 days where 1 = (case when (GetDay() in (1,5)) then (1) when (GetDay() in (10,15)) then (1) else (0) esac) start at {0} stop at {1}", "'01.01.2012 00:00:00'", "'01.02.2012 00:00:00'",
+            EvaluateQuery(@"repeat every days where 1 = (
+                case 
+                    when (GetDay() in (1,5)) then (1) 
+                    when (GetDay() in (10,15)) then (1) 
+                    else (0) esac) start at {0} stop at {1}", 
+                "'01.01.2012 00:00:00'", 
+                "'01.02.2012 00:00:00'",
                 (x) => x == DateTimeOffset.Parse("01.01.2012 00:00:00"),
                 (x) => x == DateTimeOffset.Parse("05.01.2012 00:00:00"),
                 (x) => x == DateTimeOffset.Parse("10.01.2012 00:00:00"),
@@ -100,25 +107,30 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("03.01.2012 00:00:00"),
                 (x) => x == DateTimeOffset.Parse("04.01.2012 00:00:00"));
         }
-
-        [Ignore]
+        
         [TestMethod]
         public void CodeGenerationVisitor_CaseWhen_EvaluationDependsOnWeekOfMonth_ShouldPass()
         {
-            EvaluateQuery("repeat every days where 1 = (case when GetWeekOfMonth() = 1 and GetDayOfWeek() in (2,3) then 1 when GetWeekOfMonth() = 3 and GetDayOfWeek() in (4,5) then 1 else 0 esac) start at {0}",
+            EvaluateQuery(@"repeat every days where 1 = 
+                (case
+                    when GetWeekOfMonth() = 1 and GetDayOfWeek() in (2,3) then 1 
+                    when GetWeekOfMonth() = 3 and GetDayOfWeek() in (4,5) then 1 
+                    else 0 esac) start at {0}",
                 "'01.12.2016 00:00:00'",
                 string.Empty,
-                (x) => x == DateTimeOffset.Parse("04.12.2016 00:00:00"));
+                (x) => x == DateTimeOffset.Parse("06.12.2016 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("07.12.2016 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("15.12.2016 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("16.12.2016 00:00:00"));
         }
-
-        [Ignore]
+        
         [TestMethod]
         public void CodeGenerationVisitor_CaseWhen_Simple_ShouldPass()
         {
-            EvaluateQuery("repeat every days where 1 = (case when GetDay() < 15 then 1 when GetMonth() = 1 then 1 else 0 esac) start at {0}",
+            EvaluateQuery("repeat every days where 1 = (case when 2 = 3 then 1 when 4 = 5 then 1 else 1 esac) start at {0} stop at {0}",
                 "'01.12.2016 00:00:00'",
                 string.Empty,
-                (x) => x == DateTimeOffset.Parse("04.12.2016 00:00:00"));
+                (x) => x == DateTimeOffset.Parse("01.12.2016 00:00:00"));
         }
 
         [TestMethod]
@@ -261,7 +273,10 @@ namespace TQL.RDL.Evaluator.Tests
             var visitor = new RDLCodeGenerator(gm);
 
             var node = parser.ComposeRootComponents();
-            node.Accept(visitor);
+
+            var traverseVisitor = new CodeGenerationTraverser(visitor);
+
+            node.Accept(traverseVisitor);
 
             var machine = visitor.VirtualMachine;
             methods.SetMachine(machine);

@@ -130,46 +130,74 @@ namespace TQL.RDL.Parser
         {
             for (int i = 0; i < tokens.Length; ++i)
             {
+                RdlSyntaxNode farg = null;
+                RdlSyntaxNode sarg = null;
                 switch (tokens[i].TokenType)
                 {
                     case StatementType.Plus:
-                        nodes.Push(new AddNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new AddNode(farg, sarg));
                         break;
                     case StatementType.Hyphen:
-                        nodes.Push(new HyphenNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new HyphenNode(farg, sarg));
                         break;
                     case StatementType.Star:
-                        nodes.Push(new StarNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new StarNode(farg, sarg));
                         break;
                     case StatementType.Mod:
-                        nodes.Push(new ModuloNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new ModuloNode(farg, sarg));
                         break;
                     case StatementType.FSlash:
-                        nodes.Push(new FSlashNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new FSlashNode(farg, sarg));
                         break;
                     case StatementType.And:
-                        nodes.Push(new AndNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new AndNode(farg, sarg));
                         break;
                     case StatementType.Or:
-                        nodes.Push(new OrNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new OrNode(farg, sarg));
                         break;
                     case StatementType.Equality:
-                        nodes.Push(new EqualityNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new EqualityNode(farg, sarg));
                         break;
                     case StatementType.Diff:
-                        nodes.Push(new DiffNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new DiffNode(farg, sarg));
                         break;
                     case StatementType.Greater:
-                        nodes.Push(new GreaterNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new GreaterNode(farg, sarg));
                         break;
                     case StatementType.GreaterEqual:
-                        nodes.Push(new GreaterEqualNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new GreaterEqualNode(farg, sarg));
                         break;
                     case StatementType.Less:
-                        nodes.Push(new LessNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new LessNode(farg, sarg));
                         break;
                     case StatementType.LessEqual:
-                        nodes.Push(new LessEqualNode(nodes.Pop(), nodes.Pop()));
+                        sarg = nodes.Pop();
+                        farg = nodes.Pop();
+                        nodes.Push(new LessEqualNode(farg, sarg));
                         break;
                     case StatementType.In:
                     case StatementType.NotIn:

@@ -59,7 +59,7 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.InstructionPointer += 1;
         }
 
-        public override string ToString() => string.Format("CALL");
+        public override string ToString() => string.Format($"CALL {info.Name}");
     }
 
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
@@ -90,7 +90,9 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push(machine.Values.Pop() & machine.Values.Pop());
+            var b = machine.Values.Pop();
+            var a = machine.Values.Pop();
+            machine.Values.Push(a & b);
             machine.InstructionPointer += 1;
         }
     }
@@ -231,7 +233,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Values.Pop() >= machine.Values.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Values.Pop() <= machine.Values.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
     }
@@ -241,7 +243,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Datetimes.Pop() >= machine.Datetimes.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Datetimes.Pop() <= machine.Datetimes.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
     }
@@ -251,7 +253,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Values.Pop() > machine.Values.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Values.Pop() < machine.Values.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
     }
@@ -261,7 +263,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Datetimes.Pop() > machine.Datetimes.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Datetimes.Pop() < machine.Datetimes.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
     }
@@ -271,7 +273,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Values.Pop() <= machine.Values.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Values.Pop() >= machine.Values.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
 
@@ -283,7 +285,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Datetimes.Pop() <= machine.Datetimes.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Datetimes.Pop() >= machine.Datetimes.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
 
@@ -295,7 +297,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Values.Pop() < machine.Values.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Values.Pop() > machine.Values.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
 
@@ -307,7 +309,7 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push((machine.Datetimes.Pop() < machine.Datetimes.Pop()) ? 1 : 0);
+            machine.Values.Push((machine.Datetimes.Pop() > machine.Datetimes.Pop()) ? 1 : 0);
             machine.InstructionPointer += 1;
         }
 
@@ -336,10 +338,7 @@ namespace TQL.RDL.Evaluator.Instructions
 
         public void Run(RDLVirtualMachine machine)
         {
-            var inArgsCount = machine.Values.Pop();
-
-            if (!inArgsCount.HasValue)
-                throw new ArgumentOutOfRangeException(nameof(inArgsCount));
+            var inArgsCount = machine.Registers[(short)Registers.B];
 
             var toCompare = pop(machine);
 
@@ -450,7 +449,9 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push(machine.Values.Pop() % machine.Values.Pop());
+            var b = machine.Values.Pop();
+            var a = machine.Values.Pop();
+            machine.Values.Push(a % b);
             machine.InstructionPointer += 1;
         }
 
@@ -474,7 +475,9 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push(machine.Values.Pop() - machine.Values.Pop());
+            var b = machine.Values.Pop();
+            var a = machine.Values.Pop();
+            machine.Values.Push(a - b);
             machine.InstructionPointer += 1;
         }
 
@@ -486,7 +489,9 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         public void Run(RDLVirtualMachine machine)
         {
-            machine.Values.Push(machine.Values.Pop() / machine.Values.Pop());
+            var b = machine.Values.Pop();
+            var a = machine.Values.Pop();
+            machine.Values.Push(a / b);
             machine.InstructionPointer += 1;
         }
 
@@ -581,6 +586,27 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => $"JMP {label}";
+    }
+
+    [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
+    public class LoadToRegister : IRDLInstruction
+    {
+        private long value;
+        private Registers register;
+
+        public LoadToRegister(Registers reg, long value)
+        {
+            this.value = value;
+            this.register = reg;
+        }
+
+        public void Run(RDLVirtualMachine machine)
+        {
+            machine.Registers[(short)register] = value;
+            machine.InstructionPointer += 1;
+        }
+
+        public override string ToString() => $"LDReg {register}, {value}";
     }
 
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]

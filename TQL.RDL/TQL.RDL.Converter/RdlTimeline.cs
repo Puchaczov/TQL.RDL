@@ -4,6 +4,7 @@ using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator;
+using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
@@ -22,8 +23,10 @@ namespace TQL.RDL.Converter
                 metadatas.RegisterMethod(method.Name, method);
             }
 
-            RDLQueryValidator coretnessChecker = new RDLQueryValidator(metadatas);
-            ast.Accept(coretnessChecker);
+
+            var coretnessChecker = new RDLQueryValidator(metadatas);
+            var queryValidatorTraverser = new CodeGenerationTraverser(coretnessChecker);
+            ast.Accept(queryValidatorTraverser);
 
             if(coretnessChecker.IsValid)
             {
@@ -37,7 +40,9 @@ namespace TQL.RDL.Converter
                     codeGenerator = new RDLCodeGenerator(metadatas);
                 }
 
-                ast.Accept(codeGenerator);
+                var codeGenerationTraverseVisitor = new CodeGenerationTraverser(codeGenerator);
+
+                ast.Accept(codeGenerationTraverseVisitor);
                 var evaluator = codeGenerator.VirtualMachine;
 
                 if (evaluator != null)

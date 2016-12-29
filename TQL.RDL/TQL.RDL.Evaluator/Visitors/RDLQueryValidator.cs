@@ -8,7 +8,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public class RDLQueryValidator : RDLAnalyzerBase
+    public class RDLQueryValidator : AnalyzerBase
     {
         protected readonly List<Exception> criticalErrors;
         private readonly List<VisitationMessage> errors;
@@ -273,8 +273,6 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(RootScriptNode node)
         {
-            base.Visit(node);
-
             if(!startAtOccured)
             {
                 ReportStartAtRequired();

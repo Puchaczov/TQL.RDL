@@ -300,6 +300,8 @@ namespace TQL.RDL.Parser
                     return StatementType.WhiteSpace;
             }
 
+            if (string.IsNullOrWhiteSpace(tokenText))
+                return StatementType.WhiteSpace;
 
             var fMatch = Regex.Match(tokenText, TokenRegexDefinition.Function);
 
@@ -316,7 +318,7 @@ namespace TQL.RDL.Parser
             {
                 return StatementType.Var;
             }
-            else if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac))
+            else if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline))
             {
                 return StatementType.CaseWhenEsac;
             }

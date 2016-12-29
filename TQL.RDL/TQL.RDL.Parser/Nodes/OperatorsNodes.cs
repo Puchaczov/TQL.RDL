@@ -9,7 +9,7 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class AndNode : BinaryNode
     {
-        public AndNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public AndNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -21,7 +21,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class OrNode : BinaryNode
     {
-        public OrNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public OrNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -33,8 +33,8 @@ namespace TQL.RDL.Parser.Nodes
 
     public class InNode : BinaryNode
     {
-        public InNode(RdlSyntaxNode partOfDate, RdlSyntaxNode right)
-            : base(partOfDate, right)
+        public InNode(RdlSyntaxNode left, RdlSyntaxNode right)
+            : base(left, right)
         { }
 
         public override Type ReturnType => typeof(Boolean);
@@ -45,7 +45,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class DiffNode : BinaryNode
     {
-        public DiffNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public DiffNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -57,7 +57,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class CommaNode : BinaryNode
     {
-        public CommaNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public CommaNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -67,7 +67,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class EqualityNode : BinaryNode
     {
-        public EqualityNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public EqualityNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -79,7 +79,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class GreaterNode : BinaryNode
     {
-        public GreaterNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public GreaterNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -91,7 +91,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class GreaterEqualNode : BinaryNode
     {
-        public GreaterEqualNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public GreaterEqualNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -103,7 +103,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class LessNode : BinaryNode
     {
-        public LessNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public LessNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -115,7 +115,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class LessEqualNode : BinaryNode
     {
-        public LessEqualNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public LessEqualNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -127,8 +127,8 @@ namespace TQL.RDL.Parser.Nodes
 
     public class NotInNode : InNode
     {
-        public NotInNode(RdlSyntaxNode partOfDate, RdlSyntaxNode right) 
-            : base(partOfDate, right)
+        public NotInNode(RdlSyntaxNode left, RdlSyntaxNode right) 
+            : base(left, right)
         { }
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -140,7 +140,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class AddNode : BinaryNode
     {
-        public AddNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public AddNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -150,7 +150,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class HyphenNode : BinaryNode
     {
-        public HyphenNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public HyphenNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -160,7 +160,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ModuloNode : BinaryNode
     {
-        public ModuloNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public ModuloNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -170,7 +170,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class StarNode : BinaryNode
     {
-        public StarNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public StarNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -180,7 +180,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class FSlashNode : BinaryNode
     {
-        public FSlashNode(RdlSyntaxNode right, RdlSyntaxNode left)
+        public FSlashNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
         { }
 
@@ -350,15 +350,15 @@ namespace TQL.RDL.Parser.Nodes
 
         public WhenThenNode(RdlSyntaxNode when, RdlSyntaxNode then) : base(when, then)
         {
-            this.descs = base.Descendants.Reverse().ToArray();
+            this.descs = base.Descendants.ToArray();
 
             When.SetParent(this);
             Then.SetParent(this);
 
         }
 
-        public WhenNode When => Descendants[1] as WhenNode;
-        public ThenNode Then => Descendants[0] as ThenNode;
+        public WhenNode When => Descendants[0] as WhenNode;
+        public ThenNode Then => Descendants[1] as ThenNode;
 
         public override RdlSyntaxNode[] Descendants => descs;
 
@@ -370,7 +370,7 @@ namespace TQL.RDL.Parser.Nodes
                 for(int i = 0, j = Parent.Descendants.Count(); i < j; ++i)
                 {
                     if (Parent.Descendants[i] == this)
-                        return j - i;
+                        return i;
                 }
                 return -1;
             }
@@ -388,7 +388,7 @@ namespace TQL.RDL.Parser.Nodes
             visitor.Visit(this);
         }
 
-        public override string ToString() => string.Format("{1} {0}", When, Then);
+        public override string ToString() => string.Format("{0} {1}", When, Then);
     }
 
     public class CaseNode : RdlSyntaxNode
@@ -409,7 +409,7 @@ namespace TQL.RDL.Parser.Nodes
 
             this.caseToken = caseToken;
 
-            this.descs = whenThenExpressions.Concat(new RdlSyntaxNode[1] { elseExpression }).Reverse().ToArray();
+            this.descs = whenThenExpressions.Concat(new RdlSyntaxNode[1] { elseExpression }).ToArray();
         }
 
         private Token caseToken;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 
 namespace TQL.RDL.Evaluator.Tests
@@ -82,9 +83,10 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
-
+            
             var validator = new RDLQueryValidator(gm);
-            node.Accept(validator);
+            var traverser = new CodeGenerationTraverser(validator);
+            node.Accept(traverser);
 
             return validator;
         }
