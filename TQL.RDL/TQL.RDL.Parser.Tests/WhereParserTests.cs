@@ -4,7 +4,7 @@ using TQL.RDL.Parser.Tokens;
 namespace TQL.RDL.Parser.Tests
 {
     [TestClass]
-    public class RDLWhereParserTests
+    public class WhereParserTests
     {
         [TestMethod]
         public void WhereConditions_ParseComplexQuery()

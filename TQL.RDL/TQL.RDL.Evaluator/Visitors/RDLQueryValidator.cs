@@ -70,7 +70,9 @@ namespace TQL.RDL.Evaluator
         }
 
         public override void Visit(ArgListNode node)
-        { }
+        {
+
+        }
 
         public override void Visit(NumericNode node)
         {
@@ -103,61 +105,36 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(ThenNode node)
         {
-            try
+            if(node.Descendants.Length == 0)
             {
-                throw new NotImplementedException(nameof(ThenNode));
-            }
-            catch (Exception exc)
-            {
-                criticalErrors.Add(exc);
+                this.ReportLackOfThenExpression(node);
             }
         }
 
         public override void Visit(CaseNode node)
         {
-            try
+            if(node.WhenThenExpressions.Length == 0)
             {
-                throw new NotImplementedException(nameof(CaseNode));
-            }
-            catch(Exception exc)
-            {
-                criticalErrors.Add(exc);
+                this.ReportLackOfWhenThenExpression(node);
             }
         }
 
         public override void Visit(WhenThenNode node)
-        {
-            try
-            {
-                throw new NotImplementedException(nameof(WhenThenNode));
-            }
-            catch (Exception exc)
-            {
-                criticalErrors.Add(exc);
-            }
-        }
+        { }
 
         public override void Visit(ElseNode node)
         {
-            try
+            if(node.Descendants.Length == 0)
             {
-                throw new NotImplementedException(nameof(ElseNode));
-            }
-            catch (Exception exc)
-            {
-                criticalErrors.Add(exc);
+                ReportLackOfElseReturnExpression(node);
             }
         }
 
         public override void Visit(WhenNode node)
         {
-            try
+            if(node.Descendants.Length == 0)
             {
-                throw new NotImplementedException(nameof(WhenNode));
-            }
-            catch (Exception exc)
-            {
-                criticalErrors.Add(exc);
+                ReportLackOfWhenReturnExpression(node);
             }
         }
 
@@ -322,6 +299,31 @@ namespace TQL.RDL.Evaluator
             {
                 this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
             }
+        }
+
+        private void ReportLackOfWhenThenExpression(CaseNode node)
+        {
+            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenThenExpression, node), SyntaxErrorKind.LackOfExpression);
+        }
+
+        private void ReportLackOfThenExpression(ThenNode node)
+        {
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfThenReturnExpression, node), SyntaxErrorKind.LackOfExpression);
+        }
+
+        private void ReportLackOfElseReturnExpression(ElseNode node)
+        {
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfElseReturnExpression, node.Parent), SyntaxErrorKind.LackOfExpression);
+        }
+
+        private void ReportLackOfWhenReturnExpression(WhenNode node)
+        {
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenReturnExpression, node.Parent), SyntaxErrorKind.LackOfExpression);
+        }
+
+        private void ReportArgListIsEmpty(ArgListNode node)
+        {
+            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty), SyntaxErrorKind.LackOfExpression);
         }
     }
 }

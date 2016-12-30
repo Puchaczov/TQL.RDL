@@ -389,6 +389,8 @@ namespace TQL.RDL.Parser.Nodes
         }
 
         public override string ToString() => string.Format("{0} {1}", When, Then);
+
+        public override Type ReturnType => Then.ReturnType;
     }
 
     public class CaseNode : RdlSyntaxNode

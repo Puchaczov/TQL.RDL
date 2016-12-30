@@ -6,24 +6,18 @@ using TQL.RDL.Parser.Nodes;
 namespace TQL.RDL.Parser.Tests
 {
     [TestClass]
-    public class RDLParserTests
+    public class ParserTests
     {
         [TestMethod]
         public void RDLParser_CheckIncompletedQuery_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            Parse("repeat");
         }
 
         [TestMethod]
         public void RDLParser_ComposeRepeatAt_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every 5 seconds");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every 5 seconds");
 
             Assert.AreEqual(1, node.Descendants.Length);
             Assert.AreEqual(typeof(NumericConsequentRepeatEveryNode), node.Descendants[0].GetType());
@@ -53,10 +47,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeWhereWithMulitpleSimpleConditions_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every seconds where @day = @monday and @month <> @january");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every seconds where @day = @monday and @month <> @january");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -82,19 +73,13 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeCaseWhen_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where case when 1 > 2 and 2 > 1 then GetDay() > 1 else GetDay() < 5 esac");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where case when 1 > 2 and 2 > 1 then GetDay() > 1 else GetDay() < 5 esac");
         }
 
         [TestMethod]
         public void RDLParser_ComposeWhereWithInCondition_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where @day in ( 'mon' , 'tue' ) or @a <> @b");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where @day in ( 'mon' , 'tue' ) or @a <> @b");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -122,10 +107,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_CheckBasicOperators_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where @f1 > @f1 and @f2 >= @f2 and @f3 < @f3 and @f4 <= @f4");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where @f1 > @f1 and @f2 >= @f2 and @f3 < @f3 and @f4 <= @f4");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -139,10 +121,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_CheckFunctionCall_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where abc(1,2,@day) > 0");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where abc(1,2,@day) > 0");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -156,10 +135,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeStartAt_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days start at @now");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days start at @now");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -171,12 +147,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeStopAt_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days stop at '21.05.2016'");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
-                "dd.M.yyyy"
-            }, new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days stop at '21.05.2016'");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -189,10 +160,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeFunctionCall_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where myFunction4(@day, @month, 3 and 4) and @p <> @v");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where myFunction4(@day, @month, 3 and 4) and @p <> @v");
 
             Assert.AreEqual(2, node.Descendants.Length);
             Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
@@ -221,12 +189,7 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComplexQuery_ShouldPass()
         {
-            var gm = new RdlMetadata();
-            var lexer = new LexerComplexTokensDecorator("repeat every days where 1 <> 2 start at '11.01.2012' stop at '12.01.2013'");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
-                "dd.M.yyyy"
-            }, new System.Globalization.CultureInfo("en-US"));
-            var node = parser.ComposeRootComponents();
+            var node = Parse("repeat every days where 1 <> 2 start at '11.01.2012' stop at '12.01.2013'");
 
             Assert.AreEqual(4, node.Descendants.Length);
 
@@ -279,6 +242,16 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(node.Descendants[1].Descendants.OfType<TOperatorNode>().Any());
             Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<TLeftOperand>().Any());
             Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<TRightOperand>().Any());
+        }
+
+        private static RootScriptNode Parse(string query)
+        {
+            var gm = new RdlMetadata();
+            var lexer = new LexerComplexTokensDecorator(query);
+            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
+                "dd.M.yyyy"
+            }, new System.Globalization.CultureInfo("en-US"));
+            return parser.ComposeRootComponents();
         }
     }
 }

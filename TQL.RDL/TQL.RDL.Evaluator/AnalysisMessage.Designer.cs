@@ -62,11 +62,56 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arguments list cannot be empty when used in &apos;IN&apos; or &apos;NOT INT&apos; clause..
+        /// </summary>
+        internal static string ArgListCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("ArgListCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression &apos;{0}&apos; is not allowed (occured in &apos;{1}&apos; node). Expected type is {2}..
         /// </summary>
         internal static string ExpressionTypeNotAllowed {
             get {
                 return ResourceManager.GetString("ExpressionTypeNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improper &apos;else&apos; definition in &apos;{0}&apos; part of query.
+        /// </summary>
+        internal static string LackOfElseReturnExpression {
+            get {
+                return ResourceManager.GetString("LackOfElseReturnExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improper &apos;then&apos; definition in &apos;{0}&apos; part of query.
+        /// </summary>
+        internal static string LackOfThenReturnExpression {
+            get {
+                return ResourceManager.GetString("LackOfThenReturnExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improper &apos;when&apos; definition in &apos;{0}&apos; part of query.
+        /// </summary>
+        internal static string LackOfWhenReturnExpression {
+            get {
+                return ResourceManager.GetString("LackOfWhenReturnExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expression &apos;{0}&apos; doesn&apos;t contains &quot;when ... then ...&quot; which are required by case clause..
+        /// </summary>
+        internal static string LackOfWhenThenExpression {
+            get {
+                return ResourceManager.GetString("LackOfWhenThenExpression", resourceCulture);
             }
         }
         

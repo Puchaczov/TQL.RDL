@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ArgListCannotBeEmpty" xml:space="preserve">
+    <value>Arguments list cannot be empty when used in 'IN' or 'NOT INT' clause.</value>
+  </data>
   <data name="ExpressionTypeNotAllowed" xml:space="preserve">
     <value>Expression '{0}' is not allowed (occured in '{1}' node). Expected type is {2}.</value>
+  </data>
+  <data name="LackOfElseReturnExpression" xml:space="preserve">
+    <value>Improper 'else' definition in '{0}' part of query</value>
+  </data>
+  <data name="LackOfThenReturnExpression" xml:space="preserve">
+    <value>Improper 'then' definition in '{0}' part of query</value>
+  </data>
+  <data name="LackOfWhenReturnExpression" xml:space="preserve">
+    <value>Improper 'when' definition in '{0}' part of query</value>
+  </data>
+  <data name="LackOfWhenThenExpression" xml:space="preserve">
+    <value>Expression '{0}' doesn't contains "when ... then ..." which are required by case clause.</value>
   </data>
   <data name="MixedTypesNotAllowed" xml:space="preserve">
     <value>Expression contains unallowed mixing of types in operator "IN"</value>

@@ -12,7 +12,8 @@ namespace TQL.RDL.Evaluator
         MissingValue,
         WrongKeyword,
         UnsupportedFunctionCall,
-        ImproperType
+        ImproperType,
+        LackOfExpression
     }
 
     public enum SemanticErrorKind

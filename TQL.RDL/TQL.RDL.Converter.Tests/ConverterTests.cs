@@ -60,8 +60,19 @@ namespace TQL.RDL.Converter.Tests
             TestDefaultMethods("repeat every days where GetDay() in (21) and GetMonth() = 5 start at '21.05.1991 00:04:24'", "21.05.1991 00:04:24");
         }
 
+        [TestMethod]
+        public void Converter_SupportCaseWhenQuery_ShouldSupport()
+        {
+            TestDefaultMethods(@"
+            repeat every days where 
+                1 = (case 
+                        when GetDay() in (22, 23) then 1 
+                        else 0 
+                    esac) start at '21.12.2016'", "22.12.2016");
+        }
+
         
-        private void TestDefaultMethods(string query, string refTime)
+        private void TestDefaultMethods(string query, string fireTime)
         {
             var request = new ConvertionRequest(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new string[] {
                 "dd.M.yyyy",
@@ -71,9 +82,9 @@ namespace TQL.RDL.Converter.Tests
             RdlTimeline timeline = new RdlTimeline(false);
             var response = timeline.Convert(request);
 
-            var fire = response.Output.NextFire();
+            var fireAt = response.Output.NextFire();
 
-            Assert.AreEqual(DateTimeOffset.Parse(refTime), fire.Value);
+            Assert.AreEqual(DateTimeOffset.Parse(fireTime), fireAt.Value);
         }
 
         public static bool TestA(DateTimeOffset? current)
