@@ -73,7 +73,17 @@ namespace TQL.RDL.Parser.Tests
         [TestMethod]
         public void RDLParser_ComposeCaseWhen_ShouldPass()
         {
-            var node = Parse("repeat every days where case when 1 > 2 and 2 > 1 then GetDay() > 1 else GetDay() < 5 esac");
+            var node = Parse(@"
+                repeat every days where 
+                    case 
+                        when 1 > 2 and 2 > 1 then GetDay() > 1 
+                        else GetDay() < 5 esac");
+
+            Assert.AreEqual(typeof(CaseNode), node.Descendants[1].Descendants[0].GetType());
+            Assert.AreEqual(typeof(WhenThenNode), node.Descendants[1].Descendants[0].Descendants[0].GetType());
+            Assert.AreEqual(typeof(ElseNode), node.Descendants[1].Descendants[0].Descendants[1].GetType());
+            Assert.AreEqual(typeof(WhenNode), node.Descendants[1].Descendants[0].Descendants[0].Descendants[0].GetType());
+            Assert.AreEqual(typeof(ThenNode), node.Descendants[1].Descendants[0].Descendants[0].Descendants[1].GetType());
         }
 
         [TestMethod]

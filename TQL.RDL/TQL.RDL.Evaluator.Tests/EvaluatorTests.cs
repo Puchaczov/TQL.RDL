@@ -207,6 +207,39 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("26.05.2012 13:00:00"));
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_ComplexConditions_ShouldPass()
+        {
+            EvaluateQuery(@"
+                repeat every minutes where 
+                    (GetHour() = 7 and GetMinute() = 0 and GetSecond() = 0) or 
+                    (GetHour() = 8 and GetMinute() = 30 and GetSecond() = 0) 
+                start at '{0}'", "04.01.2017", string.Empty,
+                (x) => x == DateTimeOffset.Parse("04.01.2017 07:00:00"),
+                (x) => x == DateTimeOffset.Parse("04.01.2017 08:30:00"),
+                (x) => x == DateTimeOffset.Parse("05.01.2017 07:00:00"));
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_CaseWhenConditions_ShouldPass()
+        {
+            EvaluateQuery(@"
+                repeat every minutes where 1 = 
+                    (case 
+                        when GetHour() = 7 and GetMinute() = 0 and GetSecond() = 0
+                        then 1
+                        when GetHour() = 8 and GetMinute() = 30 and GetSecond() = 0
+                        then 1
+                        else 0
+                    esac) start at '04.01.2017' stop at '05.01.2017 08:00:00'
+            ",
+            string.Empty,
+            string.Empty,
+            (x) => x == DateTimeOffset.Parse("04.01.2017 07:00:00"),
+            (x) => x == DateTimeOffset.Parse("04.01.2017 08:30:00"),
+            (x) => x == DateTimeOffset.Parse("05.01.2017 07:00:00"));
+        }
+
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
             EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, funcs);
@@ -269,6 +302,10 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.GetHour), methods.GetType().GetMethod(nameof(DefaultMethods.GetHour), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.GetMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetMonth), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.GetMinute), methods.GetType().GetMethod(nameof(DefaultMethods.GetMinute), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.GetSecond), methods.GetType().GetMethod(nameof(DefaultMethods.GetSecond), new Type[0]));
 
             var visitor = new RDLCodeGenerator(gm);
 
