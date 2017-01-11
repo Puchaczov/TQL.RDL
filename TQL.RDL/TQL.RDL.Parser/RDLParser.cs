@@ -8,13 +8,13 @@ using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser
 {
-    public class RDLParser : ParserBase<Token, StatementType>
+    public class RdlParser : ParserBase<Token, StatementType>
     {
         private LexerComplexTokensDecorator cLexer;
-        private RdlMetadata metadatas;
-        private TimeSpan zone;
-        private string[] formats;
-        private CultureInfo ci;
+        private readonly RdlMetadata metadatas;
+        private readonly TimeSpan zone;
+        private readonly string[] formats;
+        private readonly CultureInfo ci;
 
         public override Token CurrentToken
         {
@@ -30,7 +30,7 @@ namespace TQL.RDL.Parser
 
         protected override ILexer<Token> Lexer => cLexer;
 
-        public RDLParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
+        public RdlParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
         {
             cLexer = lexer;
             LastToken = new NoneToken();
@@ -128,11 +128,11 @@ namespace TQL.RDL.Parser
 
         private RdlSyntaxNode ComposePostfix(Stack<RdlSyntaxNode> nodes, Token[] tokens)
         {
-            for (int i = 0; i < tokens.Length; ++i)
+            foreach (var t in tokens)
             {
                 RdlSyntaxNode farg = null;
                 RdlSyntaxNode sarg = null;
-                switch (tokens[i].TokenType)
+                switch (t.TokenType)
                 {
                     case StatementType.Plus:
                         sarg = nodes.Pop();
@@ -211,25 +211,25 @@ namespace TQL.RDL.Parser
                         }
 
                         var partOfDate = nodes.Pop();
-                        if (tokens[i].TokenType == StatementType.In)
+                        if (t.TokenType == StatementType.In)
                             nodes.Push(new InNode(partOfDate, args));
                         else
                             nodes.Push(new NotInNode(partOfDate, args));
                         break;
                     case StatementType.Numeric:
-                        nodes.Push(new NumericNode(tokens[i]));
+                        nodes.Push(new NumericNode(t));
                         break;
                     case StatementType.Word:
-                        nodes.Push(new WordNode(tokens[i]));
+                        nodes.Push(new WordNode(t));
                         break;
                     case StatementType.Function:
-                        var functionToken = tokens[i] as FunctionToken;
+                        var functionToken = t as FunctionToken;
                         var argsNode = nodes.Pop() as ArgListNode;
                         nodes.Push(new FunctionNode(functionToken, argsNode, () => metadatas.GetReturnType(functionToken.Value, argsNode.Descendants.Select(f => f.ReturnType).ToArray())));
                         break;
                     case StatementType.VarArg:
-                        var varArg = tokens[i] as VarArgToken;
-                        List<RdlSyntaxNode> arguments = new List<RdlSyntaxNode>();
+                        var varArg = t as VarArgToken;
+                        var arguments = new List<RdlSyntaxNode>();
                         for(int f = 0; f < varArg.Arguments; ++f)
                         {
                             arguments.Add(nodes.Pop());
@@ -238,29 +238,29 @@ namespace TQL.RDL.Parser
                         nodes.Push(new ArgListNode(arguments));
                         break;
                     case StatementType.Var:
-                        nodes.Push(new VarNode(tokens[i] as VarToken));
+                        nodes.Push(new VarNode(t as VarToken));
                         break;
                     case StatementType.Else:
-                        var elseNode = new ElseNode(tokens[i], nodes.Pop());
+                        var elseNode = new ElseNode(t, nodes.Pop());
                         var whenThenExpressions = new List<WhenThenNode>();
                         while (nodes.Peek() is WhenThenNode)
                         {
                             var whenNode = nodes.Pop() as WhenThenNode;
                             whenThenExpressions.Add(whenNode);
                         }
-                        nodes.Push(new CaseNode(tokens[i], whenThenExpressions.ToArray(), elseNode));
+                        nodes.Push(new CaseNode(t, whenThenExpressions.ToArray(), elseNode));
                         break;
                     case StatementType.When:
-                        nodes.Push(new WhenNode(tokens[i], nodes.Pop()));
+                        nodes.Push(new WhenNode(t, nodes.Pop()));
                         break;
                     case StatementType.Then:
-                        var thenNode = new ThenNode(tokens[i], nodes.Pop());
+                        var thenNode = new ThenNode(t, nodes.Pop());
                         nodes.Push(new WhenThenNode(nodes.Pop(), thenNode));
                         break;
                     case StatementType.CaseWhenEsac:
                         var oldLexer = cLexer;
                         cLexer = new LexerComplexTokensDecorator(new Lexer(cLexer.Query, Parser.Lexer.DefinitionSet.CaseWhen));
-                        cLexer.ChangePosition(tokens[i].Span.Start);
+                        cLexer.ChangePosition(t.Span.Start);
                         nodes.Push(ComposeCaseWhenEsac());
                         cLexer = oldLexer;
                         break;
@@ -285,8 +285,8 @@ namespace TQL.RDL.Parser
 
         private WhenThenNode[] ConsumeWhenNodes()
         {
-            List<WhenThenNode> nodes = new List<WhenThenNode>();
-            RDLWhereParser parser = new RDLWhereParser();
+            var nodes = new List<WhenThenNode>();
+            var parser = new RDLWhereParser();
             while (CurrentToken.TokenType == StatementType.When)
             {
                 Consume(StatementType.When);
@@ -311,7 +311,7 @@ namespace TQL.RDL.Parser
         {
             Consume(StatementType.Else);
             cLexer.DisableEnumerationWhen(StatementType.CaseEnd);
-            RDLWhereParser parser = new RDLWhereParser();
+            var parser = new RDLWhereParser();
             var elseNode = parser.Parse(cLexer);
             CurrentToken = cLexer.CurrentToken();
             LastToken = cLexer.LastToken();
@@ -349,14 +349,6 @@ namespace TQL.RDL.Parser
                     break;
             }
             return node;
-        }
-
-        private void EatWhiteSpaces()
-        {
-            while(CurrentToken.TokenType == StatementType.WhiteSpace)
-            {
-                Consume(CurrentToken.TokenType);
-            }
         }
     }
 }

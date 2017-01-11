@@ -3,9 +3,6 @@ using TQL.Core.Converters;
 using TQL.RDL.Parser.Tokens;
 using TQL.RDL.Parser;
 using TQL.RDL.Evaluator;
-using System.Reflection;
-using System;
-using System.Diagnostics;
 
 namespace TQL.RDL.Converter
 {
@@ -32,15 +29,15 @@ namespace TQL.RDL.Converter
 
         protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest request)
         {
-            var preprocessor = new Preprocessor();
+            var preprocessor = new Preprocessor.Preprocessor();
             var query = preprocessor.Execute(request.Query);
             var lexer = new LexerComplexTokensDecorator(query);
-            RDLParser parser = null;
+            RdlParser parser = null;
 
             if (request.Formats == null || request.Formats.Length == 0)
-                parser = new RDLParser(lexer, metadatas, request.Source.BaseUtcOffset, defaultFormats, request.CultureInfo);
+                parser = new RdlParser(lexer, metadatas, request.Source.BaseUtcOffset, defaultFormats, request.CultureInfo);
             else
-                parser = new RDLParser(lexer, metadatas, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo);
+                parser = new RdlParser(lexer, metadatas, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo);
 
             return parser.ComposeRootComponents();
         }

@@ -4,46 +4,18 @@ using TQL.Interfaces;
 
 namespace TQL.RDL.Evaluator
 {
-    public class MemoryVariables : Dictionary<string, object>
-    {
-        public DateTimeOffset Current => (DateTimeOffset)base["current"];
-        public int Second => Current.Second;
-        public int Minute => Current.Minute;
-        public int Hour => Current.Hour;
-        public int Day => Current.Day;
-        public int Month => Current.Month;
-        public int Year => Current.Year;
-        public DayOfWeek DayOfWeek => Current.DayOfWeek;
-    }
-
-    public enum Registers : short
-    {
-        A,
-        B
-    }
-
-    public interface IVmTracker
-    {
-        DateTimeOffset StartAt { get; }
-        DateTimeOffset? StopAt { get; }
-        IRdlInstruction[] Instructions { get; }
-        Stack<long> Values { get; }
-        Stack<DateTimeOffset> Datetimes { get; }
-        object[] CallArgs { get; }
-    }
-
     public class RDLVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
-        private IRdlInstruction[] instructions;
+        private readonly IRdlInstruction[] instructions;
         private int instrPtr;
         private DateTimeOffset? stopAt;
         private DateTimeOffset startAt;
-        private long[] regs = new long[2];
+        private readonly long[] regs;
 
         public Dictionary<string, int> RelativeLabels { get; }
 
         public MemoryVariables Variables { get; }
-        private Func<DateTimeOffset, DateTimeOffset> GenerateNext;
+        private Func<DateTimeOffset, DateTimeOffset> generateNext;
 
         public Stack<long> Values { get; }
         public Stack<DateTimeOffset> Datetimes { get; }
@@ -53,9 +25,8 @@ namespace TQL.RDL.Evaluator
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
-            GenerateNext = generateNext;
-            Variables = new MemoryVariables();
-            Variables["current"] = DateTimeOffset.Now;
+            this.generateNext = generateNext;
+            Variables = new MemoryVariables {["current"] = DateTimeOffset.Now};
             this.instructions = instructions;
             this.stopAt = stopAt;
             this.startAt = startAt;
@@ -109,7 +80,7 @@ namespace TQL.RDL.Evaluator
                     return null;
                 }
 
-                bool cond = false;
+                var cond = false;
                 if (Values.Count > 0)
                     cond = Convert.ToBoolean(Values.Pop());
                 else
@@ -149,7 +120,7 @@ namespace TQL.RDL.Evaluator
 
         public bool Break { get; set; }
 
-        public bool Exit { get; set; }
+        private bool Exit { get; set; }
 
         public int InstructionPointer
         {

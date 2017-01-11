@@ -75,7 +75,7 @@ namespace TQL.RDL.Evaluator.Tests
         {
             var gm = new RdlMetadata();
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
+            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
             var node = parser.ComposeRootComponents();
 
             var methods = new DefaultMethods();

@@ -282,7 +282,7 @@ namespace TQL.RDL.Evaluator.Tests
             var gm = new RdlMetadata();
 
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[] {
+            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[] {
                 "dd/M/yyyy H:m:s",
                 "dd/M/yyyy h:m:s tt",
                 "dd.M.yyyy H:m:s",

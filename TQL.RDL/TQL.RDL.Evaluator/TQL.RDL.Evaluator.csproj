@@ -90,6 +90,9 @@
     <Compile Include="Instructions\PushDateTimeInstruction.cs" />
     <Compile Include="Instructions\PushNumericInstruction.cs" />
     <Compile Include="Instructions\SubtractNumeric.cs" />
+    <Compile Include="IVmTracker.cs" />
+    <Compile Include="MemoryVariables.cs" />
+    <Compile Include="Registers.cs" />
     <Compile Include="Visitors\AnalyzerBase.cs" />
     <Compile Include="Visitors\RDLQueryValidator.cs" />
     <Compile Include="Visitors\RDLCodeGenerator.cs" />

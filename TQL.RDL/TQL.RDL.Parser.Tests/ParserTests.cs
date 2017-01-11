@@ -228,7 +228,7 @@ namespace TQL.RDL.Parser.Tests
             gm.RegisterMethod("A", null);
 
             var lexer = new LexerComplexTokensDecorator("repeat every days where A(B())");
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
+            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
             var node = parser.ComposeRootComponents();
 
             Assert.AreEqual(2, node.Descendants.Length);
@@ -242,7 +242,7 @@ namespace TQL.RDL.Parser.Tests
         {
             var gm = new RdlMetadata();
             var lexer = new LexerComplexTokensDecorator(string.Format("repeat every seconds where {1} {0} {2}", op, left, right));
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
+            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[0], new System.Globalization.CultureInfo("en-US"));
             var node = parser.ComposeRootComponents();
 
             Assert.AreEqual(2, node.Descendants.Length);
@@ -258,7 +258,7 @@ namespace TQL.RDL.Parser.Tests
         {
             var gm = new RdlMetadata();
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RDLParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
+            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
                 "dd.M.yyyy"
             }, new System.Globalization.CultureInfo("en-US"));
             return parser.ComposeRootComponents();
