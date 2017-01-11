@@ -5,7 +5,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class JumpToLabel : IRdlInstruction
     {
-        private string label;
+        private readonly string label;
 
         public JumpToLabel(string label)
         {

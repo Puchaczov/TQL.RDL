@@ -10,9 +10,9 @@ namespace TQL.RDL.Evaluator.Instructions
         protected delegate void PushFun(RDLVirtualMachine machine, T value);
         protected delegate T PeekFun(RDLVirtualMachine machine);
 
-        private PopFun pop;
-        private PushFun push;
-        private PeekFun peek;
+        private readonly PopFun pop;
+        private readonly PushFun push;
+        private readonly PeekFun peek;
 
         protected InInstruction(PopFun popFun, PushFun pushFun, PeekFun peekFun)
         {
@@ -28,7 +28,7 @@ namespace TQL.RDL.Evaluator.Instructions
             var toCompare = pop(machine);
 
             var result = false;
-            int i = 0;
+            var i = 0;
             for (; i < inArgsCount && !result; ++i)
             {
                 var tmpRes = pop(machine);

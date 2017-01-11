@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class LoadNumericVariableInstruction : IRdlInstruction
     {
-        private Func<MemoryVariables, int> loadFun;
+        private readonly Func<MemoryVariables, int> loadFun;
 
         public LoadNumericVariableInstruction(Func<MemoryVariables, int> func)
         {

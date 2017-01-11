@@ -5,8 +5,8 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class LoadToRegister : IRdlInstruction
     {
-        private long value;
-        private Registers register;
+        private readonly long value;
+        private readonly Registers register;
 
         public LoadToRegister(Registers reg, long value)
         {

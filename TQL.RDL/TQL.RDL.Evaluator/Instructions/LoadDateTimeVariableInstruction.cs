@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class LoadDateTimeVariableInstruction : IRdlInstruction
     {
-        private Func<MemoryVariables, DateTimeOffset> loadFun;
+        private readonly Func<MemoryVariables, DateTimeOffset> loadFun;
 
         public LoadDateTimeVariableInstruction(Func<MemoryVariables, DateTimeOffset> func)
         {

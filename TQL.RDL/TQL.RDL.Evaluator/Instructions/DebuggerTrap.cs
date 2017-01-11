@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using TQL.RDL.Parser.Nodes;
 
@@ -12,10 +13,10 @@ namespace TQL.RDL.Evaluator.Instructions
             After
         }
 
-        private RdlSyntaxNode node;
-        private ExpressionState state;
-        private OnExpressionBegin expBeginCallback;
-        private OnExpressionEnd expEndCallback;
+        private readonly RdlSyntaxNode node;
+        private readonly ExpressionState state;
+        private readonly OnExpressionBegin expBeginCallback;
+        private readonly OnExpressionEnd expEndCallback;
 
         public delegate void OnExpressionBegin(RdlSyntaxNode node, IVmTracker tracker);
         public delegate void OnExpressionEnd(RdlSyntaxNode node, IVmTracker tracker);
@@ -38,6 +39,8 @@ namespace TQL.RDL.Evaluator.Instructions
                 case ExpressionState.After:
                     expEndCallback(node, machine);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

@@ -5,13 +5,14 @@ using TQL.RDL.Parser;
 using TQL.RDL.Evaluator;
 using System.Reflection;
 using System;
+using System.Diagnostics;
 
 namespace TQL.RDL.Converter
 {
     public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, StatementType, RootScriptNode, ConvertionRequest>
     {
-        protected bool throwOnError;
-        protected RdlMetadata metadatas;
+        private bool throwOnError;
+        protected readonly RdlMetadata metadatas;
 
         protected AbstractConverter(bool throwOnError, RdlMetadata metadatas)
             : base(throwOnError)
@@ -22,7 +23,7 @@ namespace TQL.RDL.Converter
             RegisterDefaultMethods();
         }
 
-        private string[] defaultFormats = new string[] {
+        private readonly string[] defaultFormats = new string[] {
             "dd/M/yyyy H:m:s",
             "dd/M/yyyy h:m:s tt",
             "dd.M.yyyy H:m:s",
@@ -44,7 +45,7 @@ namespace TQL.RDL.Converter
             return parser.ComposeRootComponents();
         }
 
-        protected override bool IsValid(ConvertionRequest request) => request.Query != null && request.Query != string.Empty;
+        protected override bool IsValid(ConvertionRequest request) => !string.IsNullOrEmpty(request.Query);
 
         private void RegisterDefaultMethods()
         {

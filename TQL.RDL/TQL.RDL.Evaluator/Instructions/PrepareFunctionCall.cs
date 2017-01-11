@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class PrepareFunctionCall : IRdlInstruction
     {
-        private IEnumerable<Type> enumerable;
+        private readonly IEnumerable<Type> enumerable;
 
         public PrepareFunctionCall(IEnumerable<Type> enumerable)
         {
@@ -18,8 +18,8 @@ namespace TQL.RDL.Evaluator.Instructions
 
         public void Run(RDLVirtualMachine machine)
         {
-            object[] args = enumerable.Select(f => {
-                switch(TypeHelper.GetTypeName((Type) f))
+            var args = enumerable.Select(f => {
+                switch(((Type) f).GetTypeName())
                 {
                     case nameof(DateTimeOffset):
                         return (object)machine.Datetimes.Pop();

@@ -12,18 +12,16 @@ namespace TQL.RDL.Evaluator
     {
         private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
-        private Stack<List<IRdlInstruction>> functions;
+        private readonly Stack<List<IRdlInstruction>> functions;
         private MemoryVariables variables;
         private Func<DateTimeOffset, DateTimeOffset> generateNext;
-        private DefaultMethods methods;
-        private Dictionary<string, int> labels;
-        private RdlMetadata metadatas;
+        private readonly DefaultMethods methods;
+        private readonly Dictionary<string, int> labels;
+        private readonly RdlMetadata metadatas;
 
-        private static string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
-        private static string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
-        private static string nBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
-
-        private static string labelNamePattern = "label_case_when_";
+        private static readonly string nDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
+        private static readonly string nInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
+        private static readonly string nBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
 
         private RDLVirtualMachine machine;
 
@@ -34,7 +32,7 @@ namespace TQL.RDL.Evaluator
         {
         }
 
-        public RDLCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
+        private RDLCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
@@ -152,12 +150,12 @@ namespace TQL.RDL.Evaluator
 
         public virtual void Visit(EqualityNode node)
         {
-            ExpressionGenerateInstructions<EqualityDatetime, EqualityNumeric>(node);
+            ExpressionGenerateInstructions<EqualityNumeric>(node);
         }
 
         public virtual void Visit(DiffNode node)
         {
-            ExpressionGenerateInstructions<DiffDatetime, DiffNumeric>(node);
+            ExpressionGenerateInstructions<DiffNumeric>(node);
         }
 
         public virtual void Visit(InNode node)
@@ -224,32 +222,32 @@ namespace TQL.RDL.Evaluator
 
         public virtual void Visit(GreaterNode node)
         {
-            ExpressionGenerateInstructions<GreaterDatetime, GreaterNumeric>(node);
+            ExpressionGenerateInstructions<GreaterNumeric>(node);
         }
 
         public virtual void Visit(GreaterEqualNode node)
         {
-            ExpressionGenerateInstructions<GreaterEqualDatetime, GreaterEqualNumeric>(node);
+            ExpressionGenerateInstructions<GreaterEqualNumeric>(node);
         }
 
         public virtual void Visit(LessNode node)
         {
-            ExpressionGenerateInstructions<LessDatetime, LessNumeric>(node);
+            ExpressionGenerateInstructions<LessNumeric>(node);
         }
 
         public virtual void Visit(LessEqualNode node)
         {
-            ExpressionGenerateInstructions<LessEqualDatetime, LessEqualNumeric>(node);
+            ExpressionGenerateInstructions<LessEqualNumeric>(node);
         }
 
         public virtual void Visit(AddNode node)
         {
-            ExpressionGenerateInstructions<AddNumericToDatetime, AddNumericToNumeric>(node);
+            ExpressionGenerateInstructions<AddNumericToNumeric>(node);
         }
 
         public virtual void Visit(ModuloNode node)
         {
-            ExpressionGenerateInstructions<ModuloNumericToNumeric, ModuloNumericToNumeric>(node);
+            ExpressionGenerateInstructions<ModuloNumericToNumeric>(node);
         }
 
         public virtual void Visit(StarNode node)
@@ -259,7 +257,7 @@ namespace TQL.RDL.Evaluator
 
         public virtual void Visit(FSlashNode node)
         {
-            if(node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
+            if(node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
             {
                 instructions.Add(new DivideNumeric());
             }
@@ -267,7 +265,7 @@ namespace TQL.RDL.Evaluator
 
         public virtual void Visit(HyphenNode node)
         {
-            if (node.Left.ReturnType == typeof(Int64) && node.Right.ReturnType == typeof(Int64))
+            if (node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
             {
                 instructions.Add(new SubtractNumeric());
             }
@@ -326,15 +324,7 @@ namespace TQL.RDL.Evaluator
             instructions.Add(new TOperator());
         }
 
-        private void ExpressionGenerateRightToLeftInstructions<TOperator>(BinaryNode node)
-            where TOperator : IRdlInstruction, new()
-        {
-            instructions.Add(new TOperator());
-        }
-
-        private void ExpressionGenerateInstructions<TDateTimeOp, TNumericOp>(BinaryNode node)
-            where TDateTimeOp: IRdlInstruction, new ()
-            where TNumericOp: IRdlInstruction, new ()
+        private void ExpressionGenerateInstructions<TNumericOp>(BinaryNode node) where TNumericOp: IRdlInstruction, new ()
         {
             instructions.Add(new TNumericOp());
         }

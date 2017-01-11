@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class PushDateTimeInstruction : IRdlInstruction
     {
-        private DateTimeOffset value;
+        private readonly DateTimeOffset value;
 
         public PushDateTimeInstruction(DateTimeOffset value)
         {

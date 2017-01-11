@@ -2,7 +2,7 @@ namespace TQL.RDL.Evaluator.Instructions
 {
     public class JumpNotEqual : IRdlInstruction
     {
-        private int shift;
+        private readonly int shift;
 
         public JumpNotEqual(int shift)
         {

@@ -28,32 +28,18 @@ namespace TQL.RDL.Converter
             var queryValidatorTraverser = new CodeGenerationTraverser(coretnessChecker);
             ast.Accept(queryValidatorTraverser);
 
-            if(coretnessChecker.IsValid)
-            {
-                RDLCodeGenerator codeGenerator = null;
-                if (request.Debuggable)
-                {
-                    codeGenerator = new RDLDebuggerSymbolGenerator(metadatas);
-                }
-                else
-                {
-                    codeGenerator = new RDLCodeGenerator(metadatas);
-                }
+            if (!coretnessChecker.IsValid)
+                return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
-                var codeGenerationTraverseVisitor = new CodeGenerationTraverser(codeGenerator);
+            var codeGenerator = request.Debuggable ? new RDLDebuggerSymbolGenerator(metadatas) : new RDLCodeGenerator(metadatas);
+            var codeGenerationTraverseVisitor = new CodeGenerationTraverser(codeGenerator);
 
-                ast.Accept(codeGenerationTraverseVisitor);
-                var evaluator = codeGenerator.VirtualMachine;
+            ast.Accept(codeGenerationTraverseVisitor);
+            var evaluator = codeGenerator.VirtualMachine;
 
-                if (evaluator != null)
-                {
-                    if (request.Source == request.Target)
-                        return new ConvertionResponse<IFireTimeEvaluator>(evaluator);
-
-                    return new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
-                }
-            }
-            return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
+            if (evaluator == null)
+                return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
+            return request.Source == request.Target ? new ConvertionResponse<IFireTimeEvaluator>(evaluator) : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
         }
 
         public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, (ast) => this.Convert(ast, request));
