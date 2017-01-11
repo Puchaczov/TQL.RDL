@@ -6,13 +6,14 @@ namespace TQL.RDL.Evaluator
 {
     public class MemoryVariables : Dictionary<string, object>
     {
-        public DateTimeOffset? Current => (DateTimeOffset?)base["current"];
-        public int? Second => Current?.Second;
-        public int? Minute => Current?.Minute;
-        public int? Hour => Current?.Hour;
-        public int? Day => Current?.Day;
-        public int? Month => Current?.Month;
-        public int? Year => Current?.Year;
+        public DateTimeOffset Current => (DateTimeOffset)base["current"];
+        public int Second => Current.Second;
+        public int Minute => Current.Minute;
+        public int Hour => Current.Hour;
+        public int Day => Current.Day;
+        public int Month => Current.Month;
+        public int Year => Current.Year;
+        public DayOfWeek DayOfWeek => Current.DayOfWeek;
     }
 
     public enum Registers : short
@@ -25,15 +26,15 @@ namespace TQL.RDL.Evaluator
     {
         DateTimeOffset StartAt { get; }
         DateTimeOffset? StopAt { get; }
-        IRDLInstruction[] Instructions { get; }
-        Stack<long?> Values { get; }
-        Stack<DateTimeOffset?> Datetimes { get; }
+        IRdlInstruction[] Instructions { get; }
+        Stack<long> Values { get; }
+        Stack<DateTimeOffset> Datetimes { get; }
         object[] CallArgs { get; }
     }
 
     public class RDLVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
-        private IRDLInstruction[] instructions;
+        private IRdlInstruction[] instructions;
         private int instrPtr;
         private DateTimeOffset? stopAt;
         private DateTimeOffset startAt;
@@ -42,16 +43,16 @@ namespace TQL.RDL.Evaluator
         public Dictionary<string, int> RelativeLabels { get; }
 
         public MemoryVariables Variables { get; }
-        private Func<DateTimeOffset?, DateTimeOffset?> GenerateNext;
+        private Func<DateTimeOffset, DateTimeOffset> GenerateNext;
 
-        public Stack<long?> Values { get; }
-        public Stack<DateTimeOffset?> Datetimes { get; }
+        public Stack<long> Values { get; }
+        public Stack<DateTimeOffset> Datetimes { get; }
         public object[] CallArgs { get; set; }
 
-        public RDLVirtualMachine(Dictionary<string, int> relativeLabels, Func<DateTimeOffset?, DateTimeOffset?> generateNext, IRDLInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
+        public RDLVirtualMachine(Dictionary<string, int> relativeLabels, Func<DateTimeOffset, DateTimeOffset> generateNext, IRdlInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
         {
-            Values = new Stack<long?>();
-            Datetimes = new Stack<DateTimeOffset?>();
+            Values = new Stack<long>();
+            Datetimes = new Stack<DateTimeOffset>();
             GenerateNext = generateNext;
             Variables = new MemoryVariables();
             Variables["current"] = DateTimeOffset.Now;
@@ -73,8 +74,7 @@ namespace TQL.RDL.Evaluator
 
             if(ReferenceTime > stopAt)
             {
-                ReferenceTime = null;
-                return null;
+                Exit = true;
             }
 
             while(true)
@@ -82,14 +82,11 @@ namespace TQL.RDL.Evaluator
                 if (Exit)
                     return null;
 
-                if (!ReferenceTime.HasValue)
-                    return null;
-
                 Break = false;
 
                 instrPtr = 0;
 
-                IRDLInstruction instruction = null;
+                IRdlInstruction instruction = null;
 
                 var old = ReferenceTime;
 
@@ -108,7 +105,7 @@ namespace TQL.RDL.Evaluator
                     Values.Clear();
                     Datetimes.Clear();
 
-                    ReferenceTime = null;
+                    Exit = true;
                     return null;
                 }
 
@@ -126,11 +123,11 @@ namespace TQL.RDL.Evaluator
             }
         }
 
-        public DateTimeOffset? ReferenceTime
+        public DateTimeOffset ReferenceTime
         {
             get
             {
-                return (DateTimeOffset?)Variables["current"];
+                return (DateTimeOffset)Variables["current"];
             }
             set
             {
@@ -172,6 +169,6 @@ namespace TQL.RDL.Evaluator
 
         public DateTimeOffset? StopAt => stopAt;
 
-        public IRDLInstruction[] Instructions => instructions;
+        public IRdlInstruction[] Instructions => instructions;
     }
 }

@@ -53,7 +53,7 @@ namespace TQL.RDL.Evaluator.Tests
             while((datetime = machine.NextFire()).HasValue)
             {
                 Assert.AreEqual(refTime, datetime);
-                refTime = refTime.Value.AddHours(1);
+                refTime = refTime.AddHours(1);
             }
 
             Assert.AreEqual(null, datetime);
@@ -70,7 +70,7 @@ namespace TQL.RDL.Evaluator.Tests
             while ((datetime = machine.NextFire()).HasValue)
             {
                 Assert.AreEqual(refTime, datetime);
-                refTime = refTime.Value.AddHours(2);
+                refTime = refTime.AddHours(2);
             }
 
             Assert.AreEqual(null, datetime);

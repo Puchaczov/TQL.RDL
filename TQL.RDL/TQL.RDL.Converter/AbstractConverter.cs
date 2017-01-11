@@ -48,32 +48,23 @@ namespace TQL.RDL.Converter
 
         private void RegisterDefaultMethods()
         {
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsDayOfWeek), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsDayOfWeek), new Type[] { typeof(DateTimeOffset?), typeof(long?) }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsDayOfWeek), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsDayOfWeek), new Type[] { typeof(long?) }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsEven), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsEven), new Type[] { typeof(long?) }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsOdd), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsOdd), new Type[] { typeof(long?) }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsWorkingDay), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsWorkingDay), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsLastDayOfMonth), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsLastDayOfMonth), new Type[] { typeof(DateTimeOffset?) }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.IsLastDayOfMonth), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.IsLastDayOfMonth), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetDate), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetYear), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetMonth), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetMonth), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetDay), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetHour), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetHour), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetMinute), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetMinute), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetSecond), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetSecond), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.Now), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.Now), new Type[] { }));
-            metadatas.RegisterMethod(nameof(DefaultMethods.UtcNow), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.UtcNow), new Type[] { }));
-
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), typeof(DefaultMethods).GetRuntimeMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
-            metadatas.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), typeof(DefaultMethods).GetType().GetRuntimeMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsDayOfWeek));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsEven));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsOdd));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsWorkingDay));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsLastDayOfMonth));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDate));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetYear));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetMonth));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDay));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetHour));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetMinute));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetSecond));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetWeekOfMonth));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.Now));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.UtcNow));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDayOfWeek));
+            metadatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDayOfYear));
         }
     }
 }

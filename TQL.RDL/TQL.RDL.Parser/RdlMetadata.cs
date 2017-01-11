@@ -1,6 +1,7 @@
 ﻿using RDL.Parser.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace TQL.RDL.Parser
@@ -81,6 +82,16 @@ namespace TQL.RDL.Parser
                 methods[name].Add(methodInfo);
             else
                 methods.Add(name, new List<MethodInfo>() { methodInfo });
+        }
+
+        public void RegisterMethods<TType>(string methodName)
+        {
+            var type = typeof(TType);
+            var typeInfo = type.GetTypeInfo();
+            var methods = typeInfo.GetDeclaredMethods(methodName);
+
+            foreach (var m in methods)
+                RegisterMethod(m.Name, m);
         }
     }
 }

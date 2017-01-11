@@ -12,9 +12,9 @@ namespace TQL.RDL.Evaluator
     {
         private DateTimeOffset startAt;
         private DateTimeOffset? stopAt;
-        private Stack<List<IRDLInstruction>> functions;
+        private Stack<List<IRdlInstruction>> functions;
         private MemoryVariables variables;
-        private Func<DateTimeOffset?, DateTimeOffset?> generateNext;
+        private Func<DateTimeOffset, DateTimeOffset> generateNext;
         private DefaultMethods methods;
         private Dictionary<string, int> labels;
         private RdlMetadata metadatas;
@@ -27,7 +27,7 @@ namespace TQL.RDL.Evaluator
 
         private RDLVirtualMachine machine;
 
-        protected List<IRDLInstruction> instructions => functions.Peek();
+        protected List<IRdlInstruction> instructions => functions.Peek();
 
         public RDLCodeGenerator(RdlMetadata metadatas)
             : this(metadatas, DateTimeOffset.UtcNow)
@@ -38,8 +38,8 @@ namespace TQL.RDL.Evaluator
         {
             methods = new DefaultMethods();
             variables = new MemoryVariables();
-            functions = new Stack<List<IRDLInstruction>>();
-            functions.Push(new List<IRDLInstruction>());
+            functions = new Stack<List<IRdlInstruction>>();
+            functions.Push(new List<IRdlInstruction>());
             stopAt = null;
             labels = new Dictionary<string, int>();
             this.metadatas = metadatas;
@@ -68,22 +68,22 @@ namespace TQL.RDL.Evaluator
             switch(node.DatePart)
             {
                 case RepeatEveryNode.PartOfDate.Seconds:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddSeconds(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddSeconds(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Minutes:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddMinutes(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddMinutes(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Hours:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddHours(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddHours(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.DaysOfMonth:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddDays(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddDays(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Months:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddMonths(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddMonths(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Years:
-                    generateNext = (DateTimeOffset? datetime) => datetime.Value.AddYears(node.Value);
+                    generateNext = (DateTimeOffset datetime) => datetime.AddYears(node.Value);
                     break;
             }
         }
@@ -135,7 +135,7 @@ namespace TQL.RDL.Evaluator
                     instructions.Add(new LoadDateTimeVariableInstruction(v => v.Current));
                     break;
                 case "weekday":
-                    instructions.Add(new LoadNumericVariableInstruction(v => (int?)v.Current?.DayOfWeek));
+                    instructions.Add(new LoadNumericVariableInstruction(v => (int)v.DayOfWeek));
                     break;
             }
         }
@@ -315,26 +315,26 @@ namespace TQL.RDL.Evaluator
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)
-            where TOperator : IRDLInstruction, new()
+            where TOperator : IRdlInstruction, new()
         {
             instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateLeftToRightInstructions<TOperator>(BinaryNode node)
-            where TOperator: IRDLInstruction, new()
+            where TOperator: IRdlInstruction, new()
         {
             instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateRightToLeftInstructions<TOperator>(BinaryNode node)
-            where TOperator : IRDLInstruction, new()
+            where TOperator : IRdlInstruction, new()
         {
             instructions.Add(new TOperator());
         }
 
         private void ExpressionGenerateInstructions<TDateTimeOp, TNumericOp>(BinaryNode node)
-            where TDateTimeOp: IRDLInstruction, new ()
-            where TNumericOp: IRDLInstruction, new ()
+            where TDateTimeOp: IRdlInstruction, new ()
+            where TNumericOp: IRdlInstruction, new ()
         {
             instructions.Add(new TNumericOp());
         }

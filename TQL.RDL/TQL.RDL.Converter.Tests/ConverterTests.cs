@@ -82,6 +82,8 @@ namespace TQL.RDL.Converter.Tests
             RdlTimeline timeline = new RdlTimeline(false);
             var response = timeline.Convert(request);
 
+            Assert.IsNotNull(response.Output);
+
             var fireAt = response.Output.NextFire();
 
             Assert.AreEqual(DateTimeOffset.Parse(fireTime), fireAt.Value);

@@ -14,12 +14,9 @@ namespace RDL.Parser.Helpers
         {
             var nullableType = Nullable.GetUnderlyingType(type);
 
-            bool isNullableType = nullableType != null;
+            var isNullableType = nullableType != null;
 
-            if (isNullableType)
-                return nullableType;
-            else
-                return type;
+            return isNullableType ? nullableType : type;
         }
     }
 }
