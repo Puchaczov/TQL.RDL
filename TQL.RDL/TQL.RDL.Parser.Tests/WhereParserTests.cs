@@ -66,7 +66,7 @@ namespace TQL.RDL.Parser.Tests
 
         private static Token[] Parse(string query)
         {
-            var parser = new RDLWhereParser();
+            var parser = new RdlWhereParser();
             var dec = new LexerComplexTokensDecorator(query);
             return parser.Parse(dec);
         }

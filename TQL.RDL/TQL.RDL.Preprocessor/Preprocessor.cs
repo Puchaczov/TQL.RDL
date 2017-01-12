@@ -11,7 +11,7 @@ namespace TQL.RDL.Preprocessor
     {
         public Preprocessor()
         {
-            base.Register(new Trim());
+            Register(new Trim());
         }
     }
 }

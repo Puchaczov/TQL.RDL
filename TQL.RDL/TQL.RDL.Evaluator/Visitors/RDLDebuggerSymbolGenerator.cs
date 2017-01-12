@@ -5,7 +5,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public sealed class RDLDebuggerSymbolGenerator : RDLCodeGenerator
+    public sealed class RdlDebuggerSymbolGenerator : RdlCodeGenerator
     {
         public void Visit(AddNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public void Visit(OrNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
@@ -32,16 +32,16 @@ namespace TQL.RDL.Evaluator
         public void Visit(NotInNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
         public void Visit(LessNode node) => ProduceDebuggerInstructions(node, (n) => base.Visit(n));
 
-        public RDLDebuggerSymbolGenerator(RdlMetadata gm)
+        public RdlDebuggerSymbolGenerator(RdlMetadata gm)
             : base(gm)
         { }
 
-        private void ProduceDebuggerInstructions<Node>(Node node, Action<Node> visit)
-            where Node : RdlSyntaxNode
+        private void ProduceDebuggerInstructions<TNode>(TNode node, Action<TNode> visit)
+            where TNode : RdlSyntaxNode
         {
-            this.instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.Before, (n, m) => { }, (n, m) => { }));
+            Instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.Before, (n, m) => { }, (n, m) => { }));
             visit(node);
-            this.instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.After, (n, m) => { }, (n, m) => { }));
+            Instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.After, (n, m) => { }, (n, m) => { }));
         }
     }
 }

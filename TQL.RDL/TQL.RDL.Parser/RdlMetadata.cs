@@ -8,11 +8,11 @@ namespace TQL.RDL.Parser
 {
     public class RdlMetadata
     {
-        private Dictionary<string, List<MethodInfo>> methods;
+        private Dictionary<string, List<MethodInfo>> _methods;
 
         public RdlMetadata()
         {
-            methods = new Dictionary<string, List<MethodInfo>>();
+            _methods = new Dictionary<string, List<MethodInfo>>();
         }
 
         public Type GetReturnType(string function, Type[] args)
@@ -27,7 +27,7 @@ namespace TQL.RDL.Parser
             if(!HasMethod(name, methodArgs, out index))
                 throw new Exception("Not matched");
 
-            return methods[name][index];
+            return _methods[name][index];
         }
 
         public bool HasMethod(string name, Type[] methodArgs)
@@ -38,12 +38,12 @@ namespace TQL.RDL.Parser
 
         private bool HasMethod(string name, Type[] methodArgs, out int index)
         {
-            if (!this.methods.ContainsKey(name))
+            if (!_methods.ContainsKey(name))
             {
                 throw new Exception(name);
             }
 
-            var methods = this.methods[name];
+            var methods = _methods[name];
 
             for (int i = 0, j = methods.Count; i < j; ++i)
             {
@@ -78,10 +78,10 @@ namespace TQL.RDL.Parser
 
         public void RegisterMethod(string name, MethodInfo methodInfo)
         {
-            if (methods.ContainsKey(name))
-                methods[name].Add(methodInfo);
+            if (_methods.ContainsKey(name))
+                _methods[name].Add(methodInfo);
             else
-                methods.Add(name, new List<MethodInfo>() { methodInfo });
+                _methods.Add(name, new List<MethodInfo>() { methodInfo });
         }
 
         public void RegisterMethods<TType>(string methodName)

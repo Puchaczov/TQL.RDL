@@ -59,23 +59,23 @@ namespace TQL.RDL.Evaluator
 
     public class SyntaxError : VisitationMessage
     {
-        private readonly SyntaxErrorKind kind;
+        private readonly SyntaxErrorKind _kind;
 
-        private static readonly Dictionary<SyntaxErrorKind, Codes> codes;
+        private static readonly Dictionary<SyntaxErrorKind, Codes> Codes;
 
         static SyntaxError()
         {
-            codes = new Dictionary<SyntaxErrorKind, Codes>();
-            codes.Add(SyntaxErrorKind.MissingValue, Codes.C02);
-            codes.Add(SyntaxErrorKind.ImproperType, Codes.C02);
-            codes.Add(SyntaxErrorKind.UnsupportedFunctionCall, Codes.C02);
-            codes.Add(SyntaxErrorKind.WrongKeyword, Codes.C02);
+            Codes = new Dictionary<SyntaxErrorKind, Codes>();
+            Codes.Add(SyntaxErrorKind.MissingValue, Evaluator.Codes.C02);
+            Codes.Add(SyntaxErrorKind.ImproperType, Evaluator.Codes.C02);
+            Codes.Add(SyntaxErrorKind.UnsupportedFunctionCall, Evaluator.Codes.C02);
+            Codes.Add(SyntaxErrorKind.WrongKeyword, Evaluator.Codes.C02);
         }
 
         public SyntaxError(TextSpan[] spans, string message, SyntaxErrorKind kind)
             : base(spans, message)
         {
-            this.kind = kind;
+            _kind = kind;
         }
 
         public SyntaxError(TextSpan span, string message, SyntaxErrorKind kind)
@@ -83,54 +83,54 @@ namespace TQL.RDL.Evaluator
         { }
 
         public override MessageLevel Level => MessageLevel.Error;
-        public SyntaxErrorKind Kind => kind;
-        public override Codes Code => codes[kind];
+        public SyntaxErrorKind Kind => _kind;
+        public override Codes Code => Codes[_kind];
 
         public override string ToString() => message;
     }
 
     public class SemanticError : VisitationMessage
     {
-        private readonly SemanticErrorKind kind;
-        private static readonly Dictionary<SemanticErrorKind, Codes> codes;
+        private readonly SemanticErrorKind _kind;
+        private static readonly Dictionary<SemanticErrorKind, Codes> Codes;
 
         static SemanticError()
         {
-            codes = new Dictionary<SemanticErrorKind, Codes>();
-            codes.Add(SemanticErrorKind.MixedValues, Codes.C02);
+            Codes = new Dictionary<SemanticErrorKind, Codes>();
+            Codes.Add(SemanticErrorKind.MixedValues, Evaluator.Codes.C02);
         }
 
         public SemanticError(TextSpan span, string message, SemanticErrorKind kind)
             : base(new TextSpan[] { span }, message)
         {
-            this.kind = kind;
+            _kind = kind;
         }
 
         public SemanticError(TextSpan[] spans, string message, SemanticErrorKind kind)
             : base(spans, message)
         {
-            this.kind = kind;
+            _kind = kind;
         }
 
         public override MessageLevel Level => MessageLevel.Error;
-        public SemanticErrorKind Kind => kind;
-        public override Codes Code => codes[kind];
-        public override string ToString() => this.message;
+        public SemanticErrorKind Kind => _kind;
+        public override Codes Code => Codes[_kind];
+        public override string ToString() => message;
     }
 
     public class FatalVisitError : VisitationMessage
     {
-        private readonly Exception exc;
+        private readonly Exception _exc;
 
         public FatalVisitError(Exception exc)
             : base(null, exc.Message)
         {
-            this.exc = exc;
+            _exc = exc;
         }
 
         public override Codes Code => Codes.C01;
         public override MessageLevel Level => MessageLevel.Error;
 
-        public override string ToString() => this.message;
+        public override string ToString() => message;
     }
 }

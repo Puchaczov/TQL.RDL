@@ -17,7 +17,7 @@ namespace TQL.RDL.Evaluator.Enumerators
 
         public VisitationState(RdlSyntaxNode node)
         {
-            this.Node = node;
+            Node = node;
             ToVisitDescendantIndex = 0;
             WasVisitedOnce = false;
         }

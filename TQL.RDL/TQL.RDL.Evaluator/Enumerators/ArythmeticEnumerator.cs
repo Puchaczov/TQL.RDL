@@ -12,27 +12,27 @@ namespace TQL.RDL.Evaluator.Enumerators
         public ArythmeticEnumerator(RdlSyntaxNode node)
             : base(node)
         {
-            this.stack.Push(new VisitationState(this.root));
+            Stack.Push(new VisitationState(Root));
         }
 
         public override void Dispose() { }
 
         public override bool MoveNext()
         {
-            while (stack.Count > 0)
+            while (Stack.Count > 0)
             {
-                var n = stack.Pop();
+                var n = Stack.Pop();
 
                 //jest lisciem i nie byl jeszcze odwiedzany
                 if (n.Node.IsLeaf && !n.WasVisitedOnce)
                 {
-                    this.Current = n.Node;
+                    Current = n.Node;
                     return true;
                 }
                 //nie jest lisciem i wszystkie dzieci zostaly odwiedzone
                 else if (!n.Node.IsLeaf && n.ToVisitDescendantIndex == n.Node.Descendants.Count())
                 {
-                    this.Current = n.Node;
+                    Current = n.Node;
                     return true;
                 }
                 else
@@ -40,21 +40,21 @@ namespace TQL.RDL.Evaluator.Enumerators
                     if (!n.WasVisitedOnce)
                     {
                         n.WasVisitedOnce = true;
-                        stack.Push(n);
+                        Stack.Push(n);
                     }
                     //jezeli zostalo jeszcze jakikolwiek dziecko do odwiedzenia
                     else if (n.ToVisitDescendantIndex < n.Node.Descendants.Count())
                     {
-                        stack.Push(n);
+                        Stack.Push(n);
                     }
 
                     for (int i = n.ToVisitDescendantIndex, j = n.Node.Descendants.Count(); i < j; ++i)
                     {
                         n.ToVisitDescendantIndex = i + 1;
-                        stack.Push(new VisitationState(n.Node.Descendants[i]));
+                        Stack.Push(new VisitationState(n.Node.Descendants[i]));
                         if (n.Node.Descendants[i].IsLeaf)
                         {
-                            stack.Peek().WasVisitedOnce = true;
+                            Stack.Peek().WasVisitedOnce = true;
                             Current = n.Node.Descendants[i];
                             return true;
                         }
@@ -70,8 +70,8 @@ namespace TQL.RDL.Evaluator.Enumerators
 
         public override void Reset()
         {
-            stack.Clear();
-            stack.Push(new VisitationState(root));
+            Stack.Clear();
+            Stack.Push(new VisitationState(Root));
         }
     }
 }

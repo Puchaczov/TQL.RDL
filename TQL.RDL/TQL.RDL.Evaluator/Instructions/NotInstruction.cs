@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class NotInstruction : IRdlInstruction
     {
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             machine.Values.Push(Convert.ToInt64(!Convert.ToBoolean(machine.Values.Pop())));
             machine.InstructionPointer += 1;

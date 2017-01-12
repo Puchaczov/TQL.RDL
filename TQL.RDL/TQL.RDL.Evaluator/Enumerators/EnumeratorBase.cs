@@ -11,12 +11,12 @@ namespace TQL.RDL.Evaluator.Enumerators
 {
     public abstract class EnumeratorBase<TStoreType> : IEnumerator<RdlSyntaxNode> where TStoreType : new()
     {
-        protected TStoreType stack = new TStoreType();
-        protected readonly RdlSyntaxNode root;
+        protected TStoreType Stack = new TStoreType();
+        protected readonly RdlSyntaxNode Root;
 
         public EnumeratorBase(RdlSyntaxNode root)
         {
-            this.root = root;
+            Root = root;
         }
 
         public RdlSyntaxNode Current { get; protected set; }

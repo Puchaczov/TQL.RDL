@@ -133,7 +133,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => string.Format("not in {0}", base.Right);
+        public override string ToString() => string.Format("not in {0}", Right);
 
         public override Type ReturnType => typeof(bool);
     }
@@ -190,16 +190,16 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ArgListNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] args;
+        private RdlSyntaxNode[] _args;
 
         public ArgListNode(IEnumerable<RdlSyntaxNode> args)
         {
-            this.args = args.Select(f => f).ToArray();
+            _args = args.Select(f => f).ToArray();
         }
 
-        public override RdlSyntaxNode[] Descendants => args;
+        public override RdlSyntaxNode[] Descendants => _args;
 
-        public override TextSpan FullSpan => new TextSpan(args[0].FullSpan.Start, args[args.Length - 1].FullSpan.End - args[0].FullSpan.Start);
+        public override TextSpan FullSpan => new TextSpan(_args[0].FullSpan.Start, _args[_args.Length - 1].FullSpan.End - _args[0].FullSpan.Start);
 
         public override bool IsLeaf => false;
 
@@ -212,43 +212,43 @@ namespace TQL.RDL.Parser.Nodes
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < (args.Length - 1); ++i)
+            for (int i = 0; i < (_args.Length - 1); ++i)
             {
-                builder.Append(args[i].ToString());
+                builder.Append(_args[i].ToString());
                 builder.Append(", ");
             }
-            if(args.Length > 0)
-                builder.Append(args[args.Length - 1].ToString());
+            if(_args.Length > 0)
+                builder.Append(_args[_args.Length - 1].ToString());
             return builder.ToString();
         }
     }
 
     public class VarNode : LeafNode
     {
-        private VarToken token;
+        private VarToken _token;
 
         public VarNode(VarToken token)
             : base(token)
         {
-            this.token = token;
+            _token = token;
         }
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
-        public override TextSpan FullSpan => token.Span;
+        public override TextSpan FullSpan => _token.Span;
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => token.ToString();
+        public override string ToString() => _token.ToString();
 
-        public string Value => token.Value;
+        public string Value => _token.Value;
 
         public override Type ReturnType
         {
             get
             {
                 //TO DO: much better implementation of this: register variable in global metadata and use it here
-                if(token.Value != "current")
+                if(_token.Value != "current")
                 {
                     return typeof(long);
                 }
@@ -259,23 +259,23 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ElseNode : UnaryNode
     {
-        private Token token;
+        private Token _token;
 
         public ElseNode(Token token, RdlSyntaxNode node)
             : base(node)
         {
-            this.token = token;
+            _token = token;
         }
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => token;
+        public override Token Token => _token;
 
         public CaseNode Parent { get; private set; }
 
         public void SetParent(CaseNode parent)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         public override void Accept(INodeVisitor visitor)
@@ -288,19 +288,19 @@ namespace TQL.RDL.Parser.Nodes
 
     public class WhenNode : UnaryNode
     {
-        private Token token;
+        private Token _token;
 
         public WhenNode(Token token, RdlSyntaxNode when) 
             : base(when)
         {
-            this.token = token;
+            _token = token;
         }
 
         public RdlSyntaxNode Expression => Descendant;
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => token;
+        public override Token Token => _token;
 
         public WhenThenNode Parent { get; private set; }
 
@@ -311,7 +311,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public void SetParent(WhenThenNode node)
         {
-            this.Parent = node;
+            Parent = node;
         }
 
         public override string ToString() => string.Format("when {0}", Expression);
@@ -319,7 +319,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ThenNode : UnaryNode
     {
-        private Token token;
+        private Token _token;
 
         public ThenNode(Token token, RdlSyntaxNode then)
             : base(then)
@@ -327,13 +327,13 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => token;
+        public override Token Token => _token;
 
         public WhenThenNode Parent { get; private set; }
 
         public void SetParent(WhenThenNode parent)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         public override void Accept(INodeVisitor visitor)
@@ -346,11 +346,11 @@ namespace TQL.RDL.Parser.Nodes
 
     public class WhenThenNode : BinaryNode
     {
-        private RdlSyntaxNode[] descs;
+        private RdlSyntaxNode[] _descs;
 
         public WhenThenNode(RdlSyntaxNode when, RdlSyntaxNode then) : base(when, then)
         {
-            this.descs = base.Descendants.ToArray();
+            _descs = base.Descendants.ToArray();
 
             When.SetParent(this);
             Then.SetParent(this);
@@ -360,7 +360,7 @@ namespace TQL.RDL.Parser.Nodes
         public WhenNode When => Descendants[0] as WhenNode;
         public ThenNode Then => Descendants[1] as ThenNode;
 
-        public override RdlSyntaxNode[] Descendants => descs;
+        public override RdlSyntaxNode[] Descendants => _descs;
 
         public CaseNode Parent { get; private set; }
 
@@ -380,7 +380,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public void SetParent(CaseNode parent)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         public override void Accept(INodeVisitor visitor)
@@ -395,44 +395,44 @@ namespace TQL.RDL.Parser.Nodes
 
     public class CaseNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] descs;
+        private RdlSyntaxNode[] _descs;
 
         public CaseNode(Token caseToken, WhenThenNode[] nodes, ElseNode node)
         {
             node.SetParent(this);
 
-            this.whenThenExpressions = nodes;
-            this.elseExpression = node;
+            _whenThenExpressions = nodes;
+            _elseExpression = node;
 
             foreach(var item in nodes)
             {
                 item.SetParent(this);
             }
 
-            this.caseToken = caseToken;
+            _caseToken = caseToken;
 
-            this.descs = whenThenExpressions.Concat(new RdlSyntaxNode[1] { elseExpression }).ToArray();
+            _descs = _whenThenExpressions.Concat(new RdlSyntaxNode[1] { _elseExpression }).ToArray();
         }
 
-        private Token caseToken;
+        private Token _caseToken;
 
-        private WhenThenNode[] whenThenExpressions;
-        private ElseNode elseExpression;
+        private WhenThenNode[] _whenThenExpressions;
+        private ElseNode _elseExpression;
 
-        public override RdlSyntaxNode[] Descendants => descs;
+        public override RdlSyntaxNode[] Descendants => _descs;
 
-        public RdlSyntaxNode[] WhenThenExpressions => whenThenExpressions;
+        public RdlSyntaxNode[] WhenThenExpressions => _whenThenExpressions;
 
-        public override TextSpan FullSpan => new TextSpan(caseToken.Span.Start, elseExpression.FullSpan.End - caseToken.Span.Start);
+        public override TextSpan FullSpan => new TextSpan(_caseToken.Span.Start, _elseExpression.FullSpan.End - _caseToken.Span.Start);
 
         public override bool IsLeaf => false;
 
-        public override Type ReturnType => whenThenExpressions[0].ReturnType;
+        public override Type ReturnType => _whenThenExpressions[0].ReturnType;
 
-        public WhenThenNode[] Expressions => whenThenExpressions;
-        public ElseNode Else => elseExpression;
+        public WhenThenNode[] Expressions => _whenThenExpressions;
+        public ElseNode Else => _elseExpression;
 
-        public override Token Token => caseToken;
+        public override Token Token => _caseToken;
 
         public override void Accept(INodeVisitor visitor)
         {

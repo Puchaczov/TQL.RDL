@@ -8,39 +8,39 @@ namespace TQL.RDL.Parser
 {
     internal class LexerEnumerator : IEnumerator<Token>
     {
-        private ILexer<Token> lexer;
-        private Token current;
-        private StatementType[] abortOnToken;
-        private bool firstValueEnumerated = false;
+        private ILexer<Token> _lexer;
+        private Token _current;
+        private StatementType[] _abortOnToken;
+        private bool _firstValueEnumerated = false;
 
         public LexerEnumerator(ILexer<Token> lexer, params StatementType[] abortOnToken)
         {
-            this.lexer = lexer;
-            this.abortOnToken = abortOnToken;
-            this.current = lexer.CurrentToken();
+            _lexer = lexer;
+            _abortOnToken = abortOnToken;
+            _current = lexer.CurrentToken();
         }
 
-        public object Current => current;
+        public object Current => _current;
 
-        Token IEnumerator<Token>.Current => current;
+        Token IEnumerator<Token>.Current => _current;
 
         public bool MoveNext()
         {
-            if (!firstValueEnumerated && current.TokenType != StatementType.None)
+            if (!_firstValueEnumerated && _current.TokenType != StatementType.None)
             {
-                if (abortOnToken.Contains(current.TokenType))
+                if (_abortOnToken.Contains(_current.TokenType))
                     return false;
-                firstValueEnumerated = true;
+                _firstValueEnumerated = true;
                 return true;
             }
 
-            firstValueEnumerated = true;
-            current = lexer.NextToken();
+            _firstValueEnumerated = true;
+            _current = _lexer.NextToken();
 
-            if (abortOnToken.Contains(current.TokenType))
+            if (_abortOnToken.Contains(_current.TokenType))
                 return false;
 
-            switch(current.TokenType)
+            switch(_current.TokenType)
             {
                 case StatementType.EndOfFile:
                     return false;

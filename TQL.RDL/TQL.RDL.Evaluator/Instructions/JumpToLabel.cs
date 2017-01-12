@@ -5,18 +5,18 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class JumpToLabel : IRdlInstruction
     {
-        private readonly string label;
+        private readonly string _label;
 
         public JumpToLabel(string label)
         {
-            this.label = label;
+            _label = label;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            machine.InstructionPointer = machine.RelativeLabels[label];
+            machine.InstructionPointer = machine.RelativeLabels[_label];
         }
 
-        public override string ToString() => $"JMP {label}";
+        public override string ToString() => $"JMP {_label}";
     }
 }

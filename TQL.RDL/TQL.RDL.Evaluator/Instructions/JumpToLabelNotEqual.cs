@@ -6,21 +6,21 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class JumpToLabelNotEqual : IRdlInstruction
     {
-        private readonly string label;
+        private readonly string _label;
 
         public JumpToLabelNotEqual(string label)
         {
-            this.label = label;
+            _label = label;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             if (!Convert.ToBoolean(machine.Values.Pop()))
-                machine.InstructionPointer = machine.RelativeLabels[label];
+                machine.InstructionPointer = machine.RelativeLabels[_label];
             else
                 machine.InstructionPointer += 1;
         }
 
-        public override string ToString() => $"JMPNE {label}";
+        public override string ToString() => $"JMPNE {_label}";
     }
 }

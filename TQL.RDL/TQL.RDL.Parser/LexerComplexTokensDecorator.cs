@@ -8,55 +8,55 @@ namespace TQL.RDL.Parser
 {
     public class LexerComplexTokensDecorator : ILexer<Token>, IEnumerable<Token>
     {
-        private Lexer lexer;
-        private StatementType[] disableEnumerationForTokens;
-        private bool skipWhiteSpaces;
+        private Lexer _lexer;
+        private StatementType[] _disableEnumerationForTokens;
+        private bool _skipWhiteSpaces;
 
         public LexerComplexTokensDecorator(Lexer lexer)
         {
-            this.lexer = lexer;
-            disableEnumerationForTokens = new StatementType[0];
-            skipWhiteSpaces = true;
+            _lexer = lexer;
+            _disableEnumerationForTokens = new StatementType[0];
+            _skipWhiteSpaces = true;
         }
 
         public LexerComplexTokensDecorator(string input, DefinitionSet ds = DefinitionSet.Query)
         {
-            lexer = new Lexer(input, ds);
-            disableEnumerationForTokens = new StatementType[0];
-            skipWhiteSpaces = true;
+            _lexer = new Lexer(input, ds);
+            _disableEnumerationForTokens = new StatementType[0];
+            _skipWhiteSpaces = true;
         }
 
-        public int Position => lexer.Position;
+        public int Position => _lexer.Position;
 
-        public string Query => lexer.Query;
+        public string Query => _lexer.Query;
 
         public void ChangePosition(int newPosition)
         {
-            lexer.ChangePosition(newPosition);
+            _lexer.ChangePosition(newPosition);
         }
 
-        public Token CurrentToken() => lexer.CurrentToken();
+        public Token CurrentToken() => _lexer.CurrentToken();
 
-        public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this, disableEnumerationForTokens);
+        public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this, _disableEnumerationForTokens);
 
         public void DisableEnumerationWhen(params StatementType[] tokens)
         {
-            disableEnumerationForTokens = tokens;
+            _disableEnumerationForTokens = tokens;
         }
 
         public void EnableEnumerationForAll()
         {
-            disableEnumerationForTokens = new StatementType[0];
+            _disableEnumerationForTokens = new StatementType[0];
         }
 
-        public Token LastToken() => lexer.LastToken();
+        public Token LastToken() => _lexer.LastToken();
 
         public Token NextToken()
         {
-            var token = lexer.NextToken();
-            while(skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
+            var token = _lexer.NextToken();
+            while(_skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
             {
-                token = lexer.NextToken();
+                token = _lexer.NextToken();
             }
             return token;
         }

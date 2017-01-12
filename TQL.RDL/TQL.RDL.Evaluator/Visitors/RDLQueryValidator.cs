@@ -8,25 +8,25 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
-    public class RDLQueryValidator : AnalyzerBase
+    public class RdlQueryValidator : AnalyzerBase
     {
-        protected readonly List<Exception> criticalErrors;
-        private readonly List<VisitationMessage> errors;
+        protected readonly List<Exception> CriticalErrors;
+        private readonly List<VisitationMessage> _errors;
 
-        public virtual IEnumerable<VisitationMessage> Errors => e;
-        protected IReadOnlyList<VisitationMessage> e => errors.Concat(criticalErrors.Select(f => new FatalVisitError(f))).ToArray();
+        public virtual IEnumerable<VisitationMessage> Errors => E;
+        protected IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
-        private RdlMetadata metadatas;
+        private RdlMetadata _metadatas;
 
-        public virtual bool IsValid => criticalErrors.Count == 0 && errors.Count == 0;
+        public virtual bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
 
-        private bool startAtOccured = false;
+        private bool _startAtOccured = false;
 
-        public RDLQueryValidator(RdlMetadata metadatas)
+        public RdlQueryValidator(RdlMetadata metadatas)
         {
-            this.criticalErrors = new List<Exception>();
-            this.errors = new List<VisitationMessage>();
-            this.metadatas = metadatas;
+            CriticalErrors = new List<Exception>();
+            _errors = new List<VisitationMessage>();
+            _metadatas = metadatas;
         }
 
         public override void Visit(WhereConditionsNode node)
@@ -43,13 +43,13 @@ namespace TQL.RDL.Evaluator
             }
             catch(Exception e)
             {
-                criticalErrors.Add(e);
+                CriticalErrors.Add(e);
             }
         }
 
         public override void Visit(OrNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Or");
+            ReportReturnTypesAreNotSame(node, "Or");
         }
 
         public override void Visit(DateTimeNode node)
@@ -60,13 +60,13 @@ namespace TQL.RDL.Evaluator
             }
             catch(Exception e)
             {
-                this.criticalErrors.Add(e);
+                CriticalErrors.Add(e);
             }
         }
 
         public override void Visit(EqualityNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Equality");
+            ReportReturnTypesAreNotSame(node, "Equality");
         }
 
         public override void Visit(ArgListNode node)
@@ -80,34 +80,34 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(GreaterEqualNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "GreaterEqual");
+            ReportReturnTypesAreNotSame(node, "GreaterEqual");
         }
 
         public override void Visit(LessEqualNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "LessEqual");
+            ReportReturnTypesAreNotSame(node, "LessEqual");
         }
 
         public override void Visit(AddNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Add");
+            ReportReturnTypesAreNotSame(node, "Add");
         }
 
         public override void Visit(ModuloNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Modulo");
+            ReportReturnTypesAreNotSame(node, "Modulo");
         }
 
         public override void Visit(FSlashNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Divide");
+            ReportReturnTypesAreNotSame(node, "Divide");
         }
 
         public override void Visit(ThenNode node)
         {
             if(node.Descendants.Length == 0)
             {
-                this.ReportLackOfThenExpression(node);
+                ReportLackOfThenExpression(node);
             }
         }
 
@@ -115,7 +115,7 @@ namespace TQL.RDL.Evaluator
         {
             if(node.WhenThenExpressions.Length == 0)
             {
-                this.ReportLackOfWhenThenExpression(node);
+                ReportLackOfWhenThenExpression(node);
             }
         }
 
@@ -140,12 +140,12 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(StarNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Star");
+            ReportReturnTypesAreNotSame(node, "Star");
         }
 
         public override void Visit(HyphenNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Hyphen");
+            ReportReturnTypesAreNotSame(node, "Hyphen");
         }
 
         public override void Visit(NumericConsequentRepeatEveryNode node)
@@ -153,12 +153,12 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(LessNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Less");
+            ReportReturnTypesAreNotSame(node, "Less");
         }
 
         public override void Visit(GreaterNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Greater");
+            ReportReturnTypesAreNotSame(node, "Greater");
         }
 
         public override void Visit(VarNode node)
@@ -166,12 +166,12 @@ namespace TQL.RDL.Evaluator
 
         public override void Visit(NotInNode node)
         {
-            this.Visit(node);
+            Visit(node);
         }
 
         public override void Visit(DiffNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "Diff");
+            ReportReturnTypesAreNotSame(node, "Diff");
         }
 
         public override void Visit(InNode node)
@@ -197,24 +197,24 @@ namespace TQL.RDL.Evaluator
             }
             catch (Exception e)
             {
-                criticalErrors.Add(e);
+                CriticalErrors.Add(e);
             }
         }
 
         public override void Visit(AndNode node)
         {
-            this.ReportReturnTypesAreNotSame(node, "And");
+            ReportReturnTypesAreNotSame(node, "And");
         }
 
         public override void Visit(StartAtNode node)
         {
             try
             {
-                startAtOccured = true;
+                _startAtOccured = true;
             }
             catch(Exception exc)
             {
-                criticalErrors.Add(exc);
+                CriticalErrors.Add(exc);
             }
         }
 
@@ -226,7 +226,7 @@ namespace TQL.RDL.Evaluator
             }
             catch (Exception exc)
             {
-                criticalErrors.Add(exc);
+                CriticalErrors.Add(exc);
             }
         }
 
@@ -237,20 +237,20 @@ namespace TQL.RDL.Evaluator
         {
             try
             {
-                if (!metadatas.HasMethod(node.Name, node.Args.Descendants.Select(f => f.ReturnType).ToArray()))
+                if (!_metadatas.HasMethod(node.Name, node.Args.Descendants.Select(f => f.ReturnType).ToArray()))
                 {
                     ReportUnknownFunctionCall(node);
                 }
             }
             catch (Exception e)
             {
-                criticalErrors.Add(e);
+                CriticalErrors.Add(e);
             }
         }
 
         public override void Visit(RootScriptNode node)
         {
-            if(!startAtOccured)
+            if(!_startAtOccured)
             {
                 ReportStartAtRequired();
             }
@@ -258,22 +258,22 @@ namespace TQL.RDL.Evaluator
 
         private void ReportStartAtRequired()
         {
-            this.AddSyntaxError(new TextSpan(-1, 0), AnalysisMessage.StartAtRequired, SyntaxErrorKind.MissingValue);
+            AddSyntaxError(new TextSpan(-1, 0), AnalysisMessage.StartAtRequired, SyntaxErrorKind.MissingValue);
         }
 
         private void ReportHasMixedTypes(InNode node)
         {
-            this.AddSemanticError(node.FullSpan, AnalysisMessage.MixedTypesNotAllowed, SemanticErrorKind.MixedValues);
+            AddSemanticError(node.FullSpan, AnalysisMessage.MixedTypesNotAllowed, SemanticErrorKind.MixedValues);
         }
 
         private void ReportUnknownFunctionCall(FunctionNode node)
         {
-            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.UnknownFunctionCall, node.Name, node.Args.Descendants.Select(f => f.ReturnType.Name).ToArray()), SyntaxErrorKind.UnsupportedFunctionCall);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.UnknownFunctionCall, node.Name, node.Args.Descendants.Select(f => f.ReturnType.Name).ToArray()), SyntaxErrorKind.UnsupportedFunctionCall);
         }
 
         private void ReportUnknownRepeatEveryDatePartFraction(RepeatEveryNode node)
         {
-            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.RepeateEveryContainsUnknownDatePartFraction, node.Token.Value), SyntaxErrorKind.WrongKeyword);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.RepeateEveryContainsUnknownDatePartFraction, node.Token.Value), SyntaxErrorKind.WrongKeyword);
         }
 
         private void AddSemanticError(TextSpan span, string message, SemanticErrorKind kind)
@@ -283,12 +283,12 @@ namespace TQL.RDL.Evaluator
 
         private void AddSemanticError(TextSpan[] spans, string message, SemanticErrorKind kind)
         {
-            errors.Add(new SemanticError(spans, message, kind));
+            _errors.Add(new SemanticError(spans, message, kind));
         }
 
         private void AddSyntaxError(TextSpan fullSpan, string v, SyntaxErrorKind missingValue)
         {
-            errors.Add(new SyntaxError(fullSpan, v, missingValue));
+            _errors.Add(new SyntaxError(fullSpan, v, missingValue));
         }
 
         private void ReportReturnTypesAreNotSame(BinaryNode node, string nodeName)
@@ -297,13 +297,13 @@ namespace TQL.RDL.Evaluator
             var right = node.Right.ReturnType.GetUnderlyingNullable();
             if (left != right)
             {
-                this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
+                AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
             }
         }
 
         private void ReportLackOfWhenThenExpression(CaseNode node)
         {
-            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenThenExpression, node), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenThenExpression, node), SyntaxErrorKind.LackOfExpression);
         }
 
         private void ReportLackOfThenExpression(ThenNode node)
@@ -323,7 +323,7 @@ namespace TQL.RDL.Evaluator
 
         private void ReportArgListIsEmpty(ArgListNode node)
         {
-            this.AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty), SyntaxErrorKind.LackOfExpression);
         }
     }
 }

@@ -12,20 +12,20 @@ namespace TQL.RDL.Evaluator.Enumerators
         public KeywordEnumerator(RdlSyntaxNode root) 
             : base(root)
         {
-            stack.Push(new VisitationState(root));
+            Stack.Push(new VisitationState(root));
         }
 
         public override void Dispose() { }
 
         public override bool MoveNext()
         {
-            while(stack.Count > 0)
+            while(Stack.Count > 0)
             {
-                var node = stack.Pop();
+                var node = Stack.Pop();
 
                 for(int i = node.Node.Descendants.Length - 1; i >= 0; --i)
                 {
-                    stack.Push(new VisitationState(node.Node.Descendants[i]));
+                    Stack.Push(new VisitationState(node.Node.Descendants[i]));
                 }
 
                 Current = node.Node;
@@ -36,8 +36,8 @@ namespace TQL.RDL.Evaluator.Enumerators
 
         public override void Reset()
         {
-            stack.Clear();
-            stack.Push(new VisitationState(root));
+            Stack.Clear();
+            Stack.Push(new VisitationState(Root));
         }
     }
 }

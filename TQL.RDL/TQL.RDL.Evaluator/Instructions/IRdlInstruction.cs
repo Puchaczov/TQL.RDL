@@ -2,6 +2,6 @@
 {
     public interface IRdlInstruction
     {
-        void Run(RDLVirtualMachine machine);
+        void Run(RdlVirtualMachine machine);
     }
 }

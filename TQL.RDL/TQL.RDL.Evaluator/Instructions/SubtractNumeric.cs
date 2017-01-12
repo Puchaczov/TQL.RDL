@@ -5,7 +5,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class SubtractNumeric : IRdlInstruction
     {
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             var b = machine.Values.Pop();
             var a = machine.Values.Pop();

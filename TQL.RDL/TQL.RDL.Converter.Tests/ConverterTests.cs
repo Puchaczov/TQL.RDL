@@ -6,8 +6,8 @@ namespace TQL.RDL.Converter.Tests
     [TestClass]
     public class ConverterTests
     {
-        private static bool testACalled = false;
-        private static bool testBCalled = false;
+        private static bool _testACalled = false;
+        private static bool _testBCalled = false;
 
         [TestMethod]
         public void Converter_CheckIsMethodRegistered_ShouldPass()
@@ -24,8 +24,8 @@ namespace TQL.RDL.Converter.Tests
 
             response.Output.NextFire();
             
-            Assert.IsTrue(testACalled);
-            Assert.IsTrue(testBCalled);
+            Assert.IsTrue(_testACalled);
+            Assert.IsTrue(_testBCalled);
         }
 
         [TestMethod]
@@ -91,13 +91,13 @@ namespace TQL.RDL.Converter.Tests
 
         public static bool TestA(DateTimeOffset? current)
         {
-            testACalled = true;
+            _testACalled = true;
             return true;
         }
 
         public static bool TestB(DateTimeOffset? current)
         {
-            testBCalled = true;
+            _testBCalled = true;
             return true;
         }
     }

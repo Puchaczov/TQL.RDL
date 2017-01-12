@@ -13,31 +13,31 @@ namespace TQL.RDL.Evaluator.Instructions
             After
         }
 
-        private readonly RdlSyntaxNode node;
-        private readonly ExpressionState state;
-        private readonly OnExpressionBegin expBeginCallback;
-        private readonly OnExpressionEnd expEndCallback;
+        private readonly RdlSyntaxNode _node;
+        private readonly ExpressionState _state;
+        private readonly OnExpressionBegin _expBeginCallback;
+        private readonly OnExpressionEnd _expEndCallback;
 
         public delegate void OnExpressionBegin(RdlSyntaxNode node, IVmTracker tracker);
         public delegate void OnExpressionEnd(RdlSyntaxNode node, IVmTracker tracker);
 
         public DebuggerTrap(RdlSyntaxNode node, ExpressionState state, OnExpressionBegin expBeginCallback, OnExpressionEnd expEndCallback)
         {
-            this.node = node;
-            this.state = state;
-            this.expBeginCallback = expBeginCallback;
-            this.expEndCallback = expEndCallback;
+            _node = node;
+            _state = state;
+            _expBeginCallback = expBeginCallback;
+            _expEndCallback = expEndCallback;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            switch(state)
+            switch(_state)
             {
                 case ExpressionState.Before:
-                    expBeginCallback(node, machine);
+                    _expBeginCallback(_node, machine);
                     break;
                 case ExpressionState.After:
-                    expEndCallback(node, machine);
+                    _expEndCallback(_node, machine);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

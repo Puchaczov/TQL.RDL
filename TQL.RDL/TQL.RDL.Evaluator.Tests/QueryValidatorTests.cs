@@ -71,7 +71,7 @@ namespace TQL.RDL.Evaluator.Tests
             }
         }
 
-        public RDLQueryValidator Parse(string query)
+        public RdlQueryValidator Parse(string query)
         {
             var gm = new RdlMetadata();
             var lexer = new LexerComplexTokensDecorator(query);
@@ -84,7 +84,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
             
-            var validator = new RDLQueryValidator(gm);
+            var validator = new RdlQueryValidator(gm);
             var traverser = new CodeGenerationTraverser(validator);
             node.Accept(traverser);
 

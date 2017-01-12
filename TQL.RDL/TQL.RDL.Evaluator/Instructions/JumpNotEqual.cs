@@ -2,18 +2,18 @@ namespace TQL.RDL.Evaluator.Instructions
 {
     public class JumpNotEqual : IRdlInstruction
     {
-        private readonly int shift;
+        private readonly int _shift;
 
         public JumpNotEqual(int shift)
         {
-            this.shift = shift;
+            _shift = shift;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             if(machine.Values.Pop() != machine.Values.Pop())
             {
-                machine.InstructionPointer += shift;
+                machine.InstructionPointer += _shift;
                 return;
             }
             machine.InstructionPointer += 1;

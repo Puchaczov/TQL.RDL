@@ -6,9 +6,9 @@ using UsefullAlgorithms.Parsing.ExpressionParsing;
 
 namespace TQL.RDL.Parser
 {
-    public class RDLWhereParser : ShuntingYard<LexerComplexTokensDecorator, Token>
+    public class RdlWhereParser : ShuntingYard<LexerComplexTokensDecorator, Token>
     {
-        public RDLWhereParser()
+        public RdlWhereParser()
             : base()
         {
             operators.Add(new Token("or", StatementType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
@@ -36,7 +36,7 @@ namespace TQL.RDL.Parser
         protected override bool IsSkippable(Token token) => token.TokenType == StatementType.WhiteSpace;
         protected override bool IsComma(Token token) => token.TokenType == StatementType.Comma;
         protected override bool IsWord(Token token) => token.TokenType == StatementType.Word;
-        protected override bool IsOperator(Token token) => this.operators.ContainsKey(token);
+        protected override bool IsOperator(Token token) => operators.ContainsKey(token);
         protected override bool IsValue(Token token) => Regex.IsMatch("[a-Z1-9]+", token.Value) && !token.Value.Contains("@");
 
         protected override Token GenerateVarArgToken(int argsCount) => new VarArgToken(argsCount);

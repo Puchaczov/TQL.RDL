@@ -5,18 +5,18 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class Modify : IRdlInstruction
     {
-        public delegate void Fun(RDLVirtualMachine machine);
+        public delegate void Fun(RdlVirtualMachine machine);
 
-        private readonly Fun fun;
+        private readonly Fun _fun;
 
         public Modify(Fun fun)
         {
-            this.fun = fun;
+            _fun = fun;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            fun(machine);
+            _fun(machine);
             machine.InstructionPointer += 1;
         }
 

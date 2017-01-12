@@ -6,16 +6,16 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class LoadDateTimeVariableInstruction : IRdlInstruction
     {
-        private readonly Func<MemoryVariables, DateTimeOffset> loadFun;
+        private readonly Func<MemoryVariables, DateTimeOffset> _loadFun;
 
         public LoadDateTimeVariableInstruction(Func<MemoryVariables, DateTimeOffset> func)
         {
-            this.loadFun = func;
+            _loadFun = func;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            machine.Datetimes.Push(loadFun(machine.Variables));
+            machine.Datetimes.Push(_loadFun(machine.Variables));
             machine.InstructionPointer += 1;
         }
     }

@@ -18,7 +18,7 @@ namespace TQL.RDL.Parser
             public static string KDiff = DiffToken.TokenText;
             public static string KElse = string.Format(Keyword, ElseToken.TokenText);
             public static string KEvery = string.Format(Keyword, EveryToken.TokenText);
-            public static string KFSlashToken = string.Format(Keyword, FSlashToken.TokenText);
+            public static string KfSlashToken = string.Format(Keyword, FSlashToken.TokenText);
             public static string KGreater = string.Format(Keyword, GreaterToken.TokenText);
             public static string KGreaterEqual = string.Format(Keyword, GreaterEqualToken.TokenText);
             public static string KHyphen = string.Format(@"\{0}", HyphenToken.TokenText);
@@ -59,7 +59,7 @@ namespace TQL.RDL.Parser
                 new TokenDefinition(TokenRegexDefinition.KDiff),
                 new TokenDefinition(TokenRegexDefinition.KElse),
                 new TokenDefinition(TokenRegexDefinition.KEvery),
-                new TokenDefinition(TokenRegexDefinition.KFSlashToken),
+                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
                 new TokenDefinition(TokenRegexDefinition.KGreater),
                 new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
                 new TokenDefinition(TokenRegexDefinition.KHyphen),
@@ -98,7 +98,7 @@ namespace TQL.RDL.Parser
                 new TokenDefinition(TokenRegexDefinition.KDiff),
                 new TokenDefinition(TokenRegexDefinition.KElse),
                 new TokenDefinition(TokenRegexDefinition.KEvery),
-                new TokenDefinition(TokenRegexDefinition.KFSlashToken),
+                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
                 new TokenDefinition(TokenRegexDefinition.KGreater),
                 new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
                 new TokenDefinition(TokenRegexDefinition.KHyphen),

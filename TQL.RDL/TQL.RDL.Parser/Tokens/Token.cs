@@ -13,7 +13,7 @@ namespace TQL.RDL.Parser.Tokens
 
         public override GenericToken<StatementType> Clone() => new Token(Value, TokenType, Span);
 
-        public bool Equals(Token other) => other.TokenType == this.TokenType && other.Value == this.Value;
+        public bool Equals(Token other) => other.TokenType == TokenType && other.Value == Value;
 
         public override bool Equals(object obj)
         {
@@ -22,7 +22,7 @@ namespace TQL.RDL.Parser.Tokens
             {
                 return false;
             }
-            if(Object.ReferenceEquals(obj, this))
+            if(ReferenceEquals(obj, this))
             {
                 return true;
             }

@@ -6,16 +6,16 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class RootScriptNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] parts;
+        private RdlSyntaxNode[] _parts;
 
         public RootScriptNode(RdlSyntaxNode[] parts)
         {
-            this.parts = parts;
+            _parts = parts;
         }
 
-        public override RdlSyntaxNode[] Descendants => parts;
+        public override RdlSyntaxNode[] Descendants => _parts;
 
-        public override TextSpan FullSpan => new TextSpan(parts[0].FullSpan.Start, (parts[parts.Length - 1].FullSpan.End - parts[0].FullSpan.Start) + 1);
+        public override TextSpan FullSpan => new TextSpan(_parts[0].FullSpan.Start, (_parts[_parts.Length - 1].FullSpan.End - _parts[0].FullSpan.Start) + 1);
 
         public override bool IsLeaf => false;
 

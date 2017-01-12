@@ -7,22 +7,22 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class CallExternalNumeric : IRdlInstruction
     {
-        private readonly MethodInfo info;
-        protected readonly object obj;
+        private readonly MethodInfo _info;
+        protected readonly object Obj;
 
         public CallExternalNumeric(object obj, MethodInfo info)
         {
-            this.obj = obj;
-            this.info = info;
+            Obj = obj;
+            _info = info;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            var result = info.Invoke(obj, machine.CallArgs);
+            var result = _info.Invoke(Obj, machine.CallArgs);
             machine.Values.Push(Convert.ToInt64(result));
             machine.InstructionPointer += 1;
         }
 
-        public override string ToString() => string.Format($"CALL {info.Name}");
+        public override string ToString() => string.Format($"CALL {_info.Name}");
     }
 }

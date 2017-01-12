@@ -7,13 +7,25 @@ namespace TQL.RDL.Converter
 {
     public class ConvertionResponse<T> : ConvertionResponseBase<T>
     {
+        /// <summary>
+        /// Gets messages that could potentially appear after convertion from query to evaluator object
+        /// </summary>
         public IReadOnlyCollection<VisitationMessage> Messages { get; }
+
+        /// <summary>
+        /// Gets converted from query object (ie. evaluator)
+        /// </summary>
         public T Output { get; }
 
+        /// <summary>
+        /// Instantiate object of ConvertionResponse with proper properties instantied
+        /// </summary>
+        /// <param name="output">Instance of object that user wanted to obtain</param>
+        /// <param name="messages">Message that potentially appeared after conversion</param>
         public ConvertionResponse(T output, params VisitationMessage[] messages)
         {
-            this.Output = output;
-            this.Messages = messages;
+            Output = output;
+            Messages = messages;
         }
     }
 }

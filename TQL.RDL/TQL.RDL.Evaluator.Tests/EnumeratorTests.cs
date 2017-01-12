@@ -21,7 +21,7 @@ namespace TQL.RDL.Evaluator.Tests
             //"case when 1 then 2 when 3 then 4 else 0"
             var rootComponent = new RootScriptNode(new RdlSyntaxNode[] {
                 new CaseNode(
-                    new Token("case", Parser.Tokens.StatementType.Case, new Core.Tokens.TextSpan(0, 0)),
+                    new Token("case", StatementType.Case, new TextSpan(0, 0)),
                     new WhenThenNode[] {
                         new WhenThenNode(
                             new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))),

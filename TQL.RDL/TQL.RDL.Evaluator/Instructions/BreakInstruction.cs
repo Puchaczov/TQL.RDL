@@ -5,7 +5,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class BreakInstruction : IRdlInstruction
     {
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             machine.Break = true;
             machine.InstructionPointer += 1;

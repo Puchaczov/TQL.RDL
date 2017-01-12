@@ -9,8 +9,8 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class EvaluatorTests
     {
-        private static bool staticMethod1Called = false;
-        private static bool staticMethod2Called = false;
+        private static bool _staticMethod1Called = false;
+        private static bool _staticMethod2Called = false;
         
 
         [TestMethod]
@@ -39,8 +39,8 @@ namespace TQL.RDL.Evaluator.Tests
 
             machine.NextFire();
 
-            Assert.IsTrue(staticMethod1Called);
-            Assert.IsTrue(staticMethod2Called);
+            Assert.IsTrue(_staticMethod1Called);
+            Assert.IsTrue(_staticMethod2Called);
         }
 
         [TestMethod]
@@ -267,17 +267,17 @@ namespace TQL.RDL.Evaluator.Tests
 
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
-            staticMethod1Called = true;
+            _staticMethod1Called = true;
             return true;
         }
 
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date, long? year)
         {
-            staticMethod2Called = true;
+            _staticMethod2Called = true;
             return true;
         }
 
-        private RDLVirtualMachine Parse(string query)
+        private RdlVirtualMachine Parse(string query)
         {
             var gm = new RdlMetadata();
 
@@ -294,8 +294,8 @@ namespace TQL.RDL.Evaluator.Tests
 
             var methods = new DefaultMethods();
 
-            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
-            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), this.GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
+            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
+            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
@@ -307,7 +307,7 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetMinute), methods.GetType().GetMethod(nameof(DefaultMethods.GetMinute), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetSecond), methods.GetType().GetMethod(nameof(DefaultMethods.GetSecond), new Type[0]));
 
-            var visitor = new RDLCodeGenerator(gm);
+            var visitor = new RdlCodeGenerator(gm);
 
             var node = parser.ComposeRootComponents();
 

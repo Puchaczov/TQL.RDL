@@ -6,37 +6,37 @@ namespace TQL.RDL.Evaluator.Instructions
     public abstract class InInstruction<T> : IRdlInstruction
         where T : struct
     {
-        protected delegate T PopFun(RDLVirtualMachine machine);
-        protected delegate void PushFun(RDLVirtualMachine machine, T value);
-        protected delegate T PeekFun(RDLVirtualMachine machine);
+        protected delegate T PopFun(RdlVirtualMachine machine);
+        protected delegate void PushFun(RdlVirtualMachine machine, T value);
+        protected delegate T PeekFun(RdlVirtualMachine machine);
 
-        private readonly PopFun pop;
-        private readonly PushFun push;
-        private readonly PeekFun peek;
+        private readonly PopFun _pop;
+        private readonly PushFun _push;
+        private readonly PeekFun _peek;
 
         protected InInstruction(PopFun popFun, PushFun pushFun, PeekFun peekFun)
         {
-            pop = popFun;
-            push = pushFun;
-            peek = peekFun;
+            _pop = popFun;
+            _push = pushFun;
+            _peek = peekFun;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             var inArgsCount = machine.Registers[(short)Registers.B];
 
-            var toCompare = pop(machine);
+            var toCompare = _pop(machine);
 
             var result = false;
             var i = 0;
             for (; i < inArgsCount && !result; ++i)
             {
-                var tmpRes = pop(machine);
+                var tmpRes = _pop(machine);
                 result |= tmpRes.Equals(toCompare);
             }
             for (; i < inArgsCount; ++i)
             {
-                pop(machine);
+                _pop(machine);
             }
             machine.Values.Push(result ? 1 : 0);
             

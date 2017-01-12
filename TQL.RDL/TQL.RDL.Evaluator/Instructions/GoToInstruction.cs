@@ -5,18 +5,18 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class GoToInstruction : IRdlInstruction
     {
-        private readonly int newInstructionPtr;
+        private readonly int _newInstructionPtr;
 
         public GoToInstruction(int newInstructionPtr)
         {
-            this.newInstructionPtr = newInstructionPtr;
+            _newInstructionPtr = newInstructionPtr;
         }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
-            machine.InstructionPointer = newInstructionPtr;
+            machine.InstructionPointer = _newInstructionPtr;
         }
 
-        public override string ToString() => $"GOTO { newInstructionPtr }";
+        public override string ToString() => $"GOTO { _newInstructionPtr }";
     }
 }

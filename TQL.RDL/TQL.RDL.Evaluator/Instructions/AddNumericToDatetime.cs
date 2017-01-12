@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Instructions
         public AddNumericToDatetime()
         { }
 
-        public void Run(RDLVirtualMachine machine)
+        public void Run(RdlVirtualMachine machine)
         {
             throw new NotImplementedException();
         }
