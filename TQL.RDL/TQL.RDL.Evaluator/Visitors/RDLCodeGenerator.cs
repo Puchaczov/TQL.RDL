@@ -10,6 +10,8 @@ namespace TQL.RDL.Evaluator
 {
     public class RdlCodeGenerator : INodeVisitor
     {
+        #region Private variables
+
         private DateTimeOffset _startAt;
         private DateTimeOffset? _stopAt;
         private readonly Stack<List<IRdlInstruction>> _functions;
@@ -18,20 +20,39 @@ namespace TQL.RDL.Evaluator
         private readonly DefaultMethods _methods;
         private readonly Dictionary<string, int> _labels;
         private readonly RdlMetadata _metadatas;
-
-        private static readonly string NDateTime = Nullable.GetUnderlyingType(typeof(Nullable<DateTimeOffset>)).Name;
-        private static readonly string NInt64 = Nullable.GetUnderlyingType(typeof(Nullable<long>)).Name;
-        private static readonly string NBoolean = Nullable.GetUnderlyingType(typeof(Nullable<bool>)).Name;
-
         private RdlVirtualMachine _machine;
+
+        #endregion
+
+        #region Private static variables
+
+        private static readonly string NDateTime = Nullable.GetUnderlyingType(typeof(DateTimeOffset?)).Name;
+        private static readonly string NInt64 = Nullable.GetUnderlyingType(typeof(long?)).Name;
+        private static readonly string NBoolean = Nullable.GetUnderlyingType(typeof(bool?)).Name;
+
+        #endregion
+
+        #region Protected Getters / Setters
 
         protected List<IRdlInstruction> Instructions => _functions.Peek();
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Instantiate code generator object
+        /// </summary>
+        /// <param name="metadatas"></param>
         public RdlCodeGenerator(RdlMetadata metadatas)
             : this(metadatas, DateTimeOffset.UtcNow)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Instantiate code generator object with custom startAt
+        /// </summary>
+        /// <param name="metadatas"></param>
+        /// <param name="startAt"></param>
         private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
         {
             _methods = new DefaultMethods();
@@ -43,6 +64,9 @@ namespace TQL.RDL.Evaluator
             _metadatas = metadatas;
             _startAt = startAt;
         }
+
+        #endregion
+
 
         public RdlVirtualMachine VirtualMachine => _machine;
 
@@ -189,7 +213,34 @@ namespace TQL.RDL.Evaluator
 
         public virtual void Visit(WordNode node)
         {
-            throw new NotImplementedException();
+            var value = 0;
+            switch (node.Token.Value.ToLowerInvariant())
+            {
+                case "monday":
+                    value = (int) DayOfWeek.Monday;
+                    goto case "__addinstr__";
+                case "tuesday":
+                    value = (int) DayOfWeek.Tuesday;
+                    goto case "__addinstr__";
+                case "wednesday":
+                    value = (int) DayOfWeek.Wednesday;
+                    goto case "__addinstr__";
+                case "thursday":
+                    value = (int) DayOfWeek.Thursday;
+                    goto case "__addinstr__";
+                case "friday":
+                    value = (int) DayOfWeek.Friday;
+                    goto case "__addinstr__";
+                case "saturday":
+                    value = (int) DayOfWeek.Saturday;
+                    goto case "__addinstr__";
+                case "sunday":
+                    value = (int) DayOfWeek.Sunday;
+                    goto case "__addinstr__";
+                case "__addinstr__":
+                    Instructions.Add(new PushNumericInstruction(value));
+                    break;
+            }
         }
 
         public virtual void Visit(FunctionNode node)

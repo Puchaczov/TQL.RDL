@@ -64,6 +64,34 @@ namespace TQL.RDL.Parser.Tests
             Assert.AreEqual(StatementType.Greater, tokens[2].TokenType);
         }
 
+        [TestMethod]
+        public void WhereConditions_ParseAithmeticOperatorsWithoutBrackets_ShouldPass()
+        {
+            var tokens = Parse("1 = 2 or 3 = 4");
+
+            Assert.AreEqual(StatementType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.Equality, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Equality, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.Or, tokens[6].TokenType);
+        }
+
+        [TestMethod]
+        public void WhereConditions_ParseArithmeticWithWord_ShouldPass()
+        {
+            var tokens = Parse("1 = monday or 2 = tuesday");
+
+            Assert.AreEqual(StatementType.Numeric, tokens[0].TokenType);
+            Assert.AreEqual(StatementType.Word, tokens[1].TokenType);
+            Assert.AreEqual(StatementType.Equality, tokens[2].TokenType);
+            Assert.AreEqual(StatementType.Numeric, tokens[3].TokenType);
+            Assert.AreEqual(StatementType.Word, tokens[4].TokenType);
+            Assert.AreEqual(StatementType.Equality, tokens[5].TokenType);
+            Assert.AreEqual(StatementType.Or, tokens[6].TokenType);
+        }
+
         private static Token[] Parse(string query)
         {
             var parser = new RdlWhereParser();

@@ -106,7 +106,7 @@ namespace TQL.RDL.Parser
             switch (token.TokenType)
             {
                 case StatementType.Var:
-                    throw new NotImplementedException();
+                    throw new NotSupportedException("Not supported yet, sorry.");
                 case StatementType.Word:
                     return new StopAtNode(stopAtToken, new DateTimeNode(token, _zone, _formats, _ci));
             }

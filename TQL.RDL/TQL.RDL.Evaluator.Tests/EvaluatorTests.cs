@@ -240,6 +240,22 @@ namespace TQL.RDL.Evaluator.Tests
             (x) => x == DateTimeOffset.Parse("05.01.2017 07:00:00"));
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_WithDayOfWeeksInsteadOfNumbers_ShouldPass()
+        {
+            EvaluateQuery(@"repeat every days where GetDayOfWeek() = monday or GetDayOfWeek() = frIday start at '12.01.2017 00:00:00'",
+                string.Empty,
+                string.Empty,
+                (x) => x == DateTimeOffset.Parse("13.01.2017 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("16.01.2017 00:00:00"));
+
+            EvaluateQuery(@"repeat every days where GetDayOfWeek() in (monday, frIday) start at '12.01.2017 00:00:00'",
+                string.Empty,
+                string.Empty,
+                (x) => x == DateTimeOffset.Parse("13.01.2017 00:00:00"),
+                (x) => x == DateTimeOffset.Parse("16.01.2017 00:00:00"));
+        }
+
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
             EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, funcs);
