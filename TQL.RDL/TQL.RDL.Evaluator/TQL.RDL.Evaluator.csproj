@@ -128,9 +128,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="AnalysisMessage.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -256,6 +256,17 @@ namespace TQL.RDL.Evaluator.Tests
                 (x) => x == DateTimeOffset.Parse("16.01.2017 00:00:00"));
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_GetSpecificDaysOfMonthThatAlsoAreSpecificDaysOfWeek_ShouldPass()
+        {
+            EvaluateQuery(@"repeat every days where GetDay() in (21,22) and GetDayOfWeek() in (1,2) start at '13.01.2017 00:00:00'", 
+                string.Empty, 
+                string.Empty,
+                (x) => true,
+                (x) => true,
+                (x) => true);
+        }
+
         public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
             EvaluateQuery(query, startAt, stopAt, (DateTimeOffset?)null, funcs);

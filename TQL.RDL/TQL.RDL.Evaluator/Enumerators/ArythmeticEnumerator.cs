@@ -9,14 +9,26 @@ namespace TQL.RDL.Evaluator.Enumerators
 {
     public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>, IEnumerator<RdlSyntaxNode>
     {
+
+        /// <summary>
+        /// Create instance of tree enumerator
+        /// </summary>
+        /// <param name="node">Abstract Syntax Tree</param>
         public ArythmeticEnumerator(RdlSyntaxNode node)
             : base(node)
         {
             Stack.Push(new VisitationState(Root));
         }
 
+        /// <summary>
+        /// Dispose unused elements
+        /// </summary>
         public override void Dispose() { }
 
+        /// <summary>
+        /// Determine if next element to visit exist
+        /// </summary>
+        /// <returns>Next visitable node exist</returns>
         public override bool MoveNext()
         {
             while (Stack.Count > 0)
@@ -68,6 +80,9 @@ namespace TQL.RDL.Evaluator.Enumerators
             return false;
         }
 
+        /// <summary>
+        /// Reset enumerator to start from root
+        /// </summary>
         public override void Reset()
         {
             Stack.Clear();
