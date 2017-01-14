@@ -1,12 +1,12 @@
-﻿using RDL.Parser.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RDL.Parser.Helpers;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
-namespace TQL.RDL.Evaluator
+namespace TQL.RDL.Evaluator.Visitors
 {
     public class RdlCodeGenerator : INodeVisitor
     {

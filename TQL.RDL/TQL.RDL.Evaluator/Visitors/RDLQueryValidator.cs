@@ -1,24 +1,25 @@
-﻿using RDL.Parser.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RDL.Parser.Helpers;
 using TQL.Core.Tokens;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
-namespace TQL.RDL.Evaluator
+namespace TQL.RDL.Evaluator.Visitors
 {
-    public class RdlQueryValidator : AnalyzerBase
+    public sealed class RdlQueryValidator : AnalyzerBase
     {
-        protected readonly List<Exception> CriticalErrors;
         private readonly List<VisitationMessage> _errors;
 
-        public virtual IEnumerable<VisitationMessage> Errors => E;
-        protected IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
+        public IEnumerable<VisitationMessage> Errors => E;
+
+        private readonly List<Exception> CriticalErrors;
+        private IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
         private RdlMetadata _metadatas;
 
-        public virtual bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
+        public bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
 
         private bool _startAtOccured = false;
 

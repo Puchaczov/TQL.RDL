@@ -6,16 +6,18 @@ using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
-    public class CodeGenerationTraverser : INodeVisitor
+    public sealed class CodeGenerationTraverser : INodeVisitor
     {
-        private INodeVisitor _codeGenerationVisitor;
+        private readonly INodeVisitor _codeGenerationVisitor;
 
         public CodeGenerationTraverser(INodeVisitor codeGenerationVisitor)
         {
+            if (codeGenerationVisitor == null) throw new ArgumentNullException(nameof(codeGenerationVisitor));
+
             _codeGenerationVisitor = codeGenerationVisitor;
         }
 
-        public virtual void Visit(WhereConditionsNode node) {
+        public void Visit(WhereConditionsNode node) {
             foreach(var item in node.Descendants)
             {
                 item.Accept(this);
@@ -23,201 +25,201 @@ namespace TQL.RDL.Evaluator.Visitors
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(StopAtNode node) {
+        public void Visit(StopAtNode node) {
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(RepeatEveryNode node) {
+        public void Visit(RepeatEveryNode node) {
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(OrNode node) {
+        public void Visit(OrNode node) {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(DateTimeNode node)
+        public void Visit(DateTimeNode node)
         {
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(EqualityNode node)
+        public void Visit(EqualityNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(ArgListNode node)
+        public void Visit(ArgListNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(NumericNode node)
+        public void Visit(NumericNode node)
         {
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(GreaterEqualNode node)
-        {
-            node.Left.Accept(this);
-            node.Right.Accept(this);
-            node.Accept(_codeGenerationVisitor);
-        }
-
-        public virtual void Visit(LessEqualNode node)
+        public void Visit(GreaterEqualNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(AddNode node)
+        public void Visit(LessEqualNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(ModuloNode node)
+        public void Visit(AddNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(FSlashNode node)
+        public void Visit(ModuloNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(ThenNode node)
+        public void Visit(FSlashNode node)
+        {
+            node.Left.Accept(this);
+            node.Right.Accept(this);
+            node.Accept(_codeGenerationVisitor);
+        }
+
+        public void Visit(ThenNode node)
         {
             node.Descendant.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(CaseNode node)
+        public void Visit(CaseNode node)
         {
             node.Accept(_codeGenerationVisitor);
             foreach (var item in node.Descendants)
                 item.Accept(this);
         }
 
-        public virtual void Visit(WhenThenNode node)
+        public void Visit(WhenThenNode node)
         {
             node.Accept(_codeGenerationVisitor);
             foreach (var item in node.Descendants)
                 item.Accept(this);
         }
 
-        public virtual void Visit(ElseNode node)
+        public void Visit(ElseNode node)
         {
             node.Descendant.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(WhenNode node)
+        public void Visit(WhenNode node)
         {
             node.Descendant.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(StarNode node)
+        public void Visit(StarNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(HyphenNode node)
+        public void Visit(HyphenNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(NumericConsequentRepeatEveryNode node)
+        public void Visit(NumericConsequentRepeatEveryNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(LessNode node)
+        public void Visit(LessNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(GreaterNode node)
+        public void Visit(GreaterNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(VarNode node)
+        public void Visit(VarNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(NotInNode node)
+        public void Visit(NotInNode node)
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(DiffNode node)
+        public void Visit(DiffNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(InNode node)
+        public void Visit(InNode node)
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(AndNode node)
+        public void Visit(AndNode node)
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(RootScriptNode node)
+        public void Visit(RootScriptNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(StartAtNode node)
+        public void Visit(StartAtNode node)
         {
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(WordNode node)
+        public void Visit(WordNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
 
-        public virtual void Visit(FunctionNode node)
+        public void Visit(FunctionNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
