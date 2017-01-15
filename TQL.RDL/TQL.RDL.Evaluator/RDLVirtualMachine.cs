@@ -80,15 +80,13 @@ namespace TQL.RDL.Evaluator
 
                 InstructionPointer = 0;
 
-                IRdlInstruction instruction = null;
-
                 var old = ReferenceTime;
 
                 Datetimes.Push(ReferenceTime);
 
                 while (!Break && !Exit)
                 {
-                    instruction = Instructions[InstructionPointer];
+                    var instruction = Instructions[InstructionPointer];
                     instruction.Run(this);
                 }
 

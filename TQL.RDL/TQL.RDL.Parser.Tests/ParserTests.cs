@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RDL.Parser.Nodes;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Parser.Tests

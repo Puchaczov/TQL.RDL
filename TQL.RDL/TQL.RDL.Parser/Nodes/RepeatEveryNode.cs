@@ -1,4 +1,5 @@
 ﻿using System;
+using RDL.Parser;
 using TQL.Core.Tokens;
 using TQL.RDL.Parser.Tokens;
 
@@ -6,17 +7,6 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class RepeatEveryNode : RdlSyntaxNode
     {
-        public enum PartOfDate
-        {
-            Seconds,
-            Minutes,
-            Hours,
-            DaysOfMonth,
-            Months,
-            Years,
-            Unknown
-        }
-
         private readonly Token _repeatEvery;
         private readonly Token _timeToken;
 
@@ -63,21 +53,6 @@ namespace TQL.RDL.Parser.Nodes
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => $"{"repeat every"} {Value}";
-    }
-
-    public class NumericConsequentRepeatEveryNode : RepeatEveryNode
-    {
-        private readonly NumericToken _number;
-
-        public NumericConsequentRepeatEveryNode(Token repeatEvery, NumericToken number, WordToken partOfDatetime)
-            : base(repeatEvery, partOfDatetime)
-        {
-            _number = number;
-        }
-
-        public override int Value => int.Parse(_number.Value);
-
-        public override string ToString() => $"{"repeat every"} {_number.Value} {base.Value}";
+        public override string ToString() => $"repeat every {Value}";
     }
 }

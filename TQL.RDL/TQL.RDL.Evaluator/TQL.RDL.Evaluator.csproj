@@ -51,6 +51,14 @@
     <Compile Include="Enumerators\EnumeratorBase.cs" />
     <Compile Include="Enumerators\KeywordEnumerator.cs" />
     <Compile Include="Enumerators\VisitationState.cs" />
+    <Compile Include="ErrorHandling\Codes.cs" />
+    <Compile Include="ErrorHandling\FatalVisitError.cs" />
+    <Compile Include="ErrorHandling\MessageLevel.cs" />
+    <Compile Include="ErrorHandling\SemanticError.cs" />
+    <Compile Include="ErrorHandling\SemanticErrorKind.cs" />
+    <Compile Include="ErrorHandling\SyntaxError.cs" />
+    <Compile Include="ErrorHandling\SyntaxErrorKind.cs" />
+    <Compile Include="ErrorHandling\VisitationMessage.cs" />
     <Compile Include="Instructions\AddNumericToDatetime.cs" />
     <Compile Include="Instructions\AddNumericToNumeric.cs" />
     <Compile Include="Instructions\AndInstruction.cs" />
@@ -100,7 +108,6 @@
     <Compile Include="RDLVirtualMachine.cs" />
     <Compile Include="Instructions\IRdlInstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VisitationMessage.cs" />
     <Compile Include="Visitors\CodeGenerationTraverser.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Nodes\NumericConsequentRepeatEveryNode.cs" />
+    <Compile Include="PartOfDate.cs" />
     <Compile Include="Tokens\CaseWhenEsacToken.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Lexer.cs" />

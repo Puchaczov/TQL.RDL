@@ -1,4 +1,6 @@
-﻿namespace TQL.RDL.Parser.Nodes
+﻿using RDL.Parser.Nodes;
+
+namespace TQL.RDL.Parser.Nodes
 {
     public interface INodeVisitor
     {

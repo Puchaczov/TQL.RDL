@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using RDL.Parser.Nodes;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Nodes;
 using TQL.RDL.Parser.Tokens;

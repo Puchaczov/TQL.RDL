@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TQL.Core.Converters;
 using TQL.RDL.Evaluator;
+using TQL.RDL.Evaluator.ErrorHandling;
 
 namespace TQL.RDL.Converter
 {

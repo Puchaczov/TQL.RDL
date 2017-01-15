@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Instructions
@@ -6,7 +7,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class AddNumericToDatetime : IRdlInstruction
     {
-        private readonly RepeatEveryNode.PartOfDate _partOfDate;
+        private readonly PartOfDate _partOfDate;
         private readonly int _value;
 
         /// <summary>
@@ -14,7 +15,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// </summary>
         /// <param name="partOfDate">Part of date that will be modified.</param>
         /// <param name="value">Value that will be added to datetime.</param>
-        public AddNumericToDatetime(RepeatEveryNode.PartOfDate partOfDate, int value)
+        public AddNumericToDatetime(PartOfDate partOfDate, int value)
         {
             _partOfDate = partOfDate;
             _value = value;
@@ -28,22 +29,22 @@ namespace TQL.RDL.Evaluator.Instructions
         {
             switch (_partOfDate)
             {
-                case RepeatEveryNode.PartOfDate.Seconds:
+                case PartOfDate.Seconds:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddSeconds(_value));
                     break;
-                case RepeatEveryNode.PartOfDate.Minutes:
+                case PartOfDate.Minutes:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddMinutes(_value));
                     break;
-                case RepeatEveryNode.PartOfDate.Hours:
+                case PartOfDate.Hours:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddHours(_value));
                     break;
-                case RepeatEveryNode.PartOfDate.DaysOfMonth:
+                case PartOfDate.DaysOfMonth:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddDays(_value));
                     break;
-                case RepeatEveryNode.PartOfDate.Months:
+                case PartOfDate.Months:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddMonths(_value));
                     break;
-                case RepeatEveryNode.PartOfDate.Years:
+                case PartOfDate.Years:
                     machine.Datetimes.Push(machine.Datetimes.Pop().AddYears(_value));
                     break;
             }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RDL.Parser;
 using RDL.Parser.Helpers;
+using RDL.Parser.Nodes;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
@@ -37,22 +39,22 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             switch(node.DatePart)
             {
-                case RepeatEveryNode.PartOfDate.Seconds:
+                case PartOfDate.Seconds:
                     _generateNext = datetime => datetime.AddSeconds(node.Value);
                     break;
-                case RepeatEveryNode.PartOfDate.Minutes:
+                case PartOfDate.Minutes:
                     _generateNext = datetime => datetime.AddMinutes(node.Value);
                     break;
-                case RepeatEveryNode.PartOfDate.Hours:
+                case PartOfDate.Hours:
                     _generateNext = datetime => datetime.AddHours(node.Value);
                     break;
-                case RepeatEveryNode.PartOfDate.DaysOfMonth:
+                case PartOfDate.DaysOfMonth:
                     _generateNext = datetime => datetime.AddDays(node.Value);
                     break;
-                case RepeatEveryNode.PartOfDate.Months:
+                case PartOfDate.Months:
                     _generateNext = datetime => datetime.AddMonths(node.Value);
                     break;
-                case RepeatEveryNode.PartOfDate.Years:
+                case PartOfDate.Years:
                     _generateNext = datetime => datetime.AddYears(node.Value);
                     break;
             }

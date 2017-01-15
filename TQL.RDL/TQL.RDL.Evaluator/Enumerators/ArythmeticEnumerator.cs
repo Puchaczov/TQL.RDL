@@ -4,7 +4,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
 {
-    public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>, IEnumerator<RdlSyntaxNode>
+    public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>
     {
         /// <summary>
         /// Create instance of tree enumerator
@@ -24,7 +24,7 @@ namespace TQL.RDL.Evaluator.Enumerators
         /// <summary>
         /// Determine if next element to visit exist
         /// </summary>
-        /// <returns>Next visitable node exist</returns>
+        /// <returns>Next node to visit exist</returns>
         public override bool MoveNext()
         {
             while (Stack.Count > 0)

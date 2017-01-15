@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RDL.Parser;
 using RDL.Parser.Helpers;
+using RDL.Parser.Nodes;
 using TQL.Core.Tokens;
+using TQL.RDL.Evaluator.ErrorHandling;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
 
@@ -37,7 +40,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             try
             {
-                if (node.DatePart == RepeatEveryNode.PartOfDate.Unknown)
+                if (node.DatePart == PartOfDate.Unknown)
                 {
                     ReportUnknownRepeatEveryDatePartFraction(node);
                 }

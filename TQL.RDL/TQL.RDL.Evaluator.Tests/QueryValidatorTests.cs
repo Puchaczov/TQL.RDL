@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TQL.RDL.Evaluator.ErrorHandling;
 using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 
