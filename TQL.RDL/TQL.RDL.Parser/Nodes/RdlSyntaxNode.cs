@@ -30,10 +30,10 @@ namespace TQL.RDL.Parser.Nodes
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             if (Descendants != null && Descendants.Length > 0)
             {
-                for (int i = 0; i < Descendants.Length - 1; ++i)
+                for (var i = 0; i < Descendants.Length - 1; ++i)
                 {
                     builder.Append(Descendants[i]);
                     builder.Append(' ');

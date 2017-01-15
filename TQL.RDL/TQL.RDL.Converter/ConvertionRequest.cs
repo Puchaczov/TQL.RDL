@@ -9,6 +9,26 @@ namespace TQL.RDL.Converter
     public class ConvertionRequest : ConvertionRequestBase
     {
         /// <summary>
+        /// Allow user to instantiate properly configured request. 
+        /// </summary>
+        /// <param name="query">User defined query.</param>
+        /// <param name="source">Source timezone in which query will be evaluated</param>
+        /// <param name="target">Target timezone in which evaluated date will be returned to user.</param>
+        /// <param name="debuggable">Should query be debuggable?</param>
+        /// <param name="formats">Default formats of date in typed query</param>
+        /// <param name="methods">C# Methods that will be bind to query</param>
+        public ConvertionRequest(string query, TimeZoneInfo source, TimeZoneInfo target, bool debuggable = false, string[] formats = null, params MethodInfo[] methods)
+        {
+            Query = query;
+            MethodsToBind = methods;
+            Debuggable = debuggable;
+            Source = source;
+            Target = target;
+            Formats = formats;
+            CultureInfo = new CultureInfo("en-US");
+        }
+
+        /// <summary>
         /// Query script typed by user.
         /// </summary>
         public string Query { get; }
@@ -42,25 +62,5 @@ namespace TQL.RDL.Converter
         /// Determine culture type of typed date (currently, always en-US)
         /// </summary>
         public CultureInfo CultureInfo { get; }
-
-        /// <summary>
-        /// Allow user to instantiate properly configured request. 
-        /// </summary>
-        /// <param name="query">User defined query.</param>
-        /// <param name="source">Source timezone in which query will be evaluated</param>
-        /// <param name="target">Target timezone in which evaluated date will be returned to user.</param>
-        /// <param name="debuggable">Should query be debuggable?</param>
-        /// <param name="formats">Default formats of date in typed query</param>
-        /// <param name="methods">C# Methods that will be bind to query</param>
-        public ConvertionRequest(string query, TimeZoneInfo source, TimeZoneInfo target, bool debuggable = false, string[] formats = null, params MethodInfo[] methods)
-        {
-            Query = query;
-            MethodsToBind = methods;
-            Debuggable = debuggable;
-            Source = source;
-            Target = target;
-            Formats = formats;
-            CultureInfo = new CultureInfo("en-US");
-        }
     }
 }

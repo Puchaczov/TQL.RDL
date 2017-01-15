@@ -10,25 +10,11 @@ namespace TQL.RDL.Parser
 {
     public class RdlParser : ParserBase<Token, StatementType>
     {
-        private LexerComplexTokensDecorator _cLexer;
+        private readonly CultureInfo _ci;
+        private readonly string[] _formats;
         private readonly RdlMetadata _metadatas;
         private readonly TimeSpan _zone;
-        private readonly string[] _formats;
-        private readonly CultureInfo _ci;
-
-        public override Token CurrentToken
-        {
-            get;
-            protected set;
-        }
-
-        public override Token LastToken
-        {
-            get;
-            protected set;
-        }
-
-        protected override ILexer<Token> Lexer => _cLexer;
+        private LexerComplexTokensDecorator _cLexer;
 
         public RdlParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
         {
@@ -45,6 +31,20 @@ namespace TQL.RDL.Parser
             _formats = formats;
             _ci = ci;
         }
+
+        public override Token CurrentToken
+        {
+            get;
+            protected set;
+        }
+
+        public override Token LastToken
+        {
+            get;
+            protected set;
+        }
+
+        protected override ILexer<Token> Lexer => _cLexer;
 
         public RootScriptNode ComposeRootComponents()
         {
@@ -116,11 +116,11 @@ namespace TQL.RDL.Parser
         private RdlSyntaxNode ComposeWhere()
         {
             Consume(StatementType.Where);
-            RdlWhereParser parser = new RdlWhereParser();
+            var parser = new RdlWhereParser();
             _cLexer.DisableEnumerationWhen(StatementType.StartAt, StatementType.StopAt);
             var tokens = parser.Parse(_cLexer);
             _cLexer.EnableEnumerationForAll();
-            Stack<RdlSyntaxNode> nodes = new Stack<RdlSyntaxNode>();
+            var nodes = new Stack<RdlSyntaxNode>();
             return ComposePostfix(nodes, tokens);
         }
 
@@ -207,7 +207,7 @@ namespace TQL.RDL.Parser
                         //ShuntingYard algorithm won't know if it point to casual expression or 'special' vararg expression (1,2,...).
                         if(!(args is ArgListNode))
                         {
-                            args = new ArgListNode(new RdlSyntaxNode[] { args });
+                            args = new ArgListNode(new[] { args });
                         }
 
                         var partOfDate = nodes.Pop();
@@ -230,7 +230,7 @@ namespace TQL.RDL.Parser
                     case StatementType.VarArg:
                         var varArg = t as VarArgToken;
                         var arguments = new List<RdlSyntaxNode>();
-                        for(int f = 0; f < varArg.Arguments; ++f)
+                        for(var f = 0; f < varArg.Arguments; ++f)
                         {
                             arguments.Add(nodes.Pop());
                         }

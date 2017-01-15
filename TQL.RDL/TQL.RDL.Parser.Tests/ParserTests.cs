@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Parser.Tests
@@ -153,7 +153,7 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(node.Descendants[1].Descendants[0].GetType() == typeof(VarNode));
             Assert.IsTrue((node.Descendants[1].Descendants[0] as VarNode).Value == "now");
         }
-        
+
         [TestMethod]
         public void RDLParser_ComposeStopAt_ShouldPass()
         {
@@ -166,7 +166,7 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(node.Descendants[1].Descendants[0].GetType() == typeof(DateTimeNode));
             Assert.IsTrue((node.Descendants[1].Descendants[0] as DateTimeNode).DateTime == DateTimeOffset.Parse("2016.05.21"));
         }
-        
+
         [TestMethod]
         public void RDLParser_ComposeFunctionCall_ShouldPass()
         {
@@ -184,7 +184,7 @@ namespace TQL.RDL.Parser.Tests
 
             Assert.AreEqual("myFunction4", functionNode.Name);
 
-            var argList = (functionNode as FunctionNode).Args;
+            var argList = functionNode.Args;
 
             Assert.IsTrue(argList.Descendants[0].GetType() == typeof(VarNode));
             Assert.IsTrue(argList.Descendants[1].GetType() == typeof(VarNode));

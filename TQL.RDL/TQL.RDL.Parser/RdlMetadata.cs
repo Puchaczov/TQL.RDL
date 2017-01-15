@@ -1,14 +1,13 @@
-﻿using RDL.Parser.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using RDL.Parser.Helpers;
 
 namespace TQL.RDL.Parser
 {
     public class RdlMetadata
     {
-        private Dictionary<string, List<MethodInfo>> _methods;
+        private readonly Dictionary<string, List<MethodInfo>> _methods;
 
         public RdlMetadata()
         {
@@ -23,7 +22,7 @@ namespace TQL.RDL.Parser
 
         public MethodInfo GetMethod(string name, Type[] methodArgs)
         {
-            int index = -1;
+            var index = -1;
             if(!HasMethod(name, methodArgs, out index))
                 throw new Exception("Not matched");
 
@@ -32,7 +31,7 @@ namespace TQL.RDL.Parser
 
         public bool HasMethod(string name, Type[] methodArgs)
         {
-            int index = 0;
+            var index = 0;
             return HasMethod(name, methodArgs, out index);
         }
 
@@ -53,8 +52,8 @@ namespace TQL.RDL.Parser
                 if (methodArgs.Length != parameters.Length)
                     continue;
 
-                bool hasMatchedArgTypes = true;
-                for (int f = 0; f < parameters.Length; ++f)
+                var hasMatchedArgTypes = true;
+                for (var f = 0; f < parameters.Length; ++f)
                 {
                     //When constant value, it won't be nullable<type> but type.
                     //So it is possible to call function with such value.
@@ -81,7 +80,7 @@ namespace TQL.RDL.Parser
             if (_methods.ContainsKey(name))
                 _methods[name].Add(methodInfo);
             else
-                _methods.Add(name, new List<MethodInfo>() { methodInfo });
+                _methods.Add(name, new List<MethodInfo> { methodInfo });
         }
 
         public void RegisterMethods<TType>(string methodName)

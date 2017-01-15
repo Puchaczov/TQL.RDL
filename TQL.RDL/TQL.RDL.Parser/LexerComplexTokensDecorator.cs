@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Tokens;
 using static TQL.RDL.Parser.Lexer;
@@ -8,9 +8,9 @@ namespace TQL.RDL.Parser
 {
     public class LexerComplexTokensDecorator : ILexer<Token>, IEnumerable<Token>
     {
-        private Lexer _lexer;
         private StatementType[] _disableEnumerationForTokens;
-        private bool _skipWhiteSpaces;
+        private readonly Lexer _lexer;
+        private readonly bool _skipWhiteSpaces;
 
         public LexerComplexTokensDecorator(Lexer lexer)
         {
@@ -26,28 +26,15 @@ namespace TQL.RDL.Parser
             _skipWhiteSpaces = true;
         }
 
-        public int Position => _lexer.Position;
-
         public string Query => _lexer.Query;
-
-        public void ChangePosition(int newPosition)
-        {
-            _lexer.ChangePosition(newPosition);
-        }
-
-        public Token CurrentToken() => _lexer.CurrentToken();
 
         public IEnumerator<Token> GetEnumerator() => new LexerEnumerator(this, _disableEnumerationForTokens);
 
-        public void DisableEnumerationWhen(params StatementType[] tokens)
-        {
-            _disableEnumerationForTokens = tokens;
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void EnableEnumerationForAll()
-        {
-            _disableEnumerationForTokens = new StatementType[0];
-        }
+        public int Position => _lexer.Position;
+
+        public Token CurrentToken() => _lexer.CurrentToken();
 
         public Token LastToken() => _lexer.LastToken();
 
@@ -61,6 +48,19 @@ namespace TQL.RDL.Parser
             return token;
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public void ChangePosition(int newPosition)
+        {
+            _lexer.ChangePosition(newPosition);
+        }
+
+        public void DisableEnumerationWhen(params StatementType[] tokens)
+        {
+            _disableEnumerationForTokens = tokens;
+        }
+
+        public void EnableEnumerationForAll()
+        {
+            _disableEnumerationForTokens = new StatementType[0];
+        }
     }
 }

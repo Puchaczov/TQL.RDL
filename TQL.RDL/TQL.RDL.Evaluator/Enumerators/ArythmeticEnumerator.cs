@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TQL.RDL.Parser.Nodes;
 
@@ -9,7 +6,6 @@ namespace TQL.RDL.Evaluator.Enumerators
 {
     public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>, IEnumerator<RdlSyntaxNode>
     {
-
         /// <summary>
         /// Create instance of tree enumerator
         /// </summary>
@@ -42,39 +38,33 @@ namespace TQL.RDL.Evaluator.Enumerators
                     return true;
                 }
                 //nie jest lisciem i wszystkie dzieci zostaly odwiedzone
-                else if (!n.Node.IsLeaf && n.ToVisitDescendantIndex == n.Node.Descendants.Count())
+                if (!n.Node.IsLeaf && n.ToVisitDescendantIndex == n.Node.Descendants.Count())
                 {
                     Current = n.Node;
                     return true;
                 }
-                else
+                if (!n.WasVisitedOnce)
                 {
-                    if (!n.WasVisitedOnce)
-                    {
-                        n.WasVisitedOnce = true;
-                        Stack.Push(n);
-                    }
-                    //jezeli zostalo jeszcze jakikolwiek dziecko do odwiedzenia
-                    else if (n.ToVisitDescendantIndex < n.Node.Descendants.Count())
-                    {
-                        Stack.Push(n);
-                    }
+                    n.WasVisitedOnce = true;
+                    Stack.Push(n);
+                }
+                //jezeli zostalo jeszcze jakikolwiek dziecko do odwiedzenia
+                else if (n.ToVisitDescendantIndex < n.Node.Descendants.Count())
+                {
+                    Stack.Push(n);
+                }
 
-                    for (int i = n.ToVisitDescendantIndex, j = n.Node.Descendants.Count(); i < j; ++i)
+                for (int i = n.ToVisitDescendantIndex, j = n.Node.Descendants.Count(); i < j; ++i)
+                {
+                    n.ToVisitDescendantIndex = i + 1;
+                    Stack.Push(new VisitationState(n.Node.Descendants[i]));
+                    if (n.Node.Descendants[i].IsLeaf)
                     {
-                        n.ToVisitDescendantIndex = i + 1;
-                        Stack.Push(new VisitationState(n.Node.Descendants[i]));
-                        if (n.Node.Descendants[i].IsLeaf)
-                        {
-                            Stack.Peek().WasVisitedOnce = true;
-                            Current = n.Node.Descendants[i];
-                            return true;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        Stack.Peek().WasVisitedOnce = true;
+                        Current = n.Node.Descendants[i];
+                        return true;
                     }
+                    break;
                 }
             }
             return false;

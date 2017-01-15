@@ -6,9 +6,9 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class DateTimeNode : LeafNode
     {
-        private TimeSpan _zone;
-        private readonly string[] _formats;
         private readonly CultureInfo _ci;
+        private readonly string[] _formats;
+        private TimeSpan _zone;
 
         public DateTimeNode(Token token, TimeSpan zone, string[] formats, CultureInfo ci) 
             : base(token)
@@ -20,10 +20,10 @@ namespace TQL.RDL.Parser.Nodes
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
         public DateTimeOffset DateTime => DateTimeOffset.ParseExact(Token.Value, _formats, _ci, DateTimeStyles.None);
 
         public override Type ReturnType => typeof(DateTimeOffset);
+
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 }

@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
 {
     public abstract class EnumeratorBase<TStoreType> : IEnumerator<RdlSyntaxNode> where TStoreType : new()
     {
-        #region Protected variables
-
-        protected readonly TStoreType Stack = new TStoreType();
-        protected readonly RdlSyntaxNode Root;
-
-        #endregion
-
         /// <summary>
         /// Initialize object.
         /// </summary>
@@ -52,5 +40,12 @@ namespace TQL.RDL.Evaluator.Enumerators
         /// Reset enumerator to start from root element.
         /// </summary>
         public abstract void Reset();
+
+        #region Protected variables
+
+        protected readonly TStoreType Stack = new TStoreType();
+        protected readonly RdlSyntaxNode Root;
+
+        #endregion
     }
 }

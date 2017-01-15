@@ -8,7 +8,6 @@ namespace TQL.RDL.Parser.Nodes
         private readonly Token _token;
 
         protected LeafNode(Token token)
-            : base()
         {
             _token = token;
         }

@@ -8,10 +8,10 @@ namespace TQL.RDL.Parser
 {
     internal class LexerEnumerator : IEnumerator<Token>
     {
-        private ILexer<Token> _lexer;
+        private readonly StatementType[] _abortOnToken;
         private Token _current;
-        private StatementType[] _abortOnToken;
-        private bool _firstValueEnumerated = false;
+        private bool _firstValueEnumerated;
+        private readonly ILexer<Token> _lexer;
 
         public LexerEnumerator(ILexer<Token> lexer, params StatementType[] abortOnToken)
         {

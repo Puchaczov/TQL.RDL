@@ -6,13 +6,10 @@ namespace TQL.RDL.Evaluator.Instructions
     public abstract class InInstruction<T> : IRdlInstruction
         where T : struct
     {
-        protected delegate T PopFun(RdlVirtualMachine machine);
-        protected delegate void PushFun(RdlVirtualMachine machine, T value);
-        protected delegate T PeekFun(RdlVirtualMachine machine);
+        private readonly PeekFun _peek;
 
         private readonly PopFun _pop;
         private readonly PushFun _push;
-        private readonly PeekFun _peek;
 
         protected InInstruction(PopFun popFun, PushFun pushFun, PeekFun peekFun)
         {
@@ -44,5 +41,11 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         public override string ToString() => "IN-GENERIC";
+
+        protected delegate T PopFun(RdlVirtualMachine machine);
+
+        protected delegate void PushFun(RdlVirtualMachine machine, T value);
+
+        protected delegate T PeekFun(RdlVirtualMachine machine);
     }
 }

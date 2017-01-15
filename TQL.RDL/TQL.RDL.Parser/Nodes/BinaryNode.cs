@@ -6,11 +6,9 @@ namespace TQL.RDL.Parser.Nodes
 {
     public abstract class BinaryNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] _parts;
-
-        public BinaryNode(RdlSyntaxNode left, RdlSyntaxNode right)
+        protected BinaryNode(RdlSyntaxNode left, RdlSyntaxNode right)
         {
-            _parts = new RdlSyntaxNode[] { left, right };
+            Descendants = new[] { left, right };
         }
 
         public virtual RdlSyntaxNode Left => Descendants[0];
@@ -19,14 +17,14 @@ namespace TQL.RDL.Parser.Nodes
 
         public override bool IsLeaf => false;
 
-        public override RdlSyntaxNode[] Descendants => _parts;
+        public override RdlSyntaxNode[] Descendants { get; }
 
         public override Token Token => null;
 
         public override TextSpan FullSpan => new TextSpan(Left.FullSpan.Start, Left.FullSpan.Length + Right.FullSpan.Length);
 
-        protected string ToString(string op) => string.Format("{0} {1} {2}", Left, op, Right);
-
         public override Type ReturnType => Left.ReturnType;
+
+        protected string ToString(string op) => string.Format("{0} {1} {2}", Left, op, Right);
     }
 }

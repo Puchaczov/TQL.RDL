@@ -3,7 +3,6 @@ using System.Linq;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Interfaces;
-using TQL.RDL.Evaluator;
 using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Nodes;
@@ -24,6 +23,13 @@ namespace TQL.RDL.Converter
         /// It's just metadata cache.
         /// </summary>
         protected override RdlMetadata Metdatas { get; } = new RdlMetadata();
+
+        /// <summary>
+        /// Convert user request into reponse that contains evaluator
+        /// </summary>
+        /// <param name="request">Query convertion request</param>
+        /// <returns>Response with evaluator</returns>
+        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, ast => Convert(ast, request));
 
         /// <summary>
         /// Convert Abstract Syntax Tree to Virtual Machine object with associated virtual code for such machine
@@ -55,13 +61,6 @@ namespace TQL.RDL.Converter
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
             return request.Source == request.Target ? new ConvertionResponse<IFireTimeEvaluator>(evaluator) : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
         }
-
-        /// <summary>
-        /// Convert user request into reponse that contains evaluator
-        /// </summary>
-        /// <param name="request">Query convertion request</param>
-        /// <returns>Response with evaluator</returns>
-        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, (ast) => Convert(ast, request));
 
         /// <summary>
         /// Construct convertion reposne if fatal error occured

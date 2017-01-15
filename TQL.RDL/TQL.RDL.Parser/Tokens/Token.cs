@@ -11,13 +11,13 @@ namespace TQL.RDL.Parser.Tokens
             : base(value, type, span)
         { }
 
-        public override GenericToken<StatementType> Clone() => new Token(Value, TokenType, Span);
-
         public bool Equals(Token other) => other.TokenType == TokenType && other.Value == Value;
+
+        public override GenericToken<StatementType> Clone() => new Token(Value, TokenType, Span);
 
         public override bool Equals(object obj)
         {
-            Token token = obj as Token;
+            var token = obj as Token;
             if(token == null)
             {
                 return false;

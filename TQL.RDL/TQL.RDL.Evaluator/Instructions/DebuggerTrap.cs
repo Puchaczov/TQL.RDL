@@ -7,19 +7,21 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class DebuggerTrap : IRdlInstruction
     {
+        public delegate void OnExpressionBegin(RdlSyntaxNode node, IVmTracker tracker);
+
+        public delegate void OnExpressionEnd(RdlSyntaxNode node, IVmTracker tracker);
+
         public enum ExpressionState
         {
             Before,
             After
         }
 
-        private readonly RdlSyntaxNode _node;
-        private readonly ExpressionState _state;
         private readonly OnExpressionBegin _expBeginCallback;
         private readonly OnExpressionEnd _expEndCallback;
 
-        public delegate void OnExpressionBegin(RdlSyntaxNode node, IVmTracker tracker);
-        public delegate void OnExpressionEnd(RdlSyntaxNode node, IVmTracker tracker);
+        private readonly RdlSyntaxNode _node;
+        private readonly ExpressionState _state;
 
         public DebuggerTrap(RdlSyntaxNode node, ExpressionState state, OnExpressionBegin expBeginCallback, OnExpressionEnd expEndCallback)
         {

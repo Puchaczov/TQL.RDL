@@ -19,7 +19,7 @@ namespace TQL.RDL.Evaluator.Instructions
         public void Run(RdlVirtualMachine machine)
         {
             var args = _enumerable.Select(f => {
-                switch(((Type) f).GetTypeName())
+                switch(f.GetTypeName())
                 {
                     case nameof(DateTimeOffset):
                         return (object)machine.Datetimes.Pop();

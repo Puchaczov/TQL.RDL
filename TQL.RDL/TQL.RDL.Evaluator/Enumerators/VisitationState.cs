@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser.Nodes;
 
@@ -12,25 +7,6 @@ namespace TQL.RDL.Evaluator.Enumerators
     [DebuggerDisplay("{Node.ToString(),nq}")]
     public class VisitationState
     {
-        #region Public properties
-
-        /// <summary>
-        /// Node that is tracked.
-        /// </summary>
-        public RdlSyntaxNode Node { get; }
-
-        /// <summary>
-        /// Determine which of node descendants were already visited.
-        /// </summary>
-        public int ToVisitDescendantIndex { get; set; }
-
-        /// <summary>
-        /// Determine if that node were visited
-        /// </summary>
-        public bool WasVisitedOnce { get; set; }
-
-        #endregion
-
         /// <summary>
         /// Initialize object
         /// </summary>
@@ -51,5 +27,24 @@ namespace TQL.RDL.Evaluator.Enumerators
             Node.Accept(analyzer);
             WasVisitedOnce = true;
         }
+
+        #region Public properties
+
+        /// <summary>
+        /// Node that is tracked.
+        /// </summary>
+        public RdlSyntaxNode Node { get; }
+
+        /// <summary>
+        /// Determine which of node descendants were already visited.
+        /// </summary>
+        public int ToVisitDescendantIndex { get; set; }
+
+        /// <summary>
+        /// Determine if that node were visited
+        /// </summary>
+        public bool WasVisitedOnce { get; set; }
+
+        #endregion
     }
 }

@@ -12,16 +12,11 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         private readonly List<VisitationMessage> _errors;
 
-        public IEnumerable<VisitationMessage> Errors => E;
-
         private readonly List<Exception> CriticalErrors;
-        private IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
-        private RdlMetadata _metadatas;
+        private readonly RdlMetadata _metadatas;
 
-        public bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
-
-        private bool _startAtOccured = false;
+        private bool _startAtOccured;
 
         public RdlQueryValidator(RdlMetadata metadatas)
         {
@@ -29,6 +24,11 @@ namespace TQL.RDL.Evaluator.Visitors
             _errors = new List<VisitationMessage>();
             _metadatas = metadatas;
         }
+
+        public IEnumerable<VisitationMessage> Errors => E;
+        private IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
+
+        public bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
 
         public override void Visit(WhereConditionsNode node)
         { }
@@ -181,7 +181,7 @@ namespace TQL.RDL.Evaluator.Visitors
             {
                 var dstType = node.Left.ReturnType.GetUnderlyingNullable();
 
-                bool hasMixedTypes = false;
+                var hasMixedTypes = false;
                 foreach (var desc in node.Right.Descendants)
                 {
                     if (dstType != desc.ReturnType)
@@ -279,7 +279,7 @@ namespace TQL.RDL.Evaluator.Visitors
 
         private void AddSemanticError(TextSpan span, string message, SemanticErrorKind kind)
         {
-            AddSemanticError(new TextSpan[] { span }, message, kind);
+            AddSemanticError(new[] { span }, message, kind);
         }
 
         private void AddSemanticError(TextSpan[] spans, string message, SemanticErrorKind kind)

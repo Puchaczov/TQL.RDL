@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Tokens;
 
@@ -121,7 +121,7 @@ namespace TQL.RDL.Parser.Tests
 
         private static Token[] Tokenize(ILexer<Token> lexer)
         {
-            List<Token> lst = new List<Token>();
+            var lst = new List<Token>();
 
             Token current = null;
             while ((current = lexer.NextToken()).TokenType != StatementType.EndOfFile)
@@ -134,7 +134,7 @@ namespace TQL.RDL.Parser.Tests
 
         private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens, params StatementType[] types)
         {
-            for(int i = 0; i < tokens.Length; ++i)
+            for(var i = 0; i < tokens.Length; ++i)
             {
                 var span = tokens[i].Span;
                 var substr = query.Substring(span.Start, span.Length);

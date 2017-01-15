@@ -1,9 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Parser;
 
@@ -12,7 +9,6 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class QueryValidatorTests
     {
-
         [TestMethod]
         public void QueryValidator_RepeatEveryWithBadDatePartFrac_ShouldPass()
         {
@@ -65,7 +61,7 @@ namespace TQL.RDL.Evaluator.Tests
             Assert.AreEqual(errorCount, errorKinds.Length);
             Assert.AreEqual(errorCount, validator.Errors.Count());
 
-            for(int i = 0; i < errorCount; ++i)
+            for(var i = 0; i < errorCount; ++i)
             {
                 Assert.AreEqual(errorKinds[i], (validator.Errors.ElementAt(i) as SyntaxError).Kind);
             }

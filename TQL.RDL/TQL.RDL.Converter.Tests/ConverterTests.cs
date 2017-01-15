@@ -6,19 +6,19 @@ namespace TQL.RDL.Converter.Tests
     [TestClass]
     public class ConverterTests
     {
-        private static bool _testACalled = false;
-        private static bool _testBCalled = false;
+        private static bool _testACalled;
+        private static bool _testBCalled;
 
         [TestMethod]
         public void Converter_CheckIsMethodRegistered_ShouldPass()
         {
             var methods = new System.Reflection.MethodInfo[2] {
-                GetType().GetMethod(nameof(TestA), new Type[] { typeof(DateTimeOffset?) }),
-                GetType().GetMethod(nameof(TestB), new Type[] { typeof(DateTimeOffset?) })
+                GetType().GetMethod(nameof(TestA), new[] { typeof(DateTimeOffset?) }),
+                GetType().GetMethod(nameof(TestB), new[] { typeof(DateTimeOffset?) })
             };
             var request = new ConvertionRequest("repeat every 5 seconds where TestA(@current) and TestB(@current) start at '06.06.2016 14:00:00'", TimeZoneInfo.Local, TimeZoneInfo.Local, false, null, methods);
 
-            RdlTimeline timeline = new RdlTimeline(false);
+            var timeline = new RdlTimeline(false);
 
             var response = timeline.Convert(request);
 
@@ -71,15 +71,15 @@ namespace TQL.RDL.Converter.Tests
                     esac) start at '21.12.2016'", "22.12.2016");
         }
 
-        
+
         private void TestDefaultMethods(string query, string fireTime)
         {
-            var request = new ConvertionRequest(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new string[] {
+            var request = new ConvertionRequest(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new[] {
                 "dd.M.yyyy",
                 "dd.M.yyyy hh:mm:ss"
             });
 
-            RdlTimeline timeline = new RdlTimeline(false);
+            var timeline = new RdlTimeline(false);
             var response = timeline.Convert(request);
 
             Assert.IsNotNull(response.Output);

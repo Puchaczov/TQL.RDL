@@ -1,23 +1,28 @@
-﻿using TQL.RDL.Parser.Nodes;
-using TQL.Core.Converters;
-using TQL.RDL.Parser.Tokens;
-using TQL.RDL.Parser;
+﻿using TQL.Core.Converters;
 using TQL.RDL.Evaluator;
+using TQL.RDL.Parser;
+using TQL.RDL.Parser.Nodes;
+using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Converter
 {
     public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, StatementType, RootScriptNode, ConvertionRequest>
     {
+        /// <summary>
+        /// Default date formats acceptable by DateTimeOffset.Parse(...) object.
+        /// </summary>
+        private readonly string[] _defaultFormats = {
+            "dd/M/yyyy H:m:s",
+            "dd/M/yyyy h:m:s tt",
+            "dd.M.yyyy H:m:s",
+            "dd.M.yyyy h:m:s tt"
+        };
+
         #region Private variables
 
         private bool _throwOnError;
 
         #endregion
-
-        /// <summary>
-        /// Gets metadata cache object
-        /// </summary>
-        protected abstract RdlMetadata Metdatas { get; }
 
         /// <summary>
         /// Construct object with information if error should be thrown when convertion failed.
@@ -32,14 +37,9 @@ namespace TQL.RDL.Converter
         }
 
         /// <summary>
-        /// Default date formats acceptable by DateTimeOffset.Parse(...) object.
+        /// Gets metadata cache object
         /// </summary>
-        private readonly string[] _defaultFormats = {
-            "dd/M/yyyy H:m:s",
-            "dd/M/yyyy h:m:s tt",
-            "dd.M.yyyy H:m:s",
-            "dd.M.yyyy h:m:s tt"
-        };
+        protected abstract RdlMetadata Metdatas { get; }
 
         /// <summary>
         /// Parse requested query into Abstract Syntax Tree

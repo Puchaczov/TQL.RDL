@@ -5,7 +5,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class PushNumericInstruction : IRdlInstruction
     {
-        private long _value;
+        private readonly long _value;
 
         public PushNumericInstruction(long value)
         {

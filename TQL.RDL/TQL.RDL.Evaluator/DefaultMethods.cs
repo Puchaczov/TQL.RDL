@@ -5,21 +5,20 @@ namespace TQL.RDL.Evaluator
 {
     public sealed class DefaultMethods
     {
-        private RdlVirtualMachine _machine;
-
-        public DefaultMethods()
-        {
-            _machine = null;
-        }
-
-        private static DayOfWeek[] _workingDays = new DayOfWeek[]
-        {
+        private static readonly DayOfWeek[] WorkingDays = {
             DayOfWeek.Monday,
             DayOfWeek.Tuesday,
             DayOfWeek.Wednesday,
             DayOfWeek.Thursday,
             DayOfWeek.Friday
         };
+
+        private RdlVirtualMachine _machine;
+
+        public DefaultMethods()
+        {
+            _machine = null;
+        }
 
         public void SetMachine(RdlVirtualMachine machine)
         {
@@ -45,7 +44,7 @@ namespace TQL.RDL.Evaluator
         public bool IsWorkingDay()
         {
             var datetime = _machine.Datetimes.Peek();
-            return _workingDays.Contains(datetime.DayOfWeek);
+            return WorkingDays.Contains(datetime.DayOfWeek);
         }
 
         public static bool IsEven(long number) => number % 2 == 0;
@@ -63,6 +62,7 @@ namespace TQL.RDL.Evaluator
         public long GetSecond() => _machine.Datetimes.Peek().Second;
         public long GetMinute() => _machine.Datetimes.Peek().Minute;
         public long GetHour() => _machine.Datetimes.Peek().Hour;
+
         public long GetWeekOfMonth()
         {
             var time = _machine.Datetimes.Peek();
@@ -70,15 +70,15 @@ namespace TQL.RDL.Evaluator
 
             if (day <= 7)
                 return 1;
-            else if (day <= 14)
+            if (day <= 14)
                 return 2;
-            else if (day <= 21)
+            if (day <= 21)
                 return 3;
-            else if (day <= 28)
+            if (day <= 28)
                 return 4;
-            else
-                return 5;
+            return 5;
         }
+
         public long GetDayOfYear() => _machine.Datetimes.Peek().DayOfYear;
         public long GetDayOfWeek() => (long)_machine.Datetimes.Peek().DayOfWeek;
     }

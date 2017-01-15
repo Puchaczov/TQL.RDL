@@ -18,6 +18,5 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.Values.Push(_loadFun(machine.Variables));
             machine.InstructionPointer += 1;
         }
-
     }
 }

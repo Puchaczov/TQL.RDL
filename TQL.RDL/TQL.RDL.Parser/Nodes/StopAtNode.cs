@@ -5,8 +5,8 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class StopAtNode : ConstantNode
     {
-        private DateTimeNode _when;
         private Token _token;
+        private readonly DateTimeNode _when;
 
         public StopAtNode(Token token, DateTimeNode when) 
             : base(when)
@@ -15,13 +15,12 @@ namespace TQL.RDL.Parser.Nodes
             _when = when;
         }
 
-        public override string ToString() => string.Format("stop at '{0}'", _when);
-
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
         public override Type ReturnType => typeof(DateTimeOffset);
 
         public DateTimeOffset When => _when.DateTime;
 
+        public override string ToString() => $"stop at '{_when}'";
+
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 }

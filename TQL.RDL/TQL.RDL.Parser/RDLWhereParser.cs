@@ -8,7 +8,7 @@ namespace TQL.RDL.Parser
 {
     public class RdlWhereParser : ShuntingYard<LexerComplexTokensDecorator, Token>
     {
-        private static string[] _knownValues = new[] {
+        private static readonly string[] KnownValues = {
             "monday",
             "tuesday",
             "wednesday",
@@ -19,7 +19,6 @@ namespace TQL.RDL.Parser
         };
 
         public RdlWhereParser()
-            : base()
         {
             operators.Add(new Token("or", StatementType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
             operators.Add(new Token("and", StatementType.And, new TextSpan(0, 0)), new PrecedenceAssociativity(5, Associativity.Left));
@@ -47,9 +46,10 @@ namespace TQL.RDL.Parser
         protected override bool IsComma(Token token) => token.TokenType == StatementType.Comma;
         protected override bool IsWord(Token token) => token.TokenType == StatementType.Word;
         protected override bool IsOperator(Token token) => operators.ContainsKey(token);
+
         protected override bool IsValue(Token token) => 
-            (Regex.IsMatch("[a-Z1-9]+", token.Value) && !token.Value.Contains("@")) || 
-            _knownValues.Contains(token.Value.ToLowerInvariant());
+            Regex.IsMatch("[a-Z1-9]+", token.Value) && !token.Value.Contains("@") || 
+            KnownValues.Contains(token.Value.ToLowerInvariant());
 
         protected override Token GenerateVarArgToken(int argsCount) => new VarArgToken(argsCount);
         protected override Token GenerateFunctionToken(Token oldToken) => new FunctionToken(oldToken.Value, oldToken.Span);

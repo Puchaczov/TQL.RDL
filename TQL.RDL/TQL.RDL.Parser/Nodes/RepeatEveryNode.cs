@@ -6,9 +6,6 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class RepeatEveryNode : RdlSyntaxNode
     {
-        protected Token RepeatEvery;
-        protected Token TimeToken;
-
         public enum PartOfDate
         {
             Seconds,
@@ -20,21 +17,22 @@ namespace TQL.RDL.Parser.Nodes
             Unknown
         }
 
+        private readonly Token _repeatEvery;
+        private readonly Token _timeToken;
+
         public RepeatEveryNode(Token repeatEvery, Token timeToken)
         {
-            RepeatEvery = repeatEvery;
-            TimeToken = timeToken;
+            _repeatEvery = repeatEvery;
+            _timeToken = timeToken;
         }
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
-        public override TextSpan FullSpan => new TextSpan(RepeatEvery.Span.Start, TimeToken.Span.End - RepeatEvery.Span.Start);
+        public override TextSpan FullSpan => new TextSpan(_repeatEvery.Span.Start, _timeToken.Span.End - _repeatEvery.Span.Start);
 
         public override bool IsLeaf => true;
 
-        public override Token Token => TimeToken;
-
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+        public override Token Token => _timeToken;
 
         public PartOfDate DatePart
         {
@@ -63,12 +61,14 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(long);
 
-        public override string ToString() => string.Format("{0} {1}", "repeat every", TimeToken.Value);
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override string ToString() => $"{"repeat every"} {Value}";
     }
 
     public class NumericConsequentRepeatEveryNode : RepeatEveryNode
     {
-        private NumericToken _number;
+        private readonly NumericToken _number;
 
         public NumericConsequentRepeatEveryNode(Token repeatEvery, NumericToken number, WordToken partOfDatetime)
             : base(repeatEvery, partOfDatetime)
@@ -76,8 +76,8 @@ namespace TQL.RDL.Parser.Nodes
             _number = number;
         }
 
-        public override string ToString() => string.Format("{0} {1} {2}", "repeat every", _number.Value, TimeToken.Value);
-
         public override int Value => int.Parse(_number.Value);
+
+        public override string ToString() => $"{"repeat every"} {_number.Value} {base.Value}";
     }
 }

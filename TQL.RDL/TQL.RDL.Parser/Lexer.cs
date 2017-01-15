@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TQL.Core.Syntax;
 using TQL.Core.Tokens;
 using TQL.RDL.Parser.Tokens;
@@ -8,126 +7,6 @@ namespace TQL.RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {
-        private static class TokenRegexDefinition
-        {
-            public static string Keyword = @"(?<=[\s]{{1,}}|^){0}(?=[\s]{{1,}}|$)";
-            public static string Function = @"[a-zA-Z_-]{1,}[\d]*(?=[\(])";
-
-            public static string KAnd = string.Format(Keyword, AndToken.TokenText);
-            public static string KComma = CommaToken.TokenText;
-            public static string KDiff = DiffToken.TokenText;
-            public static string KElse = string.Format(Keyword, ElseToken.TokenText);
-            public static string KEvery = string.Format(Keyword, EveryToken.TokenText);
-            public static string KfSlashToken = string.Format(Keyword, FSlashToken.TokenText);
-            public static string KGreater = string.Format(Keyword, GreaterToken.TokenText);
-            public static string KGreaterEqual = string.Format(Keyword, GreaterEqualToken.TokenText);
-            public static string KHyphen = string.Format(@"\{0}", HyphenToken.TokenText);
-            public static string KIn = string.Format(Keyword, InToken.TokenText);
-            public static string KIs = string.Format(Keyword, IsToken.TokenText);
-            public static string KLeftParenthesis = string.Format(@"\{0}", LeftParenthesisToken.TokenText);
-            public static string KLess = string.Format(Keyword, LessToken.TokenText);
-            public static string KLessEqual = string.Format(Keyword, LessEqualToken.TokenText);
-            public static string KModulo = string.Format(Keyword, ModuloToken.TokenText);
-            public static string KNot = string.Format(Keyword, NotToken.TokenText);
-            public static string KNotIn = string.Format(Keyword, NotInToken.TokenText);
-            public static string KOr = string.Format(Keyword, OrToken.TokenText);
-            public static string KPlus = string.Format(@"\{0}", PlusToken.TokenText);
-            public static string KRepeat = string.Format(Keyword, RepeatToken.TokenText);
-            public static string KRightParenthesis = string.Format(@"\{0}", RightParenthesisToken.TokenText);
-            public static string KStar = string.Format(Keyword, string.Format(@"\{0}", StarToken.TokenText));
-            public static string KStartAt = @"(?<=[\s]{1,}|^)start[\s]{1,}at(?=[\s]{1,}|$)";
-            public static string KStopAt = @"(?<=[\s]{1,}|^)stop[\s]{1,}at(?=[\s]{1,}|$)";
-            public static string KThen = string.Format(Keyword, ThenToken.TokenText);
-            public static string KWhere = string.Format(Keyword, WhereToken.TokenText);
-            public static string KWhiteSpace = @"[\s]{1,}";
-            public static string KVar = @"@(?<varname>(?<=@)((\w{1,})))(?<=\s{0,}|$)";
-            public static string KWord = @"[\w*?_]{1,}";
-            public static string KWordBracketed = @"'(.*?[^\\])'";
-            public static string KEqual = string.Format(Keyword, EqualityToken.TokenText);
-            public static string KCaseWhenEsac = @"case.*esac";
-            public static string KCase = string.Format(Keyword, CaseToken.TokenText);
-            public static string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
-            public static string KWhen = string.Format(Keyword, WhenToken.TokenText);
-        }
-
-        protected static class DefinitionSets
-        {
-            public static TokenDefinition[] CasualQuery => new TokenDefinition[] {
-                new TokenDefinition(TokenRegexDefinition.KAnd),
-                new TokenDefinition(TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline),
-                new TokenDefinition(TokenRegexDefinition.KComma),
-                new TokenDefinition(TokenRegexDefinition.KDiff),
-                new TokenDefinition(TokenRegexDefinition.KElse),
-                new TokenDefinition(TokenRegexDefinition.KEvery),
-                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
-                new TokenDefinition(TokenRegexDefinition.KGreater),
-                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
-                new TokenDefinition(TokenRegexDefinition.KHyphen),
-                new TokenDefinition(TokenRegexDefinition.KIn),
-                new TokenDefinition(TokenRegexDefinition.KIs),
-                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KLess),
-                new TokenDefinition(TokenRegexDefinition.KLessEqual),
-                new TokenDefinition(TokenRegexDefinition.KEqual),
-                new TokenDefinition(TokenRegexDefinition.KModulo),
-                new TokenDefinition(TokenRegexDefinition.KNotIn),
-                new TokenDefinition(TokenRegexDefinition.KNot),
-                new TokenDefinition(TokenRegexDefinition.KOr),
-                new TokenDefinition(TokenRegexDefinition.KPlus),
-                new TokenDefinition(TokenRegexDefinition.KRepeat),
-                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KStartAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KWhere),
-                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
-                new TokenDefinition(TokenRegexDefinition.KVar),
-                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
-                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
-            };
-
-            public static TokenDefinition[] CaseWhenQuery => new TokenDefinition[] {
-                new TokenDefinition(TokenRegexDefinition.KAnd),
-                new TokenDefinition(TokenRegexDefinition.KCase),
-                new TokenDefinition(TokenRegexDefinition.KWhen),
-                new TokenDefinition(TokenRegexDefinition.KThen),
-                new TokenDefinition(TokenRegexDefinition.KCaseEnd),
-                new TokenDefinition(TokenRegexDefinition.KComma),
-                new TokenDefinition(TokenRegexDefinition.KDiff),
-                new TokenDefinition(TokenRegexDefinition.KElse),
-                new TokenDefinition(TokenRegexDefinition.KEvery),
-                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
-                new TokenDefinition(TokenRegexDefinition.KGreater),
-                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
-                new TokenDefinition(TokenRegexDefinition.KHyphen),
-                new TokenDefinition(TokenRegexDefinition.KIn),
-                new TokenDefinition(TokenRegexDefinition.KIs),
-                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KLess),
-                new TokenDefinition(TokenRegexDefinition.KLessEqual),
-                new TokenDefinition(TokenRegexDefinition.KEqual),
-                new TokenDefinition(TokenRegexDefinition.KModulo),
-                new TokenDefinition(TokenRegexDefinition.KNotIn),
-                new TokenDefinition(TokenRegexDefinition.KNot),
-                new TokenDefinition(TokenRegexDefinition.KOr),
-                new TokenDefinition(TokenRegexDefinition.KPlus),
-                new TokenDefinition(TokenRegexDefinition.KRepeat),
-                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KStartAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KWhere),
-                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
-                new TokenDefinition(TokenRegexDefinition.KVar),
-                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
-                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
-            };
-        }
-
         public enum DefinitionSet
         {
             Query,
@@ -139,19 +18,19 @@ namespace TQL.RDL.Parser
                 ds == DefinitionSet.Query ? DefinitionSets.CasualQuery : DefinitionSets.CaseWhenQuery)
         { }
 
+        public string Query => input;
+
         public void ChangePosition(int newPosition)
         {
             Position = newPosition;
         }
 
-        public string Query => input;
-
         protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(input.Length, 0));
 
         protected override Token GetToken(TokenDefinition matchedDefinition, Match match)
         {
-            string tokenText = match.Value;
-            StatementType token = GetTokenCandidate(tokenText, matchedDefinition);
+            var tokenText = match.Value;
+            var token = GetTokenCandidate(tokenText, matchedDefinition);
 
             switch(token)
             {
@@ -305,25 +184,145 @@ namespace TQL.RDL.Parser
 
             var fMatch = Regex.Match(tokenText, TokenRegexDefinition.Function);
 
-            int number = 0;
+            var number = 0;
             if (int.TryParse(tokenText, out number) && !tokenText.Contains(" "))
             {
                 return StatementType.Numeric;
             }
-            else if(fMatch.Success && fMatch.Index == 0)
+            if(fMatch.Success && fMatch.Index == 0)
             {
                 return StatementType.Function;
             }
-            else if(matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
+            if(matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
             {
                 return StatementType.Var;
             }
-            else if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline))
+            if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline))
             {
                 return StatementType.CaseWhenEsac;
             }
 
             return StatementType.Word;
+        }
+
+        private static class TokenRegexDefinition
+        {
+            public static readonly string Keyword = @"(?<=[\s]{{1,}}|^){0}(?=[\s]{{1,}}|$)";
+            public static readonly string Function = @"[a-zA-Z_-]{1,}[\d]*(?=[\(])";
+
+            public static readonly string KAnd = string.Format(Keyword, AndToken.TokenText);
+            public static readonly string KComma = CommaToken.TokenText;
+            public static readonly string KDiff = DiffToken.TokenText;
+            public static readonly string KElse = string.Format(Keyword, ElseToken.TokenText);
+            public static readonly string KEvery = string.Format(Keyword, EveryToken.TokenText);
+            public static readonly string KfSlashToken = string.Format(Keyword, FSlashToken.TokenText);
+            public static readonly string KGreater = string.Format(Keyword, GreaterToken.TokenText);
+            public static readonly string KGreaterEqual = string.Format(Keyword, GreaterEqualToken.TokenText);
+            public static readonly string KHyphen = string.Format(@"\{0}", HyphenToken.TokenText);
+            public static readonly string KIn = string.Format(Keyword, InToken.TokenText);
+            public static readonly string KIs = string.Format(Keyword, IsToken.TokenText);
+            public static readonly string KLeftParenthesis = string.Format(@"\{0}", LeftParenthesisToken.TokenText);
+            public static readonly string KLess = string.Format(Keyword, LessToken.TokenText);
+            public static readonly string KLessEqual = string.Format(Keyword, LessEqualToken.TokenText);
+            public static readonly string KModulo = string.Format(Keyword, ModuloToken.TokenText);
+            public static readonly string KNot = string.Format(Keyword, NotToken.TokenText);
+            public static readonly string KNotIn = string.Format(Keyword, NotInToken.TokenText);
+            public static readonly string KOr = string.Format(Keyword, OrToken.TokenText);
+            public static readonly string KPlus = string.Format(@"\{0}", PlusToken.TokenText);
+            public static readonly string KRepeat = string.Format(Keyword, RepeatToken.TokenText);
+            public static readonly string KRightParenthesis = string.Format(@"\{0}", RightParenthesisToken.TokenText);
+            public static readonly string KStar = string.Format(Keyword, string.Format(@"\{0}", StarToken.TokenText));
+            public static readonly string KStartAt = @"(?<=[\s]{1,}|^)start[\s]{1,}at(?=[\s]{1,}|$)";
+            public static readonly string KStopAt = @"(?<=[\s]{1,}|^)stop[\s]{1,}at(?=[\s]{1,}|$)";
+            public static readonly string KThen = string.Format(Keyword, ThenToken.TokenText);
+            public static readonly string KWhere = string.Format(Keyword, WhereToken.TokenText);
+            public static readonly string KWhiteSpace = @"[\s]{1,}";
+            public static readonly string KVar = @"@(?<varname>(?<=@)((\w{1,})))(?<=\s{0,}|$)";
+            public static readonly string KWord = @"[\w*?_]{1,}";
+            public static readonly string KWordBracketed = @"'(.*?[^\\])'";
+            public static readonly string KEqual = string.Format(Keyword, EqualityToken.TokenText);
+            public static readonly string KCaseWhenEsac = @"case.*esac";
+            public static readonly string KCase = string.Format(Keyword, CaseToken.TokenText);
+            public static readonly string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
+            public static readonly string KWhen = string.Format(Keyword, WhenToken.TokenText);
+        }
+
+        private static class DefinitionSets
+        {
+            public static TokenDefinition[] CasualQuery => new[] {
+                new TokenDefinition(TokenRegexDefinition.KAnd),
+                new TokenDefinition(TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline),
+                new TokenDefinition(TokenRegexDefinition.KComma),
+                new TokenDefinition(TokenRegexDefinition.KDiff),
+                new TokenDefinition(TokenRegexDefinition.KElse),
+                new TokenDefinition(TokenRegexDefinition.KEvery),
+                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
+                new TokenDefinition(TokenRegexDefinition.KGreater),
+                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
+                new TokenDefinition(TokenRegexDefinition.KHyphen),
+                new TokenDefinition(TokenRegexDefinition.KIn),
+                new TokenDefinition(TokenRegexDefinition.KIs),
+                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KLess),
+                new TokenDefinition(TokenRegexDefinition.KLessEqual),
+                new TokenDefinition(TokenRegexDefinition.KEqual),
+                new TokenDefinition(TokenRegexDefinition.KModulo),
+                new TokenDefinition(TokenRegexDefinition.KNotIn),
+                new TokenDefinition(TokenRegexDefinition.KNot),
+                new TokenDefinition(TokenRegexDefinition.KOr),
+                new TokenDefinition(TokenRegexDefinition.KPlus),
+                new TokenDefinition(TokenRegexDefinition.KRepeat),
+                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KStartAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KWhere),
+                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
+                new TokenDefinition(TokenRegexDefinition.KVar),
+                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
+                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
+            };
+
+            public static TokenDefinition[] CaseWhenQuery => new[] {
+                new TokenDefinition(TokenRegexDefinition.KAnd),
+                new TokenDefinition(TokenRegexDefinition.KCase),
+                new TokenDefinition(TokenRegexDefinition.KWhen),
+                new TokenDefinition(TokenRegexDefinition.KThen),
+                new TokenDefinition(TokenRegexDefinition.KCaseEnd),
+                new TokenDefinition(TokenRegexDefinition.KComma),
+                new TokenDefinition(TokenRegexDefinition.KDiff),
+                new TokenDefinition(TokenRegexDefinition.KElse),
+                new TokenDefinition(TokenRegexDefinition.KEvery),
+                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
+                new TokenDefinition(TokenRegexDefinition.KGreater),
+                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
+                new TokenDefinition(TokenRegexDefinition.KHyphen),
+                new TokenDefinition(TokenRegexDefinition.KIn),
+                new TokenDefinition(TokenRegexDefinition.KIs),
+                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KLess),
+                new TokenDefinition(TokenRegexDefinition.KLessEqual),
+                new TokenDefinition(TokenRegexDefinition.KEqual),
+                new TokenDefinition(TokenRegexDefinition.KModulo),
+                new TokenDefinition(TokenRegexDefinition.KNotIn),
+                new TokenDefinition(TokenRegexDefinition.KNot),
+                new TokenDefinition(TokenRegexDefinition.KOr),
+                new TokenDefinition(TokenRegexDefinition.KPlus),
+                new TokenDefinition(TokenRegexDefinition.KRepeat),
+                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KStartAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStopAt),
+                new TokenDefinition(TokenRegexDefinition.KStar),
+                new TokenDefinition(TokenRegexDefinition.KWhere),
+                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
+                new TokenDefinition(TokenRegexDefinition.KVar),
+                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
+                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
+            };
         }
     }
 }

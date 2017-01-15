@@ -11,7 +11,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)
         {
-            machine.Values.Push((machine.Values.Pop() != machine.Values.Pop()) ? 1 : 0);
+            machine.Values.Push(machine.Values.Pop() != machine.Values.Pop() ? 1 : 0);
             machine.InstructionPointer += 1;
         }
     }

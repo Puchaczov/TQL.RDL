@@ -7,27 +7,25 @@ namespace TQL.RDL.Parser.Nodes
 {
     public class FunctionNode : RdlSyntaxNode
     {
-        private ArgListNode _args;
-        private FunctionToken _functionName;
-        private Func<Type> _getReturnType;
+        private readonly FunctionToken _functionName;
+        private readonly Func<Type> _getReturnType;
 
         public FunctionNode(FunctionToken functionName, ArgListNode args, Func<Type> getReturnType = null)
-            : base()
         {
             _functionName = functionName;
-            _args = args;
+            Args = args;
             _getReturnType = getReturnType;
         }
 
-        public override RdlSyntaxNode[] Descendants => _args.Descendants;
+        public override RdlSyntaxNode[] Descendants => Args.Descendants;
 
         public override TextSpan FullSpan
         {
             get
             {
-                if (_args.Descendants.Length == 0)
+                if (Args.Descendants.Length == 0)
                     return new TextSpan(_functionName.Span.Start, _functionName.Span.Length);
-                return new TextSpan(_functionName.Span.Start, _args.Descendants[_args.Descendants.Length - 1].FullSpan.End - _functionName.Span.Start);
+                return new TextSpan(_functionName.Span.Start, Args.Descendants[Args.Descendants.Length - 1].FullSpan.End - _functionName.Span.Start);
             }
         }
 
@@ -35,14 +33,14 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Token Token => _functionName;
 
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override string ToString() => _functionName.ToString() + '(' + string.Join<RdlSyntaxNode>(",", _args.Descendants) + ')';
-
         public string Name => Token.Value;
 
         public override Type ReturnType => _getReturnType();
 
-        public ArgListNode Args => _args;
+        public ArgListNode Args { get; }
+
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override string ToString() => _functionName.ToString() + '(' + string.Join<RdlSyntaxNode>(",", Args.Descendants) + ')';
     }
 }

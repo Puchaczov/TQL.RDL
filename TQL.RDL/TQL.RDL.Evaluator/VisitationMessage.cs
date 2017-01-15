@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQL.Core.Tokens;
 
 namespace TQL.RDL.Evaluator
@@ -59,8 +56,6 @@ namespace TQL.RDL.Evaluator
 
     public class SyntaxError : VisitationMessage
     {
-        private readonly SyntaxErrorKind _kind;
-
         private static readonly Dictionary<SyntaxErrorKind, Codes> Codes;
 
         static SyntaxError()
@@ -75,23 +70,23 @@ namespace TQL.RDL.Evaluator
         public SyntaxError(TextSpan[] spans, string message, SyntaxErrorKind kind)
             : base(spans, message)
         {
-            _kind = kind;
+            Kind = kind;
         }
 
         public SyntaxError(TextSpan span, string message, SyntaxErrorKind kind)
-            : this(new TextSpan[] { span }, message, kind)
+            : this(new[] { span }, message, kind)
         { }
 
         public override MessageLevel Level => MessageLevel.Error;
-        public SyntaxErrorKind Kind => _kind;
-        public override Codes Code => Codes[_kind];
+        public SyntaxErrorKind Kind { get; }
+
+        public override Codes Code => Codes[Kind];
 
         public override string ToString() => message;
     }
 
     public class SemanticError : VisitationMessage
     {
-        private readonly SemanticErrorKind _kind;
         private static readonly Dictionary<SemanticErrorKind, Codes> Codes;
 
         static SemanticError()
@@ -101,20 +96,21 @@ namespace TQL.RDL.Evaluator
         }
 
         public SemanticError(TextSpan span, string message, SemanticErrorKind kind)
-            : base(new TextSpan[] { span }, message)
+            : base(new[] { span }, message)
         {
-            _kind = kind;
+            Kind = kind;
         }
 
         public SemanticError(TextSpan[] spans, string message, SemanticErrorKind kind)
             : base(spans, message)
         {
-            _kind = kind;
+            Kind = kind;
         }
 
         public override MessageLevel Level => MessageLevel.Error;
-        public SemanticErrorKind Kind => _kind;
-        public override Codes Code => Codes[_kind];
+        public SemanticErrorKind Kind { get; }
+
+        public override Codes Code => Codes[Kind];
         public override string ToString() => message;
     }
 

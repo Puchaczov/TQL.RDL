@@ -1,9 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQL.Core.Tokens;
 using TQL.RDL.Evaluator.Enumerators;
 using TQL.RDL.Parser.Nodes;
@@ -14,7 +9,6 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class EnumeratorTests
     {
-
         [TestMethod]
         public void Enumerator_EnumerateKeywords_ShouldPass()
         {
@@ -22,7 +16,7 @@ namespace TQL.RDL.Evaluator.Tests
             var rootComponent = new RootScriptNode(new RdlSyntaxNode[] {
                 new CaseNode(
                     new Token("case", StatementType.Case, new TextSpan(0, 0)),
-                    new WhenThenNode[] {
+                    new[] {
                         new WhenThenNode(
                             new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))),
                             new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("2", StatementType.Numeric, new TextSpan())))

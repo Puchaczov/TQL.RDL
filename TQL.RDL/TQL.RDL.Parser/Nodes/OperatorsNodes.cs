@@ -1,8 +1,8 @@
 ﻿using System;
-using TQL.Core.Tokens;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TQL.Core.Tokens;
 using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser.Nodes
@@ -13,10 +13,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("and");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class OrNode : BinaryNode
@@ -25,10 +25,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("or");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class InNode : BinaryNode
@@ -37,9 +37,9 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
-        public override Type ReturnType => typeof(Boolean);
+        public override Type ReturnType => typeof(bool);
 
-        public override string ToString() => string.Format("{0} {1} ({2})", Left.ToString(), "in", Right.ToString());
+        public override string ToString() => string.Format("{0} {1} ({2})", Left, "in", Right);
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 
@@ -49,10 +49,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("<>");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class CommaNode : BinaryNode
@@ -61,7 +61,7 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
-        public override string ToString() => string.Format("{0},{1}", Left.ToString(), Right.ToString());
+        public override string ToString() => string.Format("{0},{1}", Left, Right);
         public override void Accept(INodeVisitor visitor) { }
     }
 
@@ -71,10 +71,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class GreaterNode : BinaryNode
@@ -83,10 +83,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString(">");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class GreaterEqualNode : BinaryNode
@@ -95,10 +95,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString(">=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class LessNode : BinaryNode
@@ -107,10 +107,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("<");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class LessEqualNode : BinaryNode
@@ -119,10 +119,10 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override string ToString() => ToString("<=");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class NotInNode : InNode
@@ -131,11 +131,11 @@ namespace TQL.RDL.Parser.Nodes
             : base(left, right)
         { }
 
+        public override Type ReturnType => typeof(bool);
+
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
         public override string ToString() => string.Format("not in {0}", Right);
-
-        public override Type ReturnType => typeof(bool);
     }
 
     public class AddNode : BinaryNode
@@ -190,7 +190,7 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ArgListNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] _args;
+        private readonly RdlSyntaxNode[] _args;
 
         public ArgListNode(IEnumerable<RdlSyntaxNode> args)
         {
@@ -211,21 +211,21 @@ namespace TQL.RDL.Parser.Nodes
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < (_args.Length - 1); ++i)
+            var builder = new StringBuilder();
+            for (var i = 0; i < _args.Length - 1; ++i)
             {
-                builder.Append(_args[i].ToString());
+                builder.Append(_args[i]);
                 builder.Append(", ");
             }
             if(_args.Length > 0)
-                builder.Append(_args[_args.Length - 1].ToString());
+                builder.Append(_args[_args.Length - 1]);
             return builder.ToString();
         }
     }
 
     public class VarNode : LeafNode
     {
-        private VarToken _token;
+        private readonly VarToken _token;
 
         public VarNode(VarToken token)
             : base(token)
@@ -236,10 +236,6 @@ namespace TQL.RDL.Parser.Nodes
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
         public override TextSpan FullSpan => _token.Span;
-
-        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
-
-        public override string ToString() => _token.ToString();
 
         public string Value => _token.Value;
 
@@ -255,21 +251,23 @@ namespace TQL.RDL.Parser.Nodes
                 return typeof(DateTimeOffset);
             }
         }
+
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override string ToString() => _token.ToString();
     }
 
     public class ElseNode : UnaryNode
     {
-        private Token _token;
-
         public ElseNode(Token token, RdlSyntaxNode node)
             : base(node)
         {
-            _token = token;
+            Token = token;
         }
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => _token;
+        public override Token Token { get; }
 
         public CaseNode Parent { get; private set; }
 
@@ -288,19 +286,17 @@ namespace TQL.RDL.Parser.Nodes
 
     public class WhenNode : UnaryNode
     {
-        private Token _token;
-
         public WhenNode(Token token, RdlSyntaxNode when) 
             : base(when)
         {
-            _token = token;
+            Token = token;
         }
 
         public RdlSyntaxNode Expression => Descendant;
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => _token;
+        public override Token Token { get; }
 
         public WhenThenNode Parent { get; private set; }
 
@@ -319,15 +315,15 @@ namespace TQL.RDL.Parser.Nodes
 
     public class ThenNode : UnaryNode
     {
-        private Token _token;
-
         public ThenNode(Token token, RdlSyntaxNode then)
             : base(then)
-        { }
+        {
+            Token = token;
+        }
 
         public override Type ReturnType => Descendant.ReturnType;
 
-        public override Token Token => _token;
+        public override Token Token { get; }
 
         public WhenThenNode Parent { get; private set; }
 
@@ -346,11 +342,9 @@ namespace TQL.RDL.Parser.Nodes
 
     public class WhenThenNode : BinaryNode
     {
-        private RdlSyntaxNode[] _descs;
-
         public WhenThenNode(RdlSyntaxNode when, RdlSyntaxNode then) : base(when, then)
         {
-            _descs = base.Descendants.ToArray();
+            Descendants = base.Descendants.ToArray();
 
             When.SetParent(this);
             Then.SetParent(this);
@@ -360,7 +354,7 @@ namespace TQL.RDL.Parser.Nodes
         public WhenNode When => Descendants[0] as WhenNode;
         public ThenNode Then => Descendants[1] as ThenNode;
 
-        public override RdlSyntaxNode[] Descendants => _descs;
+        public override RdlSyntaxNode[] Descendants { get; }
 
         public CaseNode Parent { get; private set; }
 
@@ -378,6 +372,8 @@ namespace TQL.RDL.Parser.Nodes
 
         public int WhenThenCount => Parent.Descendants.Count() - 1;
 
+        public override Type ReturnType => Then.ReturnType;
+
         public void SetParent(CaseNode parent)
         {
             Parent = parent;
@@ -389,20 +385,18 @@ namespace TQL.RDL.Parser.Nodes
         }
 
         public override string ToString() => string.Format("{0} {1}", When, Then);
-
-        public override Type ReturnType => Then.ReturnType;
     }
 
     public class CaseNode : RdlSyntaxNode
     {
-        private RdlSyntaxNode[] _descs;
+        private readonly Token _caseToken;
 
         public CaseNode(Token caseToken, WhenThenNode[] nodes, ElseNode node)
         {
             node.SetParent(this);
 
-            _whenThenExpressions = nodes;
-            _elseExpression = node;
+            Expressions = nodes;
+            Else = node;
 
             foreach(var item in nodes)
             {
@@ -411,26 +405,22 @@ namespace TQL.RDL.Parser.Nodes
 
             _caseToken = caseToken;
 
-            _descs = _whenThenExpressions.Concat(new RdlSyntaxNode[1] { _elseExpression }).ToArray();
+            Descendants = Expressions.Concat(new RdlSyntaxNode[1] { Else }).ToArray();
         }
 
-        private Token _caseToken;
+        public override RdlSyntaxNode[] Descendants { get; }
 
-        private WhenThenNode[] _whenThenExpressions;
-        private ElseNode _elseExpression;
+        public RdlSyntaxNode[] WhenThenExpressions => Expressions;
 
-        public override RdlSyntaxNode[] Descendants => _descs;
-
-        public RdlSyntaxNode[] WhenThenExpressions => _whenThenExpressions;
-
-        public override TextSpan FullSpan => new TextSpan(_caseToken.Span.Start, _elseExpression.FullSpan.End - _caseToken.Span.Start);
+        public override TextSpan FullSpan => new TextSpan(_caseToken.Span.Start, Else.FullSpan.End - _caseToken.Span.Start);
 
         public override bool IsLeaf => false;
 
-        public override Type ReturnType => _whenThenExpressions[0].ReturnType;
+        public override Type ReturnType => Expressions[0].ReturnType;
 
-        public WhenThenNode[] Expressions => _whenThenExpressions;
-        public ElseNode Else => _elseExpression;
+        public WhenThenNode[] Expressions { get; }
+
+        public ElseNode Else { get; }
 
         public override Token Token => _caseToken;
 

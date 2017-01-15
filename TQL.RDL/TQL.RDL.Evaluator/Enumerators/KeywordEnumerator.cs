@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
@@ -34,7 +30,7 @@ namespace TQL.RDL.Evaluator.Enumerators
             {
                 var node = Stack.Pop();
 
-                for(int i = node.Node.Descendants.Length - 1; i >= 0; --i)
+                for(var i = node.Node.Descendants.Length - 1; i >= 0; --i)
                 {
                     Stack.Push(new VisitationState(node.Node.Descendants[i]));
                 }
@@ -44,7 +40,7 @@ namespace TQL.RDL.Evaluator.Enumerators
             }
             return false;
         }
-        
+
         /// <summary>
         /// Reset enumerator to start from root element.
         /// </summary>

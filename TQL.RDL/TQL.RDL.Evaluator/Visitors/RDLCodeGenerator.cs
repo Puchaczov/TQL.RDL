@@ -10,65 +10,13 @@ namespace TQL.RDL.Evaluator.Visitors
 {
     public class RdlCodeGenerator : INodeVisitor
     {
-        #region Private variables
-
-        private DateTimeOffset _startAt;
-        private DateTimeOffset? _stopAt;
-        private readonly Stack<List<IRdlInstruction>> _functions;
-        private MemoryVariables _variables;
-        private Func<DateTimeOffset, DateTimeOffset> _generateNext;
-        private readonly DefaultMethods _methods;
-        private readonly Dictionary<string, int> _labels;
-        private readonly RdlMetadata _metadatas;
-        private RdlVirtualMachine _machine;
-
-        #endregion
-
-        #region Private static variables
-
-        private static readonly string NDateTime = Nullable.GetUnderlyingType(typeof(DateTimeOffset?)).Name;
-        private static readonly string NInt64 = Nullable.GetUnderlyingType(typeof(long?)).Name;
-        private static readonly string NBoolean = Nullable.GetUnderlyingType(typeof(bool?)).Name;
-
-        #endregion
-
         #region Protected Getters / Setters
 
         protected List<IRdlInstruction> Instructions => _functions.Peek();
 
         #endregion
 
-        #region Constructors
-
-        /// <summary>
-        /// Instantiate code generator object
-        /// </summary>
-        /// <param name="metadatas"></param>
-        public RdlCodeGenerator(RdlMetadata metadatas)
-            : this(metadatas, DateTimeOffset.UtcNow)
-        { }
-
-        /// <summary>
-        /// Instantiate code generator object with custom startAt
-        /// </summary>
-        /// <param name="metadatas"></param>
-        /// <param name="startAt"></param>
-        private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
-        {
-            _methods = new DefaultMethods();
-            _variables = new MemoryVariables();
-            _functions = new Stack<List<IRdlInstruction>>();
-            _functions.Push(new List<IRdlInstruction>());
-            _stopAt = null;
-            _labels = new Dictionary<string, int>();
-            _metadatas = metadatas;
-            _startAt = startAt;
-        }
-
-        #endregion
-
-
-        public RdlVirtualMachine VirtualMachine => _machine;
+        public RdlVirtualMachine VirtualMachine { get; private set; }
 
         public virtual void Visit(WhereConditionsNode node)
         {
@@ -90,22 +38,22 @@ namespace TQL.RDL.Evaluator.Visitors
             switch(node.DatePart)
             {
                 case RepeatEveryNode.PartOfDate.Seconds:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddSeconds(node.Value);
+                    _generateNext = datetime => datetime.AddSeconds(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Minutes:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddMinutes(node.Value);
+                    _generateNext = datetime => datetime.AddMinutes(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Hours:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddHours(node.Value);
+                    _generateNext = datetime => datetime.AddHours(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.DaysOfMonth:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddDays(node.Value);
+                    _generateNext = datetime => datetime.AddDays(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Months:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddMonths(node.Value);
+                    _generateNext = datetime => datetime.AddMonths(node.Value);
                     break;
                 case RepeatEveryNode.PartOfDate.Years:
-                    _generateNext = (DateTimeOffset datetime) => datetime.AddYears(node.Value);
+                    _generateNext = datetime => datetime.AddYears(node.Value);
                     break;
             }
         }
@@ -203,12 +151,12 @@ namespace TQL.RDL.Evaluator.Visitors
         public virtual void Visit(RootScriptNode node)
         {
             Instructions.Add(new Modify(
-                (f) => f.Datetimes.Push(_generateNext(f.Datetimes.Pop()))));
+                f => f.Datetimes.Push(_generateNext(f.Datetimes.Pop()))));
 
             Instructions.Add(new BreakInstruction());
 
-            _machine = new RdlVirtualMachine(_labels, _generateNext, Instructions.ToArray(), _stopAt, _startAt);
-            _methods.SetMachine(_machine);
+            VirtualMachine = new RdlVirtualMachine(_labels, _generateNext, Instructions.ToArray(), _stopAt, _startAt);
+            _methods.SetMachine(VirtualMachine);
         }
 
         public virtual void Visit(WordNode node)
@@ -379,5 +327,55 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             Instructions.Add(new TNumericOp());
         }
+
+        #region Private variables
+
+        private DateTimeOffset _startAt;
+        private DateTimeOffset? _stopAt;
+        private readonly Stack<List<IRdlInstruction>> _functions;
+        private MemoryVariables _variables;
+        private Func<DateTimeOffset, DateTimeOffset> _generateNext;
+        private readonly DefaultMethods _methods;
+        private readonly Dictionary<string, int> _labels;
+        private readonly RdlMetadata _metadatas;
+
+        #endregion
+
+        #region Private static variables
+
+        private static readonly string NDateTime = Nullable.GetUnderlyingType(typeof(DateTimeOffset?)).Name;
+        private static readonly string NInt64 = Nullable.GetUnderlyingType(typeof(long?)).Name;
+        private static readonly string NBoolean = Nullable.GetUnderlyingType(typeof(bool?)).Name;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Instantiate code generator object
+        /// </summary>
+        /// <param name="metadatas"></param>
+        public RdlCodeGenerator(RdlMetadata metadatas)
+            : this(metadatas, DateTimeOffset.UtcNow)
+        { }
+
+        /// <summary>
+        /// Instantiate code generator object with custom startAt
+        /// </summary>
+        /// <param name="metadatas"></param>
+        /// <param name="startAt"></param>
+        private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
+        {
+            _methods = new DefaultMethods();
+            _variables = new MemoryVariables();
+            _functions = new Stack<List<IRdlInstruction>>();
+            _functions.Push(new List<IRdlInstruction>());
+            _stopAt = null;
+            _labels = new Dictionary<string, int>();
+            _metadatas = metadatas;
+            _startAt = startAt;
+        }
+
+        #endregion
     }
 }

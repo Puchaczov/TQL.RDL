@@ -1,22 +1,11 @@
 ﻿using System.Collections.Generic;
 using TQL.Core.Converters;
-using TQL.Interfaces;
 using TQL.RDL.Evaluator;
 
 namespace TQL.RDL.Converter
 {
     public class ConvertionResponse<T> : ConvertionResponseBase<T>
     {
-        /// <summary>
-        /// Gets messages that could potentially appear after convertion from query to evaluator object
-        /// </summary>
-        public IReadOnlyCollection<VisitationMessage> Messages { get; }
-
-        /// <summary>
-        /// Gets converted from query object (ie. evaluator)
-        /// </summary>
-        public T Output { get; }
-
         /// <summary>
         /// Instantiate object of ConvertionResponse with proper properties instantied
         /// </summary>
@@ -27,5 +16,15 @@ namespace TQL.RDL.Converter
             Output = output;
             Messages = messages;
         }
+
+        /// <summary>
+        /// Gets messages that could potentially appear after convertion from query to evaluator object
+        /// </summary>
+        public IReadOnlyCollection<VisitationMessage> Messages { get; }
+
+        /// <summary>
+        /// Gets converted from query object (ie. evaluator)
+        /// </summary>
+        public T Output { get; }
     }
 }
