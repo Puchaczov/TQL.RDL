@@ -1,4 +1,4 @@
-## RDL: Small language usefull to querying time.
+## RDL is small language usefull to querying time.
 
 RDL is parser and evaluator for small language to querying time. Syntax is similar to english language. It's goal is to allow typing every pattern you could imagine and express it in form closest to english sentence. It can be used for generating next occurences of some event and as datetime feeder for scheduler. It should be perfect as complementary for CRON expressions.
 
