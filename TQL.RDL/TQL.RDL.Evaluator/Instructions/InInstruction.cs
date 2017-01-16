@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace TQL.RDL.Evaluator.Instructions
@@ -6,18 +7,25 @@ namespace TQL.RDL.Evaluator.Instructions
     public abstract class InInstruction<T> : IRdlInstruction
         where T : struct
     {
-        private readonly PeekFun _peek;
-
+        
         private readonly PopFun _pop;
-        private readonly PushFun _push;
 
-        protected InInstruction(PopFun popFun, PushFun pushFun, PeekFun peekFun)
+        /// <summary>
+        /// Initialize object.
+        /// </summary>
+        /// <param name="popFun">Pop function that pops from source stack.</param>
+        protected InInstruction(PopFun popFun)
         {
+            if (popFun == null) throw new ArgumentNullException(nameof(popFun));
             _pop = popFun;
-            _push = pushFun;
-            _peek = peekFun;
         }
 
+        /// <summary>
+        /// Performs "generic in" comparsion. Get how much arguments, pop reference value, and compare
+        /// each poped value from stack with such reference value. If one of them match, then push true, else false. 
+        /// This operation push it's result to numeric stack.
+        /// </summary>
+        /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
         {
             var inArgsCount = machine.Registers[(short)Registers.B];
@@ -40,12 +48,17 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.InstructionPointer += 1;
         }
 
+        /// <summary>
+        /// Represents short information about instruction. 
+        /// </summary>
+        /// <returns>short description of instruction</returns>
         public override string ToString() => "IN-GENERIC";
 
+        /// <summary>
+        /// Pop value from stack.
+        /// </summary>
+        /// <param name="machine">Virtual machine which registers will be used.</param>
+        /// <returns>Poped value from stack.</returns>
         protected delegate T PopFun(RdlVirtualMachine machine);
-
-        protected delegate void PushFun(RdlVirtualMachine machine, T value);
-
-        protected delegate T PeekFun(RdlVirtualMachine machine);
     }
 }

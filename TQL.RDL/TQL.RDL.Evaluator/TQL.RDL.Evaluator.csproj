@@ -78,7 +78,6 @@
     <Compile Include="Instructions\InInstruction.cs" />
     <Compile Include="Instructions\InInstructionDatetime.cs" />
     <Compile Include="Instructions\InInstructionNumeric.cs" />
-    <Compile Include="Instructions\JumpNotEqual.cs" />
     <Compile Include="Instructions\JumpToLabel.cs" />
     <Compile Include="Instructions\JumpToLabelNotEqual.cs" />
     <Compile Include="Instructions\LessDatetime.cs" />
