@@ -14,21 +14,22 @@ RDL is parser and evaluator for small language to querying time. Syntax is simil
 
 - Get dates of tuesday and wednesday that are in first week of month and dates of thursday and friday in the third week of month starting from 01.12.2016
 
-.. code-block:: bash
+```  
+repeat every days where 1 = 
+(case
+    when GetWeekOfMonth() = 1 and GetDayOfWeek() in (tuesday,wednesday) then 1 
+    when GetWeekOfMonth() = 3 and GetDayOfWeek() in (thursday,friday) then 1 
+    else 0 esac) start at '01.12.2016'
+```
 
-   repeat every days where 1 = 
-                (case
-                    when GetWeekOfMonth() = 1 and GetDayOfWeek() in (tuesday,wednesday) then 1 
-                    when GetWeekOfMonth() = 3 and GetDayOfWeek() in (thursday,friday) then 1 
-                    else 0 esac) start at '01.12.2016'
-                    
 - Occurs every days at 7:30 am and 8:30 am
-.. code-block:: bash
 
-   repeat every minutes where 
-                    (GetHour() = 7 and GetMinute() = 0 and GetSecond() = 0) or 
-                    (GetHour() = 8 and GetMinute() = 30 and GetSecond() = 0) 
-                start at '04.01.2017'
+```
+repeat every minutes where 
+    (GetHour() = 7 and GetMinute() = 0 and GetSecond() = 0) or 
+    (GetHour() = 8 and GetMinute() = 30 and GetSecond() = 0) 
+    start at '04.01.2017'
+```
 
 ## Installation
 
