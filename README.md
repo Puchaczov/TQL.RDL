@@ -1,65 +1,53 @@
-# TQL.RDL
-Small language used to querying time for periodic task scheduling
+## RDL is small language usefull to querying time.
 
-# Short specification:
+RDL is parser and evaluator for small language to querying time. Syntax is similar to english language. It's goal is to allow typing every pattern you could imagine and express it in form closest to english sentence. It can be used for generating next occurences of some event and as datetime feeder for scheduler. It should be perfect as complementary for CRON expressions.
 
-basic:<br/>
-&emsp;repeat every ([second/minute/hour/day/month/year] | nth [seconds/minutes/hours/days/months/years])<br/>
-optional:<br/>
-&emsp;where left [operators:+,-,*,/,%,in,not in] right<br/>
-optional:<br/>
-&emsp;start at 'date constant'<br/>
-&emsp;stop at 'date constant'<br/><br/>
+## Features
 
-left, right: [second/minute/hour/day/month/year/function()/constant]<br/>
+- Written in C# (.NET)
+- Nuget availibility
+- Usable with CRON expressions (shares same abstractions)
+- Easy to use
+- Various timeline resolution (seconds, minutes, hours, days, months, years) 
 
-Note: left and right <b>can contains subexpressions</b>.<br/>
+## Examples
 
-# Default functions
-&emsp;IsLastDayOfMonth(): bool<br/>
-&emsp;IsLastDayOfMonth(DateTimeOffset time): bool<br/>
-&emsp;IsDayOfWeek(DateTimeOffset time, long DayOfWeek): bool<br/>
-&emsp;IsDayOfWeek(long DayOfWeek): bool<br/>
-&emsp;IsWorkingDay(): bool<br/>
-&emsp;IsEven(long number): bool<br/>
-&emsp;IsOdd(long number): bool<br/><br/>
-&emsp;GetDate(): DateTimeOffset<br/>
-&emsp;Now(): DateTimeOffset<br/>
-&emsp;UtcNow(): DateTimeOffset<br/><br/>
-&emsp;GetDay(): long<br/>
-&emsp;GetMonth(): long<br/>
-&emsp;GetYear(): long<br/><br/>
-&emsp;GetSecond(): long<br/>
-&emsp;GetMinute(): long<br/>
-&emsp;GetHour(): long<br/><br/>
-&emsp;GetDayOfYear(): long
+- Get dates of tuesday and wednesday that are in first week of month and dates of thursday and friday in the third week of month starting from 01.12.2016
 
-# How query can looks:
+```  
+repeat every days where 1 = 
+(case
+    when GetWeekOfMonth() = 1 and GetDayOfWeek() in (tuesday,wednesday) then 1 
+    when GetWeekOfMonth() = 3 and GetDayOfWeek() in (thursday,friday) then 1 
+    else 0 esac) start at '01.12.2016'
+```
 
-repeat every day where (IsLastDayOfMonth() and GetDay() in (monday,friday)) or (IsLastDayOfMonth() and GetMonth() % 2 = 0)
+- Occurs every days at 7:30 am and 8:30 am
 
-# C# methods bindings:
+```
+repeat every minutes where 
+    (GetHour() = 7 and GetMinute() = 0 and GetSecond() = 0) or 
+    (GetHour() = 8 and GetMinute() = 30 and GetSecond() = 0) 
+    start at '04.01.2017'
+```
 
-You can bind static methods by registering it in GlobalMetadata manager. Allowed return type of methods is DateTimeOffset, long and bool,
-allowed parameters of functions are DateTimeOffset? and long?. Parameters count aren't limited.
+## Installation
 
-# RDL virtual machine (Expression evaluator engine):
+Download and install the latest version (nuget): **Install-Package TQL.RDL**
 
-&emsp;+ Stack based (operate on two stacks: long? and DateTimeOffset?)<br/>
-&emsp;+ Specialized small assembler with instructions: <br/>
-&emsp;  GoTo, Break, Jump, CallExternal, CallExternal, Call, Ret, Push, Load, And, Or, GreaterOrEqual, <br/>
-&emsp;  LessOrEqual, Greater, Less, Equal, NotEqual, In, NotIn, Modify, PrepareFunctionCall<br/>
-&emsp;+ Less amount of instructions is better, specialized instructions with complex internals <br/>
-&emsp;  are prefered over generate more set of instructions doing the same.<br/>
-&emsp;+ Query hints support<br/>
+## Tests and examples
 
-# Flow
+Describe and show how to run the tests with code examples.
 
-&emsp;String expression convertion to evaluator object uses such stages:<br/>
-&emsp;"repeat where..." -> preprocessor -> lexer -> parser -> code generator -> RDL virtual machine.<br/><br/>
+## Contributors
 
-&emsp;Then, you can evaluate your next occurences.
+- Fork the repo
+- Create new branch
+- Change source code and commit & push your changes
+- Create pull request
 
-# Notice
+If you found a bug, open an issue and type query you couldn't evaluate. Feel free to request new functionality i you need something.
 
-&emsp;<b>Not every features pointed in this document are already supported!</b>. It is very early stage currently.
+## License
+
+Apache 2.0
