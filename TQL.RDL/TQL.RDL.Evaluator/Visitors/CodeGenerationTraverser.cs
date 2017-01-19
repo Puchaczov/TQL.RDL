@@ -163,6 +163,16 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
+        /// Visit Not node in DFS manner.
+        /// </summary>
+        /// <param name="notNode">Not node that will be visited.</param>
+        public void Visit(NotNode notNode)
+        {
+            notNode.Descendant.Accept(this);
+            notNode.Accept(_codeGenerationVisitor);
+        }
+
+        /// <summary>
         /// Visit Case node in BFS manner.
         /// </summary>
         /// <param name="node">Case node that will be visited.</param>

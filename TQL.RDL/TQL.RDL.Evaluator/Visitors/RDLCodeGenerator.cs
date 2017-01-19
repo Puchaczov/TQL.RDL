@@ -161,6 +161,10 @@ namespace TQL.RDL.Evaluator.Visitors
             _methods.SetMachine(VirtualMachine);
         }
 
+        /// <summary>
+        /// TO DO: Special language keyword should be moved to specialized method
+        /// </summary>
+        /// <param name="node"></param>
         public virtual void Visit(WordNode node)
         {
             var value = 0;
@@ -190,6 +194,9 @@ namespace TQL.RDL.Evaluator.Visitors
                 case "__addinstr__":
                     Instructions.Add(new PushNumericInstruction(value));
                     break;
+                default:
+                    Instructions.Add(new PushStringInstruction(node.Token.Value));
+                    break;
             }
         }
 
@@ -205,7 +212,8 @@ namespace TQL.RDL.Evaluator.Visitors
                 obj = _methods;
             }
 
-            Instructions.Add(new PrepareFunctionCall(argTypes));
+            var parameters = registeredFunction.GetParameters();
+            Instructions.Add(new PrepareFunctionCall(argTypes, parameters.Length, parameters.OptionalParameters()));
 
             if (returnName == NDateTime)
             {
@@ -311,6 +319,11 @@ namespace TQL.RDL.Evaluator.Visitors
         public virtual void Visit(ElseNode node)
         {
             _labels.Add($"esac_{node.Parent.Else.FullSpan.Start}{node.Parent.Else.FullSpan.End}", Instructions.Count);
+        }
+
+        public void Visit(NotNode notNode)
+        {
+            Instructions.Add(new NotInstruction());
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)

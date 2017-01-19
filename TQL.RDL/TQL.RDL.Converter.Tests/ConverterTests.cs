@@ -71,7 +71,6 @@ namespace TQL.RDL.Converter.Tests
                     esac) start at '21.12.2016'", "22.12.2016");
         }
 
-
         private void TestDefaultMethods(string query, string fireTime)
         {
             var request = new ConvertionRequest(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new[] {

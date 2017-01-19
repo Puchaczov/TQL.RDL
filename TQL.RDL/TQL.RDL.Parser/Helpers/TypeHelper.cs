@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 
 namespace RDL.Parser.Helpers
 {
@@ -14,5 +16,7 @@ namespace RDL.Parser.Helpers
 
             return isNullableType ? nullableType : type;
         }
+
+        public static int OptionalParameters(this ParameterInfo[] parameters) => parameters.Count(f => f.IsOptional);
     }
 }

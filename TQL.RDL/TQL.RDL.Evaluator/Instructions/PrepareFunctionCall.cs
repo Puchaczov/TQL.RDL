@@ -10,10 +10,14 @@ namespace TQL.RDL.Evaluator.Instructions
     public class PrepareFunctionCall : IRdlInstruction
     {
         private readonly IEnumerable<Type> _enumerable;
+        private readonly int _parametersLength;
+        private readonly int _optionalParameters;
 
-        public PrepareFunctionCall(IEnumerable<Type> enumerable)
+        public PrepareFunctionCall(IEnumerable<Type> enumerable, int parametersLength, int optionalParameters)
         {
             _enumerable = enumerable;
+            _parametersLength = parametersLength;
+            _optionalParameters = optionalParameters;
         }
 
         public void Run(RdlVirtualMachine machine)
@@ -23,14 +27,27 @@ namespace TQL.RDL.Evaluator.Instructions
                 {
                     case nameof(DateTimeOffset):
                         return (object)machine.Datetimes.Pop();
+                    case nameof(String):
+                        return (object) machine.Strings.Pop();
                     case nameof(Int64):
                     case nameof(Boolean):
                         return (object)machine.Values.Pop();
                     default:
                         throw new Exception();
                 }
-            }).ToArray();
-            machine.CallArgs = args;
+            }).ToList();
+
+            var countOfUnsetParameters = (_parametersLength - args.Count);
+
+            if(countOfUnsetParameters > _optionalParameters)
+                throw new ArgumentException();
+
+            for (var i = 0; i < countOfUnsetParameters; ++i)
+            {
+                args.Add(Type.Missing);
+            }
+
+            machine.CallArgs = args.ToArray();
             machine.InstructionPointer += 1;
         }
 

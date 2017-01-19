@@ -170,6 +170,10 @@ namespace TQL.RDL.Parser
                         farg = nodes.Pop();
                         nodes.Push(new OrNode(farg, sarg));
                         break;
+                    case StatementType.Not:
+                        farg = nodes.Pop();
+                        nodes.Push(new NotNode(t, farg));
+                        break;
                     case StatementType.Equality:
                         sarg = nodes.Pop();
                         farg = nodes.Pop();

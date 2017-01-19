@@ -11,6 +11,7 @@ namespace TQL.RDL.Parser.Nodes
         void Visit(StopAtNode node);
         void Visit(RootScriptNode node);
         void Visit(RepeatEveryNode node);
+        void Visit(NotNode notNode);
         void Visit(AndNode node);
         void Visit(OrNode node);
         void Visit(InNode node);

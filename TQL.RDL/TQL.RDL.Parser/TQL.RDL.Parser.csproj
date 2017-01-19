@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\MethodNotFoundedException.cs" />
+    <Compile Include="Nodes\NotNode.cs" />
     <Compile Include="Nodes\NumericConsequentRepeatEveryNode.cs" />
     <Compile Include="PartOfDate.cs" />
     <Compile Include="Tokens\CaseWhenEsacToken.cs" />

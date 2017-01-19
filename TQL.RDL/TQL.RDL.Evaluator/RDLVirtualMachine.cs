@@ -12,6 +12,7 @@ namespace TQL.RDL.Evaluator
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
+            Strings = new Stack<string>();
             _generateNext = generateNext;
             Variables = new MemoryVariables {["current"] = DateTimeOffset.Now};
             Instructions = instructions;
@@ -124,5 +125,7 @@ namespace TQL.RDL.Evaluator
         public DateTimeOffset? StopAt { get; }
 
         public IRdlInstruction[] Instructions { get; }
+
+        public Stack<string> Strings { get; private set; }
     }
 }

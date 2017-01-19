@@ -196,5 +196,11 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="node">Fuction node of AST</param>
         public abstract void Visit(FunctionNode node);
+
+        /// <summary>
+        /// Visit Not node.
+        /// </summary>
+        /// <param name="notNode">Not node of AST.</param>
+        public abstract void Visit(NotNode notNode);
     }
 }

@@ -120,6 +120,9 @@
   <data name="ArgListCannotBeEmpty" xml:space="preserve">
     <value>Arguments list cannot be empty when used in 'IN' or 'NOT INT' clause.</value>
   </data>
+  <data name="BadType" xml:space="preserve">
+    <value>Expression returns {0} type but must {1}.</value>
+  </data>
   <data name="ExpressionTypeNotAllowed" xml:space="preserve">
     <value>Expression '{0}' is not allowed (occured in '{1}' node). Expected type is {2}.</value>
   </data>

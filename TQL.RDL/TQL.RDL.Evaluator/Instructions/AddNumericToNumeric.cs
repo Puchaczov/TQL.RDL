@@ -15,6 +15,10 @@ namespace TQL.RDL.Evaluator.Instructions
             machine.InstructionPointer += 1;
         }
 
+        /// <summary>
+        /// Gets instruction short description
+        /// </summary>
+        /// <returns>Description.</returns>
         public override string ToString() => "ADD";
     }
 }

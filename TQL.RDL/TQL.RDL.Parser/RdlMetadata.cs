@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using RDL.Parser.Exceptions;
 using RDL.Parser.Helpers;
 
 namespace TQL.RDL.Parser
@@ -24,22 +25,23 @@ namespace TQL.RDL.Parser
         {
             var index = -1;
             if(!HasMethod(name, methodArgs, out index))
-                throw new Exception("Not matched");
+                throw new MethodNotFoundedException();
 
             return _methods[name][index];
         }
 
         public bool HasMethod(string name, Type[] methodArgs)
         {
-            var index = 0;
+            int index;
             return HasMethod(name, methodArgs, out index);
         }
 
-        private bool HasMethod(string name, Type[] methodArgs, out int index)
+        private bool HasMethod(string name, IReadOnlyList<Type> methodArgs, out int index)
         {
             if (!_methods.ContainsKey(name))
             {
-                throw new Exception(name);
+                index = -1;
+                return false;
             }
 
             var methods = _methods[name];
@@ -48,20 +50,22 @@ namespace TQL.RDL.Parser
             {
                 var methodInfo = methods[i];
                 var parameters = methodInfo.GetParameters();
+                var optionalParametersCount = parameters.OptionalParameters();
 
-                if (methodArgs.Length != parameters.Length)
+                //Wrong amount of argument's. That's not our function.
+                if (HasMoreArgumentsThanMethodDefinitionContains(methodArgs, parameters) || 
+                    !CanUseSomeArgumentsAsDefaultParameters(methodArgs, parameters, optionalParametersCount))
                     continue;
 
                 var hasMatchedArgTypes = true;
-                for (var f = 0; f < parameters.Length; ++f)
+                for (int f = 0, g = methodArgs.Count; f < g; ++f)
                 {
                     //When constant value, it won't be nullable<type> but type.
                     //So it is possible to call function with such value.
-                    if (parameters[f].ParameterType.GetUnderlyingNullable() != methodArgs[f].GetUnderlyingNullable()) //long? != long
-                    {
-                        hasMatchedArgTypes = false;
-                        break;
-                    }
+                    if (parameters[f].ParameterType.GetUnderlyingNullable() == methodArgs[f].GetUnderlyingNullable())
+                        continue;
+                    hasMatchedArgTypes = false;
+                    break;
                 }
 
                 if (!hasMatchedArgTypes)
@@ -74,6 +78,13 @@ namespace TQL.RDL.Parser
             index = -1;
             return false;
         }
+
+        private static bool CanUseSomeArgumentsAsDefaultParameters(IReadOnlyCollection<Type> methodArgs, IReadOnlyCollection<ParameterInfo> parameters, int optionalParametersCount)
+        {
+            return ((methodArgs.Count >= (parameters.Count - optionalParametersCount)) && methodArgs.Count <= parameters.Count);
+        }
+
+        private static bool HasMoreArgumentsThanMethodDefinitionContains(IReadOnlyList<Type> methodArgs, ParameterInfo[] parameters) => methodArgs.Count > parameters.Length;
 
         public void RegisterMethod(string name, MethodInfo methodInfo)
         {

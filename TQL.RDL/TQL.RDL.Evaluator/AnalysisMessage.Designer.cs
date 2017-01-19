@@ -71,6 +71,15 @@ namespace TQL.RDL.Evaluator {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expression returns {0} type but must {1}..
+        /// </summary>
+        internal static string BadType {
+            get {
+                return ResourceManager.GetString("BadType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression &apos;{0}&apos; is not allowed (occured in &apos;{1}&apos; node). Expected type is {2}..
         /// </summary>
         internal static string ExpressionTypeNotAllowed {

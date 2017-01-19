@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using TQL.RDL.Evaluator.Helpers;
 
 namespace TQL.RDL.Evaluator
 {
@@ -63,20 +64,20 @@ namespace TQL.RDL.Evaluator
         public long GetMinute() => _machine.Datetimes.Peek().Minute;
         public long GetHour() => _machine.Datetimes.Peek().Hour;
 
-        public long GetWeekOfMonth()
+        public long GetWeekOfMonth(string type = "")
         {
             var time = _machine.Datetimes.Peek();
-            var day = time.Day;
 
-            if (day <= 7)
-                return 1;
-            if (day <= 14)
-                return 2;
-            if (day <= 21)
-                return 3;
-            if (day <= 28)
-                return 4;
-            return 5;
+            switch (type)
+            {
+                case "simple":
+                    break;
+                case "calculated":
+                    return time.WeekOfMonth(DayOfWeek.Sunday);
+                case "iso":
+                    break;
+            }
+            return time.WeekOfMonth();
         }
 
         public long GetDayOfYear() => _machine.Datetimes.Peek().DayOfYear;

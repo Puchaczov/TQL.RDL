@@ -256,6 +256,31 @@ namespace TQL.RDL.Evaluator.Tests
         }
 
         [TestMethod]
+        public void CodeGenerationVisitor_WithDay()
+        {
+            EvaluateQuery(@"
+                repeat every hours where 1 = 
+                    (case 
+                        when GetWeekOfMonth() = 1 and GetDayOfWeek() % 2 = 0 and not IsWorkingDay()
+                        then GetHour() = 0
+                        when GetWeekOfMonth() = 2 and IsWorkingDay()
+                        then GetHour() in (7,8)
+                        when GetWeekOfMonth() = 3
+                        then GetHour() = 20
+                        when GetWeekOfMonth() = 4 and GetDayOfWeek() in (monday, friday)
+                        then GetHour() in (7,15)
+                        when GetWeekOfMonth() in (4,5)
+                        then IsWorkingDay()
+                        else 0
+                    esac)
+                start at '01.01.2017' stop at '01.02.2017'
+            ",
+            string.Empty,
+            string.Empty,
+            (x) => true);
+        }
+
+        [TestMethod]
         public void CodeGenerationVisitor_GetSpecificDaysOfMonthThatAlsoAreSpecificDaysOfWeek_ShouldPass()
         {
             EvaluateQuery(@"repeat every days where GetDay() in (21,22) and GetDayOfWeek() in (1,2) start at '13.01.2017 00:00:00'", 
@@ -325,13 +350,15 @@ namespace TQL.RDL.Evaluator.Tests
             gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { }));
+            gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { typeof(string) }));
             gm.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetHour), methods.GetType().GetMethod(nameof(DefaultMethods.GetHour), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetMonth), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetMinute), methods.GetType().GetMethod(nameof(DefaultMethods.GetMinute), new Type[0]));
             gm.RegisterMethod(nameof(DefaultMethods.GetSecond), methods.GetType().GetMethod(nameof(DefaultMethods.GetSecond), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.IsWorkingDay), methods.GetType().GetMethod(nameof(DefaultMethods.IsWorkingDay), new Type[0]));
+            gm.RegisterMethod(nameof(DefaultMethods.IsLastDayOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.IsLastDayOfMonth), new Type[0]));
 
             var visitor = new RdlCodeGenerator(gm);
 

@@ -329,5 +329,13 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty), SyntaxErrorKind.LackOfExpression);
         }
+
+        public override void Visit(NotNode node)
+        {
+            if (node.Descendant.ReturnType != typeof(bool))
+            {
+                AddSemanticError(node.FullSpan, string.Format(AnalysisMessage.BadType, node.Descendant.ReturnType.Name, nameof(Boolean)), SemanticErrorKind.MixedValues);
+            }
+        }
     }
 }

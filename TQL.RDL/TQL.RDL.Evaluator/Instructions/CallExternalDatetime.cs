@@ -35,7 +35,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <summary>
         /// Gets instruction short description
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Description.</returns>
         public override string ToString() => $"CALL EXTERNAL {_info}";
     }
 }
