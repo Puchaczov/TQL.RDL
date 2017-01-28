@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
+using RDL.Parser.Tokens;
 using TQL.Core.Tokens;
-using TQL.RDL.Parser.Tokens;
 using UsefullAlgorithms.Parsing.ExpressionParsing;
 
-namespace TQL.RDL.Parser
+namespace RDL.Parser
 {
     public class RdlWhereParser : ShuntingYard<LexerComplexTokensDecorator, Token>
     {

@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RDL.Parser.Exceptions;
 
-namespace TQL.RDL.Parser.Tests
+namespace TQL.RDL.Evaluator.Tests
 {
     [TestClass]
     public class MetadataManagerTests

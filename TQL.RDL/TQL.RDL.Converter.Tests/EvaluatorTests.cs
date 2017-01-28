@@ -1,28 +1,28 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TQL.RDL.Evaluator.Visitors;
-using TQL.RDL.Parser;
+using TQL.RDL.Evaluator.Attributes;
+using TQL.RDL.Evaluator.ErrorHandling;
 
-namespace TQL.RDL.Evaluator.Tests
+namespace TQL.RDL.Converter.Tests
 {
+    [BindableClass]
     [TestClass]
     public class EvaluatorTests
     {
         private static bool _staticMethod1Called;
         private static bool _staticMethod2Called;
-
-
+        
         [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
-            var machine = Parse("repeat every days where GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100 start at '01.01.2000' stop at '05.05.2100'");
-
-            machine.ReferenceTime = DateTimeOffset.Parse("01.01.2000");
-            var refTime = default(DateTimeOffset?);
+            var evaluator = TestHelper.ToEvaluator("repeat every days where GetDay() in (21,22,23,24) and 3 = 4 and GetYear() < 2100 start at '01.01.2000' stop at '05.05.2100'");
+            
+            DateTimeOffset? refTime;
             var count = 0;
             do
             {
-                refTime = machine.NextFire();
+                refTime = evaluator.NextFire();
                 count += 1;
             }
             while (refTime != null);
@@ -33,8 +33,11 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_ComposeFunctionCall_ShouldPass()
         {
-            var machine = Parse("repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate()) start at '07.06.2016 22:00:00'");
-            machine.ReferenceTime = new DateTimeOffset(2016, 6, 7, 22, 0, 0, new TimeSpan());
+            var response =
+                TestHelper.Convert<EvaluatorTests>(
+                    "repeat every hours where TestMethodWithDateTimeOffset(GetDate(), GetYear()) and TestMethodWithDateTimeOffset(GetDate()) start at '07.06.2016 22:00:00'");
+
+            var machine = response.Output;
 
             machine.NextFire();
 
@@ -45,11 +48,11 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateSimpleStartAtStopAt_ShouldPass()
         {
-            var machine = Parse("repeat every hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
+            var evaluator = TestHelper.ToEvaluator("repeat every hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
 
-            var refTime = machine.ReferenceTime;
+            var refTime = DateTimeOffset.Parse("21.05.2012 05:00:00");
             var datetime = default(DateTimeOffset?);
-            while((datetime = machine.NextFire()).HasValue)
+            while((datetime = evaluator.NextFire()).HasValue)
             {
                 Assert.AreEqual(refTime, datetime);
                 refTime = refTime.AddHours(1);
@@ -61,12 +64,13 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateSimpleWithModifiedRepetiotion_ShouldPass()
         {
-            var machine = Parse("repeat every 2 hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
+            var evaluator = TestHelper
+                .ToEvaluator("repeat every 2 hours start at '21.05.2012 05:00:00' stop at '21.05.2012 12:00:00'");
 
-            var refTime = machine.ReferenceTime;
+            var refTime = DateTimeOffset.Parse("21.05.2012 05:00:00");
             var datetime = default(DateTimeOffset?);
 
-            while ((datetime = machine.NextFire()).HasValue)
+            while ((datetime = evaluator.NextFire()).HasValue)
             {
                 Assert.AreEqual(refTime, datetime);
                 refTime = refTime.AddHours(2);
@@ -141,10 +145,9 @@ namespace TQL.RDL.Evaluator.Tests
         [TestMethod]
         public void CodeGenerationVisitor_EvaluateNullWhenStopAtReached_ShouldReturnNull()
         {
-            var machine = Parse("repeat every 2 hours start at '21.05.2012 13:00:00' stop at '21.05.2012 12:00:00'");
-
-            Assert.AreEqual(null, machine.NextFire());
-            Assert.AreEqual(null, machine.NextFire());
+            EvaluateQuery("repeat every 2 hours start at '21.05.2012 13:00:00' stop at '21.05.2012 12:00:00'", string.Empty, string.Empty,
+                (x) => x == null,
+                (x) => x == null);
         }
 
         [TestMethod]
@@ -291,87 +294,45 @@ namespace TQL.RDL.Evaluator.Tests
                 x => true);
         }
 
-        public void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
-        {
-            EvaluateQuery(query, startAt, stopAt, null, funcs);
-        }
-
-        public void EvaluateQuery(string query, string startAt, string stopAt, DateTimeOffset? referenceTime = null, params Func<DateTimeOffset?, bool>[] funcs)
-        {
-
-            var machine = Parse(string.Format(query, startAt, stopAt));
-
-            if (referenceTime.HasValue)
-                machine.ReferenceTime = referenceTime.Value;
-
-            var datetime = default(DateTimeOffset?);
-            var index = 0;
-
-            while((datetime = machine.NextFire()).HasValue && index < funcs.Length)
-            {
-                Assert.IsTrue(funcs[index](datetime));
-                index += 1;
-            }
-
-            Assert.IsTrue(index == funcs.Length);
-        }
-
+        [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
             _staticMethod1Called = true;
             return true;
         }
 
+        [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date, long? year)
         {
             _staticMethod2Called = true;
             return true;
         }
 
-        private RdlVirtualMachine Parse(string query)
+        [BindableMethod]
+        public static int GetYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.Year;
+
+        [BindableMethod]
+        public static DateTimeOffset GetDate([InjectReferenceTime] DateTimeOffset datetime) => datetime;
+
+        private void EvaluateQuery(string query, string startAt, string stopAt, params Func<DateTimeOffset?, bool>[] funcs)
         {
-            var gm = new RdlMetadata();
+            var response = TestHelper.Convert(string.Format(query, startAt, stopAt));
 
-            var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RdlParser(lexer, gm, TimeZoneInfo.Local.BaseUtcOffset, new[] {
-                "dd/M/yyyy H:m:s",
-                "dd/M/yyyy h:m:s tt",
-                "dd.M.yyyy H:m:s",
-                "dd.M.yyyy h:m:s tt",
-                "yyyy-mm.dd HH:mm:ss",
-                "yyyy/mm/dd H:m:s",
-                "dd.M.yyyy"
-            }, new System.Globalization.CultureInfo("en-US"));
+            DateTimeOffset? datetime;
+            var index = 0;
 
-            var methods = new DefaultMethods();
+            Assert.IsFalse(response.Messages.Any(f => f.Level == MessageLevel.Error));
 
-            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?) }));
-            gm.RegisterMethod(nameof(TestMethodWithDateTimeOffset), GetType().GetMethod(nameof(TestMethodWithDateTimeOffset), new[] { typeof(DateTimeOffset?), typeof(long?) }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetDate), methods.GetType().GetMethod(nameof(DefaultMethods.GetDate), new Type[] { }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetYear), new Type[] { }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetDay), methods.GetType().GetMethod(nameof(DefaultMethods.GetDay), new Type[] { }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetWeekOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetWeekOfMonth), new Type[] { typeof(string) }));
-            gm.RegisterMethod(nameof(DefaultMethods.GetDayOfYear), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfYear), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.GetDayOfWeek), methods.GetType().GetMethod(nameof(DefaultMethods.GetDayOfWeek), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.GetHour), methods.GetType().GetMethod(nameof(DefaultMethods.GetHour), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.GetMonth), methods.GetType().GetMethod(nameof(DefaultMethods.GetMonth), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.GetMinute), methods.GetType().GetMethod(nameof(DefaultMethods.GetMinute), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.GetSecond), methods.GetType().GetMethod(nameof(DefaultMethods.GetSecond), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.IsWorkingDay), methods.GetType().GetMethod(nameof(DefaultMethods.IsWorkingDay), new Type[0]));
-            gm.RegisterMethod(nameof(DefaultMethods.IsLastDayOfMonth), methods.GetType().GetMethod(nameof(DefaultMethods.IsLastDayOfMonth), new Type[0]));
+            var evaluator = response.Output;
 
-            var visitor = new RdlCodeGenerator(gm);
+            while (index < funcs.Length)
+            {
+                datetime = evaluator.NextFire();
+                Assert.IsTrue(funcs[index](datetime));
+                index += 1;
+            }
 
-            var node = parser.ComposeRootComponents();
-
-            var traverseVisitor = new CodeGenerationTraverser(visitor);
-
-            node.Accept(traverseVisitor);
-
-            var machine = visitor.VirtualMachine;
-            methods.SetMachine(machine);
-
-            return machine;
+            Assert.IsTrue(index == funcs.Length);
         }
     }
 }

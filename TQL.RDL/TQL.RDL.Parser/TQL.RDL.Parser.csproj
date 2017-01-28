@@ -34,7 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\MethodDeclarationNotFoundedException.cs" />
     <Compile Include="Exceptions\MethodNotFoundedException.cs" />
+    <Compile Include="Exceptions\FunctionHasEmptyOrNullNameException.cs" />
+    <Compile Include="IMethodDeclarationResolver.cs" />
+    <Compile Include="MethodDeclaration.cs" />
     <Compile Include="Nodes\NotNode.cs" />
     <Compile Include="Nodes\NumericConsequentRepeatEveryNode.cs" />
     <Compile Include="PartOfDate.cs" />
@@ -42,7 +46,6 @@
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="LexerEnumerator.cs" />
-    <Compile Include="RdlMetadata.cs" />
     <Compile Include="Nodes\BinaryNode.cs" />
     <Compile Include="Nodes\ConstantNode.cs" />
     <Compile Include="Nodes\DateTimeNode.cs" />

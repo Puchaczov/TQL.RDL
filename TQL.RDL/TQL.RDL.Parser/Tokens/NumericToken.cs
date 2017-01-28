@@ -1,6 +1,6 @@
 ﻿using TQL.Core.Tokens;
 
-namespace TQL.RDL.Parser.Tokens
+namespace RDL.Parser.Tokens
 {
     public class NumericToken : Token
     {

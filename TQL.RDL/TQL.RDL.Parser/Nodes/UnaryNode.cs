@@ -1,6 +1,6 @@
 ﻿using TQL.Core.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public abstract class UnaryNode : RdlSyntaxNode
     {

@@ -6,7 +6,7 @@ using TQL.Core.Converters;
 
 namespace TQL.RDL.Converter
 {
-    public class ConvertionRequest : ConvertionRequestBase
+    public class ConvertionRequest<TMethodsAggregator> : ConvertionRequestBase where TMethodsAggregator: new()
     {
         /// <summary>
         /// Allow user to instantiate properly configured request. 
@@ -16,11 +16,10 @@ namespace TQL.RDL.Converter
         /// <param name="target">Target timezone in which evaluated date will be returned to user.</param>
         /// <param name="debuggable">Should query be debuggable?</param>
         /// <param name="formats">Default formats of date in typed query</param>
-        /// <param name="methods">C# Methods that will be bind to query</param>
-        public ConvertionRequest(string query, TimeZoneInfo source, TimeZoneInfo target, bool debuggable = false, string[] formats = null, params MethodInfo[] methods)
+        public ConvertionRequest(string query, TimeZoneInfo source, TimeZoneInfo target, bool debuggable = false, string[] formats = null)
         {
             Query = query;
-            MethodsToBind = methods;
+            MethodsAggregator = new TMethodsAggregator();
             Debuggable = debuggable;
             Source = source;
             Target = target;
@@ -36,7 +35,7 @@ namespace TQL.RDL.Converter
         /// <summary>
         /// User defined custom methods
         /// </summary>
-        public IEnumerable<MethodInfo> MethodsToBind { get; }
+        public TMethodsAggregator MethodsAggregator { get; }
 
         /// <summary>
         /// Determine if query should be debuggable

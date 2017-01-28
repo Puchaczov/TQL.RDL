@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using RDL.Parser.Nodes;
 using TQL.RDL.Evaluator.Visitors;
-using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
 {

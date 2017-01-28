@@ -1,7 +1,7 @@
-﻿using TQL.Core.Tokens;
-using TQL.RDL.Parser.Tokens;
+﻿using RDL.Parser.Tokens;
+using TQL.Core.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public abstract class ConstantNode : RdlSyntaxNode
     {

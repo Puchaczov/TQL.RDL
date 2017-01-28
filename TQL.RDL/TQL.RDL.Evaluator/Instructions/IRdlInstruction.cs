@@ -1,4 +1,4 @@
-﻿namespace TQL.RDL.Evaluator
+﻿namespace TQL.RDL.Evaluator.Instructions
 {
     public interface IRdlInstruction
     {

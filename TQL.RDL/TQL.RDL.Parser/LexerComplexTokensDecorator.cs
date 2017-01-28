@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
-using TQL.RDL.Parser.Tokens;
-using static TQL.RDL.Parser.Lexer;
 
-namespace TQL.RDL.Parser
+namespace RDL.Parser
 {
     public class LexerComplexTokensDecorator : ILexer<Token>, IEnumerable<Token>
     {
@@ -19,7 +18,7 @@ namespace TQL.RDL.Parser
             _skipWhiteSpaces = true;
         }
 
-        public LexerComplexTokensDecorator(string input, DefinitionSet ds = DefinitionSet.Query)
+        public LexerComplexTokensDecorator(string input, Lexer.DefinitionSet ds = Lexer.DefinitionSet.Query)
         {
             _lexer = new Lexer(input, ds);
             _disableEnumerationForTokens = new StatementType[0];

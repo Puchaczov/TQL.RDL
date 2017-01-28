@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Linq;
+using RDL.Parser.Tokens;
 using TQL.Core.Tokens;
-using TQL.RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public class FunctionNode : RdlSyntaxNode
     {
         private readonly FunctionToken _functionName;
-        private readonly Func<Type> _getReturnType;
+        private readonly Type _returnType;
 
-        public FunctionNode(FunctionToken functionName, ArgListNode args, Func<Type> getReturnType = null)
+        public FunctionNode(FunctionToken functionName, ArgListNode args, Type returnType)
         {
             _functionName = functionName;
             Args = args;
-            _getReturnType = getReturnType;
+            _returnType = returnType;
         }
 
         public override RdlSyntaxNode[] Descendants => Args.Descendants;
@@ -29,13 +29,13 @@ namespace TQL.RDL.Parser.Nodes
             }
         }
 
-        public override bool IsLeaf => Descendants.Count() == 0;
+        public override bool IsLeaf => !Descendants.Any();
 
         public override Token Token => _functionName;
 
         public string Name => Token.Value;
 
-        public override Type ReturnType => _getReturnType();
+        public override Type ReturnType => _returnType;
 
         public ArgListNode Args { get; }
 

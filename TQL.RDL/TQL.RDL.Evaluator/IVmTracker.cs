@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TQL.RDL.Evaluator.Instructions;
 
 namespace TQL.RDL.Evaluator
 {
@@ -10,6 +11,6 @@ namespace TQL.RDL.Evaluator
         IRdlInstruction[] Instructions { get; }
         Stack<long> Values { get; }
         Stack<DateTimeOffset> Datetimes { get; }
-        object[] CallArgs { get; }
+        Stack<string> Strings { get; }
     }
 }

@@ -1,15 +1,13 @@
 ﻿using System;
 using RDL.Parser.Nodes;
 using TQL.RDL.Evaluator.Instructions;
-using TQL.RDL.Parser;
-using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
     public sealed class RdlDebuggerSymbolGenerator : RdlCodeGenerator
     {
-        public RdlDebuggerSymbolGenerator(RdlMetadata gm)
-            : base(gm)
+        public RdlDebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext)
+            : base(gm, callMethodContext)
         { }
 
         public override void Visit(AddNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));

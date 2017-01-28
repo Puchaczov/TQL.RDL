@@ -46,8 +46,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AnalysisMessage.resx</DependentUpon>
     </Compile>
+    <Compile Include="Attributes\BindableClassAttribute.cs" />
+    <Compile Include="Attributes\BindableMethodAttribute.cs" />
+    <Compile Include="Attributes\InjectReferenceTimeAttribute.cs" />
+    <Compile Include="Attributes\InjectTypeAttribute.cs" />
     <Compile Include="Enumerators\ArythmeticEnumerator.cs" />
-    <Compile Include="DefaultMethods.cs" />
     <Compile Include="Enumerators\EnumeratorBase.cs" />
     <Compile Include="Enumerators\KeywordEnumerator.cs" />
     <Compile Include="Enumerators\VisitationState.cs" />
@@ -60,11 +63,11 @@
     <Compile Include="ErrorHandling\SyntaxErrorKind.cs" />
     <Compile Include="ErrorHandling\VisitationMessage.cs" />
     <Compile Include="Helpers\DateTimeOffsetHelper.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Instructions\AddNumericToDatetime.cs" />
     <Compile Include="Instructions\AddNumericToNumeric.cs" />
     <Compile Include="Instructions\AndInstruction.cs" />
     <Compile Include="Instructions\BreakInstruction.cs" />
-    <Compile Include="Instructions\CallExternalDatetime.cs" />
     <Compile Include="Instructions\DebuggerTrap.cs" />
     <Compile Include="Instructions\DiffDatetime.cs" />
     <Compile Include="Instructions\DiffNumeric.cs" />
@@ -92,15 +95,16 @@
     <Compile Include="Instructions\ModuloNumericToNumeric.cs" />
     <Compile Include="Instructions\MultiplyNumerics.cs" />
     <Compile Include="Instructions\NotInstruction.cs" />
-    <Compile Include="Instructions\CallExternalNumeric.cs" />
+    <Compile Include="Instructions\CallExternal.cs" />
     <Compile Include="Instructions\OrInstruction.cs" />
-    <Compile Include="Instructions\PrepareFunctionCall.cs" />
     <Compile Include="Instructions\PushDateTimeInstruction.cs" />
     <Compile Include="Instructions\PushNumericInstruction.cs" />
     <Compile Include="Instructions\PushStringInstruction.cs" />
     <Compile Include="Instructions\SubtractNumeric.cs" />
     <Compile Include="IVmTracker.cs" />
     <Compile Include="MemoryVariables.cs" />
+    <Compile Include="MethodDeclarationResolver.cs" />
+    <Compile Include="RdlMetadata.cs" />
     <Compile Include="Registers.cs" />
     <Compile Include="Visitors\AnalyzerBase.cs" />
     <Compile Include="Visitors\RDLQueryValidator.cs" />

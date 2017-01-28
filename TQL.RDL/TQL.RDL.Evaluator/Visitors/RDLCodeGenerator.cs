@@ -4,9 +4,8 @@ using System.Linq;
 using RDL.Parser;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
+using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Instructions;
-using TQL.RDL.Parser;
-using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
@@ -152,13 +151,11 @@ namespace TQL.RDL.Evaluator.Visitors
 
         public virtual void Visit(RootScriptNode node)
         {
-            Instructions.Add(new Modify(
-                f => f.Datetimes.Push(_generateNext(f.Datetimes.Pop()))));
+            Instructions.Add(new Modify(_generateNext));
 
             Instructions.Add(new BreakInstruction());
 
-            VirtualMachine = new RdlVirtualMachine(_labels, _generateNext, Instructions.ToArray(), _stopAt, _startAt);
-            _methods.SetMachine(VirtualMachine);
+            VirtualMachine = new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt);
         }
 
         /// <summary>
@@ -204,29 +201,8 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
             var registeredFunction = _metadatas.GetMethod(node.Name, argTypes);
-            var returnName = registeredFunction.ReturnType.GetTypeName();
-
-            object obj = null;
-            if (registeredFunction.DeclaringType.Name == nameof(DefaultMethods))
-            {
-                obj = _methods;
-            }
-
-            var parameters = registeredFunction.GetParameters();
-            Instructions.Add(new PrepareFunctionCall(argTypes, parameters.Length, parameters.OptionalParameters()));
-
-            if (returnName == NDateTime)
-            {
-                Instructions.Add(new CallExternalDatetime(obj, registeredFunction));
-            }
-            else if(returnName == NInt64)
-            {
-                Instructions.Add(new CallExternalNumeric(obj, registeredFunction));
-            }
-            else if(returnName == NBoolean)
-            {
-                Instructions.Add(new CallExternalNumeric(obj, registeredFunction));
-            }
+            
+            Instructions.Add(new CallExternal(_callMethodContext, registeredFunction, argTypes.Length));
         }
 
         public virtual void Visit(GreaterNode node)
@@ -349,10 +325,10 @@ namespace TQL.RDL.Evaluator.Visitors
         private DateTimeOffset? _stopAt;
         private readonly Stack<List<IRdlInstruction>> _functions;
         private MemoryVariables _variables;
-        private Func<DateTimeOffset, DateTimeOffset> _generateNext;
-        private readonly DefaultMethods _methods;
+        private Modify.Fun _generateNext;
         private readonly Dictionary<string, int> _labels;
         private readonly RdlMetadata _metadatas;
+        private readonly object _callMethodContext;
 
         #endregion
 
@@ -369,19 +345,20 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <summary>
         /// Instantiate code generator object
         /// </summary>
-        /// <param name="metadatas"></param>
-        public RdlCodeGenerator(RdlMetadata metadatas)
-            : this(metadatas, DateTimeOffset.UtcNow)
+        /// <param name="metadatas">Metadata manager with functions registered.</param>
+        /// <param name="callMethodContext">object that contains methods to invoke.</param>
+        public RdlCodeGenerator(RdlMetadata metadatas, object callMethodContext)
+            : this(metadatas, DateTimeOffset.UtcNow, callMethodContext)
         { }
 
         /// <summary>
         /// Instantiate code generator object with custom startAt
         /// </summary>
-        /// <param name="metadatas"></param>
-        /// <param name="startAt"></param>
-        private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt)
+        /// <param name="metadatas">Metadata manager with functions registered.</param>
+        /// <param name="startAt">Starting from parameter.</param>
+        /// <param name="callMethodContext">object that contains methods to invoke.</param>
+        private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext)
         {
-            _methods = new DefaultMethods();
             _variables = new MemoryVariables();
             _functions = new Stack<List<IRdlInstruction>>();
             _functions.Push(new List<IRdlInstruction>());
@@ -389,6 +366,7 @@ namespace TQL.RDL.Evaluator.Visitors
             _labels = new Dictionary<string, int>();
             _metadatas = metadatas;
             _startAt = startAt;
+            _callMethodContext = callMethodContext;
         }
 
         #endregion

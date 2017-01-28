@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace TQL.RDL.Evaluator.Instructions
@@ -5,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class Modify : IRdlInstruction
     {
-        public delegate void Fun(RdlVirtualMachine machine);
+        public delegate DateTimeOffset Fun(DateTimeOffset value);
 
         private readonly Fun _fun;
 
@@ -16,7 +17,7 @@ namespace TQL.RDL.Evaluator.Instructions
 
         public void Run(RdlVirtualMachine machine)
         {
-            _fun(machine);
+            machine.ReferenceTime = _fun(machine.ReferenceTime);
             machine.InstructionPointer += 1;
         }
 

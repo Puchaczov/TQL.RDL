@@ -1,6 +1,5 @@
 ﻿using System;
-using TQL.RDL.Parser.Nodes;
-using TQL.RDL.Parser.Tokens;
+using RDL.Parser.Tokens;
 
 namespace RDL.Parser.Nodes
 {

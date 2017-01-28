@@ -2,35 +2,32 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using RDL.Parser.Exceptions;
 using RDL.Parser.Nodes;
+using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
-using TQL.RDL.Parser.Nodes;
-using TQL.RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser
+namespace RDL.Parser
 {
     public class RdlParser : ParserBase<Token, StatementType>
     {
         private readonly CultureInfo _ci;
         private readonly string[] _formats;
-        private readonly RdlMetadata _metadatas;
         private readonly TimeSpan _zone;
         private LexerComplexTokensDecorator _cLexer;
+        private readonly IMethodDeclarationResolver _resolver;
 
-        public RdlParser(LexerComplexTokensDecorator lexer, RdlMetadata metadatas, TimeSpan zone, string[] formats, CultureInfo ci)
+        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci, IMethodDeclarationResolver resolver)
         {
             _cLexer = lexer;
             LastToken = new NoneToken();
             CurrentToken = lexer.NextToken();
 
-            if (metadatas == null)
-                throw new ArgumentNullException(nameof(RdlMetadata));
-
-            _metadatas = metadatas;
-
             _zone = zone;
             _formats = formats;
             _ci = ci;
+            _resolver = resolver;
         }
 
         public override Token CurrentToken
@@ -229,8 +226,22 @@ namespace TQL.RDL.Parser
                         break;
                     case StatementType.Function:
                         var functionToken = t as FunctionToken;
+
+                        if(functionToken == null)
+                            throw new NullReferenceException(nameof(functionToken));
+
+                        if (string.IsNullOrEmpty(functionToken.Value))
+                            throw new FunctionHasEmptyOrNullNameException();
+
                         var argsNode = nodes.Pop() as ArgListNode;
-                        nodes.Push(new FunctionNode(functionToken, argsNode, () => _metadatas.GetReturnType(functionToken.Value, argsNode.Descendants.Select(f => f.ReturnType).ToArray())));
+                        var typesOfArgs = argsNode.Descendants.Select(f => f.ReturnType).ToArray();
+
+                        MethodInfo methodDeclaration = null;
+
+                        if(!_resolver.TryResolveMethod(functionToken.Value, typesOfArgs, out methodDeclaration))
+                            throw new MethodDeclarationNotFoundedException();
+
+                        nodes.Push(new FunctionNode(functionToken, argsNode, methodDeclaration.ReturnType));
                         break;
                     case StatementType.VarArg:
                         var varArg = t as VarArgToken;
@@ -339,7 +350,7 @@ namespace TQL.RDL.Parser
                         var numeric = CurrentToken;
                         Consume(StatementType.Numeric);
                         node = new NumericConsequentRepeatEveryNode(
-                            new Token("repeat every", StatementType.Repeat, new Core.Tokens.TextSpan(repeat.Span.Start, CurrentToken.Span.End - repeat.Span.Start)), 
+                            new Token("repeat every", StatementType.Repeat, new TQL.Core.Tokens.TextSpan(repeat.Span.Start, CurrentToken.Span.End - repeat.Span.Start)), 
                             numeric as NumericToken,
                             CurrentToken as WordToken);
                     }

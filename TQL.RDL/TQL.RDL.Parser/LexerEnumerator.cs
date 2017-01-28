@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
-using TQL.RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser
+namespace RDL.Parser
 {
     internal class LexerEnumerator : IEnumerator<Token>
     {

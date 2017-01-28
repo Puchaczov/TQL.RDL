@@ -1,7 +1,7 @@
 ﻿using System;
-using TQL.RDL.Parser.Tokens;
+using RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public class NumericNode : LeafNode
     {
@@ -13,6 +13,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(long);
 
+        //TO DO: should be long??
         public int Value => int.Parse(Token.Value);
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);

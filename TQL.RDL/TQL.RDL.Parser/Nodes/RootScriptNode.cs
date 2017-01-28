@@ -1,8 +1,8 @@
 ﻿using System;
+using RDL.Parser.Tokens;
 using TQL.Core.Tokens;
-using TQL.RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public class RootScriptNode : RdlSyntaxNode
     {

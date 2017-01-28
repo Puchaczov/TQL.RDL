@@ -62,8 +62,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestHelper.cs" />
     <Compile Include="ConverterTests.cs" />
+    <Compile Include="EvaluatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TQL.RDL.Converter\TQL.RDL.csproj">

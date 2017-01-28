@@ -6,8 +6,7 @@ using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
 using TQL.Core.Tokens;
 using TQL.RDL.Evaluator.ErrorHandling;
-using TQL.RDL.Parser;
-using TQL.RDL.Parser.Nodes;
+using TQL.RDL.Evaluator.Helpers;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
@@ -170,7 +169,7 @@ namespace TQL.RDL.Evaluator.Visitors
 
         public override void Visit(NotInNode node)
         {
-            Visit(node);
+            Visit(node as InNode);
         }
 
         public override void Visit(DiffNode node)
@@ -187,7 +186,7 @@ namespace TQL.RDL.Evaluator.Visitors
                 var hasMixedTypes = false;
                 foreach (var desc in node.Right.Descendants)
                 {
-                    if (dstType != desc.ReturnType)
+                    if (dstType != desc.ReturnType && !CanBeGeneralized(node.Left, desc))
                     {
                         hasMixedTypes = true;
                         break;
@@ -299,10 +298,38 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             var left = node.Left.ReturnType.GetUnderlyingNullable();
             var right = node.Right.ReturnType.GetUnderlyingNullable();
-            if (left != right)
+            if (!RdlMetadata.IsTypePossibleToConvert(left, right) && !CanBeGeneralized(node))
             {
                 AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
             }
+        }
+
+        /// <summary>
+        /// Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
+        /// ie. monday = 4 or month in (may,...,december)
+        /// </summary>
+        /// <param name="node">Node do check.</param>
+        /// <returns>true if can be generalized, else false.</returns>
+        private bool CanBeGeneralized(BinaryNode node) => CanBeGeneralized(node.Left, node.Right);
+
+        /// <summary>
+        /// Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
+        /// ie. monday = 4 or month in (may,...,december)
+        /// </summary>
+        /// <param name="left">Node do check.</param>
+        /// <param name="right">Node do check.</param>
+        /// <returns>true if can be generalized, else false.</returns>
+        private bool CanBeGeneralized(RdlSyntaxNode left, RdlSyntaxNode right)
+        {
+            if (right.Token.Value.IsKeyword() &&
+                RdlMetadata.IsTypePossibleToConvert(left.ReturnType, typeof(int)))
+                return true;
+
+            if (left.Token.Value.IsKeyword() &&
+                RdlMetadata.IsTypePossibleToConvert(typeof(int), right.ReturnType))
+                return true;
+
+            return false;
         }
 
         private void ReportLackOfWhenThenExpression(CaseNode node)

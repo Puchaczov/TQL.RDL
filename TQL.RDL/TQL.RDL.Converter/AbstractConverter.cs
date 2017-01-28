@@ -1,12 +1,13 @@
-﻿using TQL.Core.Converters;
+﻿using RDL.Parser;
+using RDL.Parser.Nodes;
+using RDL.Parser.Tokens;
+using TQL.Core.Converters;
 using TQL.RDL.Evaluator;
-using TQL.RDL.Parser;
-using TQL.RDL.Parser.Nodes;
-using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Converter
 {
-    public abstract class AbstractConverter<TOutput> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, StatementType, RootScriptNode, ConvertionRequest>
+    public abstract class AbstractConverter<TOutput, TMethodsAggregator> : ConverterBase<TOutput, ConvertionResponse<TOutput>, INodeVisitor, StatementType, RootScriptNode, ConvertionRequest<TMethodsAggregator>>
+        where TMethodsAggregator : new()
     {
         /// <summary>
         /// Default date formats acceptable by DateTimeOffset.Parse(...) object.
@@ -32,8 +33,6 @@ namespace TQL.RDL.Converter
             : base(throwOnError)
         {
             _throwOnError = throwOnError;
-
-            RegisterDefaultMethods();
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace TQL.RDL.Converter
         /// </summary>
         /// <param name="request">User defined request</param>
         /// <returns>Abstract syntax tree</returns>
-        protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest request)
+        protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest<TMethodsAggregator> request)
         {
             var preprocessor = new Preprocessor.Preprocessor();
             var query = preprocessor.Execute(request.Query);
@@ -54,9 +53,9 @@ namespace TQL.RDL.Converter
             RdlParser parser = null;
 
             if (request.Formats == null || request.Formats.Length == 0)
-                parser = new RdlParser(lexer, Metdatas, request.Source.BaseUtcOffset, _defaultFormats, request.CultureInfo);
+                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, _defaultFormats, request.CultureInfo, new MethodDeclarationResolver(Metdatas));
             else
-                parser = new RdlParser(lexer, Metdatas, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo);
+                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo, new MethodDeclarationResolver(Metdatas));
 
             return parser.ComposeRootComponents();
         }
@@ -66,30 +65,6 @@ namespace TQL.RDL.Converter
         /// </summary>
         /// <param name="request">User defined request</param>
         /// <returns>Return if request is valid</returns>
-        protected override bool IsValid(ConvertionRequest request) => !string.IsNullOrEmpty(request.Query);
-
-        /// <summary>
-        /// Register methods which can be used by user in his query.
-        /// </summary>
-        private void RegisterDefaultMethods()
-        {
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsDayOfWeek));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsEven));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsOdd));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsWorkingDay));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.IsLastDayOfMonth));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDate));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetYear));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetMonth));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDay));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetHour));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetMinute));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetSecond));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetWeekOfMonth));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.Now));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.UtcNow));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDayOfWeek));
-            Metdatas.RegisterMethods<DefaultMethods>(nameof(DefaultMethods.GetDayOfYear));
-        }
+        protected override bool IsValid(ConvertionRequest<TMethodsAggregator> request) => !string.IsNullOrEmpty(request.Query);
     }
 }

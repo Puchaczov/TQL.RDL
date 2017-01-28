@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using RDL.Parser.Helpers;
+using RDL.Parser.Nodes;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Interfaces;
+using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Visitors;
-using TQL.RDL.Parser;
-using TQL.RDL.Parser.Nodes;
+using TQL.RDL.Converter.Exceptions;
+using TQL.RDL.Evaluator;
 
 namespace TQL.RDL.Converter
 {
-    public class RdlTimeline : AbstractConverter<IFireTimeEvaluator>, IConvertible<ConvertionRequest, ConvertionResponse<IFireTimeEvaluator>>
+    public class RdlTimeline<TMethodsAggregator> : AbstractConverter<IFireTimeEvaluator, TMethodsAggregator>, IConvertible<ConvertionRequest<TMethodsAggregator>, ConvertionResponse<IFireTimeEvaluator>> 
+        where TMethodsAggregator : new()
     {
         /// <summary>
         /// Instantiate to evaluator converter.
@@ -17,7 +22,9 @@ namespace TQL.RDL.Converter
         /// <param name="throwOnError">Allow errors to be aggregated or rethrowed immediatelly</param>
         public RdlTimeline(bool throwOnError = false)
             : base(throwOnError)
-        { }
+        {
+            RegisterQueryMethods();
+        }
 
         /// <summary>
         /// It's just metadata cache.
@@ -29,7 +36,7 @@ namespace TQL.RDL.Converter
         /// </summary>
         /// <param name="request">Query convertion request</param>
         /// <returns>Response with evaluator</returns>
-        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest request) => base.Convert(request, ast => Convert(ast, request));
+        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest<TMethodsAggregator> request) => base.Convert(request, ast => Convert(ast, request));
 
         /// <summary>
         /// Convert Abstract Syntax Tree to Virtual Machine object with associated virtual code for such machine
@@ -37,13 +44,8 @@ namespace TQL.RDL.Converter
         /// <param name="ast">Abstract Syntax Tree.</param>
         /// <param name="request">Request used by user to perform convertion.</param>
         /// <returns>Object that allows evaluate next occurences</returns>
-        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest request)
+        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest<TMethodsAggregator> request)
         {
-            foreach(var method in request.MethodsToBind)
-            {
-                Metdatas.RegisterMethod(method.Name, method);
-            }
-
             var coretnessChecker = new RdlQueryValidator(Metdatas);
             var queryValidatorTraverser = new CodeGenerationTraverser(coretnessChecker);
             ast.Accept(queryValidatorTraverser);
@@ -51,7 +53,7 @@ namespace TQL.RDL.Converter
             if (!coretnessChecker.IsValid)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
-            var codeGenerator = request.Debuggable ? new RdlDebuggerSymbolGenerator(Metdatas) : new RdlCodeGenerator(Metdatas);
+            var codeGenerator = request.Debuggable ? new RdlDebuggerSymbolGenerator(Metdatas, request.MethodsAggregator) : new RdlCodeGenerator(Metdatas, request.MethodsAggregator);
             var codeGenerationTraverseVisitor = new CodeGenerationTraverser(codeGenerator);
 
             ast.Accept(codeGenerationTraverseVisitor);
@@ -60,6 +62,43 @@ namespace TQL.RDL.Converter
             if (evaluator == null)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
             return request.Source == request.Target ? new ConvertionResponse<IFireTimeEvaluator>(evaluator) : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
+        }
+
+        /// <summary>
+        /// Register methods of TMethodsAggregator that are properly annotated.
+        /// </summary>
+        private void RegisterQueryMethods()
+        {
+            var type = typeof(TMethodsAggregator);
+            var typeInfo = type.GetTypeInfo();
+
+            if (typeInfo.GetCustomAttribute<BindableClassAttribute>() != null)
+            {
+                var methods = type
+                    .GetRuntimeMethods().Where(f => f.IsDefined(typeof(BindableMethodAttribute), false));
+
+                foreach (var method in methods)
+                {
+                    CheckMethodHasInjectableOptionalOrDefaultParameters(method);
+                    Metdatas.RegisterMethod(method);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if method fit injection conditions.
+        /// </summary>
+        /// <param name="method">method that will be analysed.</param>
+        private void CheckMethodHasInjectableOptionalOrDefaultParameters(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            var injectedParams = parameters.GetParametersWithAttribute<InjectTypeAttribute>();
+
+            if (injectedParams.Any(f => f.IsOptional))
+                throw new InjectParameterCannotBeOptionalException(method.Name);
+
+            if (injectedParams.Any(f => f.HasDefaultValue))
+                throw new InjectParameterHasDefaultValueException(method.Name);
         }
 
         /// <summary>

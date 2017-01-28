@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TQL.RDL.Parser.Tokens;
+using RDL.Parser;
+using RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser.Tests
 {

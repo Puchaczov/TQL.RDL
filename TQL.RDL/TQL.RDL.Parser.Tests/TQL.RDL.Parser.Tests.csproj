@@ -72,10 +72,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Resolvers\DummyDeclarationResolver.cs" />
     <Compile Include="LexerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParserTests.cs" />
-    <Compile Include="MetadataManagerTests.cs" />
     <Compile Include="WhereParserTests.cs" />
   </ItemGroup>
   <ItemGroup>

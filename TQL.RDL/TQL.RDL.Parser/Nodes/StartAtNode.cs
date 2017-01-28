@@ -1,7 +1,7 @@
 ﻿using System;
-using TQL.RDL.Parser.Tokens;
+using RDL.Parser.Tokens;
 
-namespace TQL.RDL.Parser.Nodes
+namespace RDL.Parser.Nodes
 {
     public class StartAtNode : ConstantNode
     {

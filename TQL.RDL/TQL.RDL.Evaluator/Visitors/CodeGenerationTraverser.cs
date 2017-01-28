@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using RDL.Parser.Nodes;
-using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
@@ -361,7 +361,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Function node that will be visited.</param>
         public void Visit(FunctionNode node)
         {
-            foreach (var item in node.Descendants)
+            foreach (var item in node.Descendants.Reverse())
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }

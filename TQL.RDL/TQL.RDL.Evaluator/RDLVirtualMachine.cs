@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using TQL.Interfaces;
+using TQL.RDL.Evaluator.Instructions;
 
 namespace TQL.RDL.Evaluator
 {
     public class RdlVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
-        private Func<DateTimeOffset, DateTimeOffset> _generateNext;
-
-        public RdlVirtualMachine(Dictionary<string, int> relativeLabels, Func<DateTimeOffset, DateTimeOffset> generateNext, IRdlInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
+        public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
             Strings = new Stack<string>();
-            _generateNext = generateNext;
             Variables = new MemoryVariables {["current"] = DateTimeOffset.Now};
             Instructions = instructions;
             StopAt = stopAt;
@@ -83,15 +81,11 @@ namespace TQL.RDL.Evaluator
 
                 var old = ReferenceTime;
 
-                Datetimes.Push(ReferenceTime);
-
                 while (!Break && !Exit)
                 {
                     var instruction = Instructions[InstructionPointer];
                     instruction.Run(this);
                 }
-
-                ReferenceTime = Datetimes.Pop();
 
                 if (StopAt.HasValue && old > StopAt.Value)
                 {
@@ -103,6 +97,7 @@ namespace TQL.RDL.Evaluator
                 }
 
                 var cond = false;
+
                 if (Values.Count > 0)
                     cond = Convert.ToBoolean(Values.Pop());
                 else
@@ -118,7 +113,6 @@ namespace TQL.RDL.Evaluator
 
         public Stack<long> Values { get; }
         public Stack<DateTimeOffset> Datetimes { get; }
-        public object[] CallArgs { get; set; }
 
         public DateTimeOffset StartAt { get; }
 
