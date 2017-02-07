@@ -30,12 +30,28 @@ namespace TQL.RDL.Parser.Tests
         }
 
         [TestMethod]
+        public void RDLParser_ComposeWhere_OperatorPrecendenceChangedByParenthesis()
+        {
+            var node = Parse("repeat every seconds where (1 + 2) * 3 = 0");
+
+            Assert.AreEqual(2, node.Descendants.Length);
+            Assert.AreEqual(typeof(RepeatEveryNode), node.Descendants[0].GetType());
+            Assert.AreEqual(typeof(WhereConditionsNode), node.Descendants[1].GetType());
+
+            Assert.AreEqual(typeof(EqualityNode), node.Descendants[1].Descendants[0].GetType());
+            Assert.AreEqual(typeof(StarNode), node.Descendants[1].Descendants[0].Descendants[0].GetType());
+            Assert.AreEqual(typeof(AddNode), node.Descendants[1].Descendants[0].Descendants[0].Descendants[0].GetType());
+            Assert.AreEqual(typeof(NumericNode), node.Descendants[1].Descendants[0].Descendants[1].GetType());
+        }
+
+        [TestMethod]
         public void RDLParser_ComposeWhereWithOperators_ShouldPass()
         {
             TestOperator_Simple<OrNode, NumericNode, NumericNode>("or", "1", "32");
             TestOperator_Simple<AndNode, NumericNode, NumericNode>("and", "1", "32");
             TestOperator_Simple<DiffNode, NumericNode, NumericNode>("<>", "1", "32");
             TestOperator_Simple<EqualityNode, NumericNode, NumericNode>("=", "1", "32");
+            TestOperator_Simple<EqualityNode, AddNode, AddNode>("=", "7 + 5", "20 + 11");
             TestOperator_Simple<GreaterNode, NumericNode, NumericNode>(">", "1", "32");
             TestOperator_Simple<LessNode, NumericNode, NumericNode>("<", "1", "32");
             TestOperator_Simple<GreaterEqualNode, NumericNode, NumericNode>(">=", "1", "32");
@@ -231,6 +247,30 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(node.Descendants[1].Descendants.OfType<FunctionNode>().Any());
             Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].GetType());
             Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].Descendants[0].GetType());
+        }
+
+        [TestMethod]
+        public void RDLParser_BetweenOperatorNumeric_ShouldPass()
+        {
+            var node = Parse("repeat every days where 1 between 2 and 3");
+
+            Assert.AreEqual(2, node.Descendants.Length);
+
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0], typeof(BetweenNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[0], typeof(NumericNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[1], typeof(NumericNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[2], typeof(NumericNode));
+        }
+
+        [TestMethod]
+        public void RDLParser_BetweenOperatorComplex_ShouldPass()
+        {
+            var node = Parse("repeat every days where GetDay() between GetMonth() and GetYear()");
+
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0], typeof(BetweenNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[0], typeof(FunctionNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[1], typeof(FunctionNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[2], typeof(FunctionNode));
         }
 
         private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)

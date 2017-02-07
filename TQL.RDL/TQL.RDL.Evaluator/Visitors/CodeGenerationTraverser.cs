@@ -365,5 +365,16 @@ namespace TQL.RDL.Evaluator.Visitors
                 item.Accept(this);
             node.Accept(_codeGenerationVisitor);
         }
+
+        /// <summary>
+        /// Visit Between node in DFS manner.
+        /// </summary>
+        /// <param name="node">Between node that will be visited.</param>
+        public void Visit(BetweenNode node)
+        {
+            foreach (var item in node.Descendants)
+                item.Accept(this);
+            node.Accept(_codeGenerationVisitor);
+        }
     }
 }

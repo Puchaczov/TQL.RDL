@@ -6,7 +6,7 @@ using UsefullAlgorithms.Parsing.ExpressionParsing;
 
 namespace RDL.Parser
 {
-    public class RdlWhereParser : ShuntingYard<LexerComplexTokensDecorator, Token>
+    public class RdlArithmeticParser : ShuntingYard<LexerComplexTokensDecorator, Token>
     {
         private static readonly string[] KnownValues = {
             "monday",
@@ -18,7 +18,7 @@ namespace RDL.Parser
             "sunday"
         };
 
-        public RdlWhereParser()
+        public RdlArithmeticParser()
         {
             operators.Add(new Token("or", StatementType.Or, new TextSpan(0, 0)), new PrecedenceAssociativity(0, Associativity.Left));
             operators.Add(new Token("and", StatementType.And, new TextSpan(0, 0)), new PrecedenceAssociativity(5, Associativity.Left));
@@ -36,6 +36,7 @@ namespace RDL.Parser
             operators.Add(new Token("-", StatementType.Hyphen, new TextSpan(0, 0)), new PrecedenceAssociativity(15, Associativity.Left));
             operators.Add(new Token("+", StatementType.Plus, new TextSpan(0, 0)), new PrecedenceAssociativity(14, Associativity.Left));
             operators.Add(new Token("not", StatementType.Not, new TextSpan(0, 0)), new PrecedenceAssociativity(20, Associativity.Right));
+            operators.Add(new Token("between", StatementType.Between, new TextSpan(0, 0)), new PrecedenceAssociativity(1, Associativity.Left));
         }
 
         public override Token[] Parse(LexerComplexTokensDecorator expression) => InfixToPostfix(expression);

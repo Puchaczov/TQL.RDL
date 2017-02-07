@@ -21,5 +21,9 @@ namespace TQL.RDL.Parser.Tests.Resolvers
         public int GetDay() => 1;
 
         public int Abc(int a, int b, int c) => 1;
+
+        public int GetMonth() => 1;
+
+        public int GetYear() => 1;
     }
 }

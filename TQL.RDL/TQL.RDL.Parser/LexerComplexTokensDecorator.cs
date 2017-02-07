@@ -18,9 +18,9 @@ namespace RDL.Parser
             _skipWhiteSpaces = true;
         }
 
-        public LexerComplexTokensDecorator(string input, Lexer.DefinitionSet ds = Lexer.DefinitionSet.Query)
+        public LexerComplexTokensDecorator(string input)
         {
-            _lexer = new Lexer(input, ds);
+            _lexer = new Lexer(input);
             _disableEnumerationForTokens = new StatementType[0];
             _skipWhiteSpaces = true;
         }

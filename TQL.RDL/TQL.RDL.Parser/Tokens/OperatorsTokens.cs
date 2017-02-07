@@ -265,4 +265,20 @@ namespace RDL.Parser.Tokens
             : base(TokenText, StatementType.CaseEnd, span)
         { }
     }
+
+    public class BetweenAndToken : Token
+    {
+        public BetweenAndToken(TextSpan span)
+            : base(string.Empty, StatementType.BetweenAnd, span)
+        { }
+    }
+
+    public class BetweenToken : Token
+    {
+        public const string TokenText = "between";
+
+        public BetweenToken(TextSpan span)
+            : base(string.Empty, StatementType.Between, span)
+        { }
+    }
 }

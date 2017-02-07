@@ -7,15 +7,8 @@ namespace RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {
-        public enum DefinitionSet
-        {
-            Query,
-            CaseWhen
-        }
-
-        public Lexer(string input, DefinitionSet ds) : 
-            base(input, new NoneToken(),
-                ds == DefinitionSet.Query ? DefinitionSets.CasualQuery : DefinitionSets.CaseWhenQuery)
+        public Lexer(string input) : 
+            base(input, new NoneToken(), DefinitionSets.General)
         { }
 
         public string Query => input;
@@ -36,8 +29,8 @@ namespace RDL.Parser
             {
                 case StatementType.And:
                     return new AndToken(new TextSpan(Position, tokenText.Length));
-                case StatementType.CaseWhenEsac:
-                    return new CaseWhenEsacToken(tokenText, new TextSpan(Position, tokenText.Length));
+                case StatementType.Between:
+                    return new BetweenToken(new TextSpan(Position, tokenText.Length));
                 case StatementType.Case:
                     return new CaseToken(new TextSpan(Position, tokenText.Length));
                 case StatementType.CaseEnd:
@@ -121,6 +114,8 @@ namespace RDL.Parser
                     return StatementType.Case;
                 case CaseEndToken.TokenText:
                     return StatementType.CaseEnd;
+                case BetweenToken.TokenText:
+                    return StatementType.Between;
                 case CommaToken.TokenText:
                     return StatementType.Comma;
                 case DiffToken.TokenText:
@@ -181,25 +176,19 @@ namespace RDL.Parser
 
             if (string.IsNullOrWhiteSpace(tokenText))
                 return StatementType.WhiteSpace;
-
-            var fMatch = Regex.Match(tokenText, TokenRegexDefinition.Function);
-
+            
+            if (matchedDefinition.Regex.ToString() == TokenRegexDefinition.Function)
+            {
+                return StatementType.Function;
+            }
             var number = 0;
             if (int.TryParse(tokenText, out number) && !tokenText.Contains(" "))
             {
                 return StatementType.Numeric;
             }
-            if(fMatch.Success && fMatch.Index == 0)
-            {
-                return StatementType.Function;
-            }
             if(matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
             {
                 return StatementType.Var;
-            }
-            if(Regex.IsMatch(tokenText, TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline))
-            {
-                return StatementType.CaseWhenEsac;
             }
 
             return StatementType.Word;
@@ -207,8 +196,8 @@ namespace RDL.Parser
 
         private static class TokenRegexDefinition
         {
-            public static readonly string Keyword = @"(?<=[\s]{{1,}}|^){0}(?=[\s]{{1,}}|$)";
-            public static readonly string Function = @"[a-zA-Z_-]{1,}[\d]*(?=[\(])";
+            private const string Keyword = @"(?<=[\s]{{1,}}|^){0}(?=[\s]{{1,}}|$)";
+            public const string Function = @"[a-zA-Z_-]{1,}[\d]*(?=[\(])";
 
             public static readonly string KAnd = string.Format(Keyword, AndToken.TokenText);
             public static readonly string KComma = CommaToken.TokenText;
@@ -218,20 +207,20 @@ namespace RDL.Parser
             public static readonly string KfSlashToken = string.Format(Keyword, FSlashToken.TokenText);
             public static readonly string KGreater = string.Format(Keyword, GreaterToken.TokenText);
             public static readonly string KGreaterEqual = string.Format(Keyword, GreaterEqualToken.TokenText);
-            public static readonly string KHyphen = string.Format(@"\{0}", HyphenToken.TokenText);
+            public static readonly string KHyphen = $@"\{HyphenToken.TokenText}";
             public static readonly string KIn = string.Format(Keyword, InToken.TokenText);
             public static readonly string KIs = string.Format(Keyword, IsToken.TokenText);
-            public static readonly string KLeftParenthesis = string.Format(@"\{0}", LeftParenthesisToken.TokenText);
+            public static readonly string KLeftParenthesis = $@"\{LeftParenthesisToken.TokenText}";
             public static readonly string KLess = string.Format(Keyword, LessToken.TokenText);
             public static readonly string KLessEqual = string.Format(Keyword, LessEqualToken.TokenText);
             public static readonly string KModulo = string.Format(Keyword, ModuloToken.TokenText);
             public static readonly string KNot = string.Format(Keyword, NotToken.TokenText);
             public static readonly string KNotIn = string.Format(Keyword, NotInToken.TokenText);
             public static readonly string KOr = string.Format(Keyword, OrToken.TokenText);
-            public static readonly string KPlus = string.Format(@"\{0}", PlusToken.TokenText);
+            public static readonly string KPlus = $@"\{PlusToken.TokenText}";
             public static readonly string KRepeat = string.Format(Keyword, RepeatToken.TokenText);
-            public static readonly string KRightParenthesis = string.Format(@"\{0}", RightParenthesisToken.TokenText);
-            public static readonly string KStar = string.Format(Keyword, string.Format(@"\{0}", StarToken.TokenText));
+            public static readonly string KRightParenthesis = $@"\{RightParenthesisToken.TokenText}";
+            public static readonly string KStar = string.Format(Keyword, $@"\{StarToken.TokenText}");
             public static readonly string KStartAt = @"(?<=[\s]{1,}|^)start[\s]{1,}at(?=[\s]{1,}|$)";
             public static readonly string KStopAt = @"(?<=[\s]{1,}|^)stop[\s]{1,}at(?=[\s]{1,}|$)";
             public static readonly string KThen = string.Format(Keyword, ThenToken.TokenText);
@@ -245,52 +234,19 @@ namespace RDL.Parser
             public static readonly string KCase = string.Format(Keyword, CaseToken.TokenText);
             public static readonly string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
             public static readonly string KWhen = string.Format(Keyword, WhenToken.TokenText);
+            public static readonly string KBetweenAnd = @"(?<=between\s).+?(?=and)and\s+.*?(?=\s+and|\s+or|$)";
+            public static readonly string KBetween = string.Format(Keyword, "between");
         }
 
         private static class DefinitionSets
         {
-            public static TokenDefinition[] CasualQuery => new[] {
-                new TokenDefinition(TokenRegexDefinition.KAnd),
-                new TokenDefinition(TokenRegexDefinition.KCaseWhenEsac, RegexOptions.Singleline),
-                new TokenDefinition(TokenRegexDefinition.KComma),
-                new TokenDefinition(TokenRegexDefinition.KDiff),
-                new TokenDefinition(TokenRegexDefinition.KElse),
-                new TokenDefinition(TokenRegexDefinition.KEvery),
-                new TokenDefinition(TokenRegexDefinition.KfSlashToken),
-                new TokenDefinition(TokenRegexDefinition.KGreater),
-                new TokenDefinition(TokenRegexDefinition.KGreaterEqual),
-                new TokenDefinition(TokenRegexDefinition.KHyphen),
-                new TokenDefinition(TokenRegexDefinition.KIn),
-                new TokenDefinition(TokenRegexDefinition.KIs),
-                new TokenDefinition(TokenRegexDefinition.KLeftParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KLess),
-                new TokenDefinition(TokenRegexDefinition.KLessEqual),
-                new TokenDefinition(TokenRegexDefinition.KEqual),
-                new TokenDefinition(TokenRegexDefinition.KModulo),
-                new TokenDefinition(TokenRegexDefinition.KNotIn),
-                new TokenDefinition(TokenRegexDefinition.KNot),
-                new TokenDefinition(TokenRegexDefinition.KOr),
-                new TokenDefinition(TokenRegexDefinition.KPlus),
-                new TokenDefinition(TokenRegexDefinition.KRepeat),
-                new TokenDefinition(TokenRegexDefinition.KRightParenthesis),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KStartAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStopAt),
-                new TokenDefinition(TokenRegexDefinition.KStar),
-                new TokenDefinition(TokenRegexDefinition.KWhere),
-                new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
-                new TokenDefinition(TokenRegexDefinition.KVar),
-                new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
-                new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
-            };
-
-            public static TokenDefinition[] CaseWhenQuery => new[] {
+            public static TokenDefinition[] General => new[] {
                 new TokenDefinition(TokenRegexDefinition.KAnd),
                 new TokenDefinition(TokenRegexDefinition.KCase),
                 new TokenDefinition(TokenRegexDefinition.KWhen),
                 new TokenDefinition(TokenRegexDefinition.KThen),
                 new TokenDefinition(TokenRegexDefinition.KCaseEnd),
+                new TokenDefinition(TokenRegexDefinition.KBetween),
                 new TokenDefinition(TokenRegexDefinition.KComma),
                 new TokenDefinition(TokenRegexDefinition.KDiff),
                 new TokenDefinition(TokenRegexDefinition.KElse),
@@ -320,6 +276,7 @@ namespace RDL.Parser
                 new TokenDefinition(TokenRegexDefinition.KWhere),
                 new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
                 new TokenDefinition(TokenRegexDefinition.KVar),
+                new TokenDefinition(TokenRegexDefinition.Function), 
                 new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
                 new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
             };

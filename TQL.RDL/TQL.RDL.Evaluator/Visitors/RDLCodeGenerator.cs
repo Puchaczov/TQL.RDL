@@ -302,6 +302,22 @@ namespace TQL.RDL.Evaluator.Visitors
             Instructions.Add(new NotInstruction());
         }
 
+        public void Visit(BetweenNode node)
+        {
+            switch (node.Expression.ReturnType.Name)
+            {
+                case nameof(Boolean):
+                case nameof(Int16):
+                case nameof(Int32):
+                case nameof(Int64):
+                    Instructions.Add(new BetweenNumeric());
+                    break;
+                case nameof(DateTimeOffset):
+                    Instructions.Add(new BetweenDatetime());
+                    break;               
+            }
+        }
+
         private void ExpressionGenerateIn<TOperator>(InNode node)
             where TOperator : IRdlInstruction, new()
         {

@@ -1,4 +1,5 @@
-﻿using RDL.Parser.Nodes;
+﻿using System;
+using RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
@@ -99,6 +100,12 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="node">WhenThen node of AST</param>
         public abstract void Visit(WhenThenNode node);
+
+        /// <summary>
+        /// Visit Between node.
+        /// </summary>
+        /// <param name="node">Between node of AST</param>
+        public abstract void Visit(BetweenNode node);
 
         /// <summary>
         /// Visit Else node.

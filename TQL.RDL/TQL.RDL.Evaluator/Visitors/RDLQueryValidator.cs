@@ -364,5 +364,9 @@ namespace TQL.RDL.Evaluator.Visitors
                 AddSemanticError(node.FullSpan, string.Format(AnalysisMessage.BadType, node.Descendant.ReturnType.Name, nameof(Boolean)), SemanticErrorKind.MixedValues);
             }
         }
+
+        public override void Visit(BetweenNode node)
+        {
+        }
     }
 }

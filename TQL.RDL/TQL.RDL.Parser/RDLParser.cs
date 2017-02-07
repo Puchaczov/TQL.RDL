@@ -6,6 +6,7 @@ using System.Reflection;
 using RDL.Parser.Exceptions;
 using RDL.Parser.Nodes;
 using RDL.Parser.Tokens;
+using TQL.Core.Exceptions;
 using TQL.Core.Syntax;
 
 namespace RDL.Parser
@@ -15,14 +16,21 @@ namespace RDL.Parser
         private readonly CultureInfo _ci;
         private readonly string[] _formats;
         private readonly TimeSpan _zone;
-        private LexerComplexTokensDecorator _cLexer;
+        private readonly LexerComplexTokensDecorator _cLexer;
         private readonly IMethodDeclarationResolver _resolver;
+
+        private enum Precendence : Int16
+        {
+            Level1,
+            Level2,
+            Level3
+        }
+
+        private Token _current;
 
         public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci, IMethodDeclarationResolver resolver)
         {
             _cLexer = lexer;
-            LastToken = new NoneToken();
-            CurrentToken = lexer.NextToken();
 
             _zone = zone;
             _formats = formats;
@@ -30,17 +38,13 @@ namespace RDL.Parser
             _resolver = resolver;
         }
 
-        public override Token CurrentToken
-        {
-            get;
-            protected set;
-        }
+        private Token Current => _cLexer.CurrentToken();
 
-        public override Token LastToken
-        {
-            get;
-            protected set;
-        }
+        private Token Last => _cLexer.LastToken();
+
+        public override Token CurrentToken { get; protected set; }
+
+        public override Token LastToken { get; protected set; }
 
         protected override ILexer<Token> Lexer => _cLexer;
 
@@ -48,28 +52,28 @@ namespace RDL.Parser
         {
             var rootComponents = new List<RdlSyntaxNode>();
             var i = 0;
-            for(; CurrentToken.TokenType != StatementType.EndOfFile; ++i)
+            Consume(StatementType.None);
+            for (; Current.TokenType != StatementType.EndOfFile; ++i)
             {
-                while(CurrentToken.TokenType == StatementType.WhiteSpace)
+                while(Current.TokenType == StatementType.WhiteSpace)
                 {
                     Consume(StatementType.WhiteSpace);
                 }
-                rootComponents.Add(ComposeNextComponents());
+                rootComponents.Add(ComposeSegmentComponents());
             }
             return new RootScriptNode(rootComponents.ToArray());
         }
 
-        private RdlSyntaxNode ComposeNextComponents()
+        private RdlSyntaxNode ComposeSegmentComponents()
         {
-            switch(CurrentToken.TokenType)
+            switch(Current.TokenType)
             {
                 case StatementType.Repeat:
                     Consume(StatementType.Repeat);
                     return ComposeRepeat();
                 case StatementType.Where:
-                    var where = ComposeWhere();
-                    CurrentToken = Lexer.CurrentToken();
-                    return new WhereConditionsNode(where);
+                    Consume(StatementType.Where);
+                    return new WhereConditionsNode(ComposeWhere());
                 case StatementType.StartAt:
                     Consume(StatementType.StartAt);
                     return ComposeStartAt();
@@ -83,9 +87,9 @@ namespace RDL.Parser
 
         private StartAtNode ComposeStartAt()
         {
-            var startAtToken = LastToken;
-            var token = CurrentToken;
-            Consume(CurrentToken.TokenType);
+            var startAtToken = Last;
+            var token = Current;
+            Consume(Current.TokenType);
             switch(token.TokenType)
             {
                 case StatementType.Var:
@@ -98,9 +102,9 @@ namespace RDL.Parser
 
         private RdlSyntaxNode ComposeStopAt()
         {
-            var stopAtToken = LastToken;
-            var token = CurrentToken;
-            Consume(CurrentToken.TokenType);
+            var stopAtToken = Last;
+            var token = Current;
+            Consume(Current.TokenType);
             switch (token.TokenType)
             {
                 case StatementType.Var:
@@ -113,255 +117,330 @@ namespace RDL.Parser
 
         private RdlSyntaxNode ComposeWhere()
         {
-            Consume(StatementType.Where);
-            var parser = new RdlWhereParser();
-            _cLexer.DisableEnumerationWhen(StatementType.StartAt, StatementType.StopAt);
-            var tokens = parser.Parse(_cLexer);
-            _cLexer.EnableEnumerationForAll();
-            var nodes = new Stack<RdlSyntaxNode>();
-            return ComposePostfix(nodes, tokens);
-        }
-
-        private RdlSyntaxNode ComposePostfix(Token[] tokens) => ComposePostfix(new Stack<RdlSyntaxNode>(), tokens);
-
-        private RdlSyntaxNode ComposePostfix(Stack<RdlSyntaxNode> nodes, Token[] tokens)
-        {
-            foreach (var t in tokens)
+            RdlSyntaxNode node = ComposeEqualityOperators();
+            while (IsQueryOperator(Current))
             {
-                RdlSyntaxNode farg = null;
-                RdlSyntaxNode sarg = null;
-                switch (t.TokenType)
+                switch (Current.TokenType)
                 {
-                    case StatementType.Plus:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new AddNode(farg, sarg));
-                        break;
-                    case StatementType.Hyphen:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new HyphenNode(farg, sarg));
-                        break;
-                    case StatementType.Star:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new StarNode(farg, sarg));
-                        break;
-                    case StatementType.Mod:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new ModuloNode(farg, sarg));
-                        break;
-                    case StatementType.FSlash:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new FSlashNode(farg, sarg));
-                        break;
                     case StatementType.And:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new AndNode(farg, sarg));
+                        Consume(StatementType.And);
+                        node = new AndNode(node, ComposeEqualityOperators());
                         break;
                     case StatementType.Or:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new OrNode(farg, sarg));
-                        break;
-                    case StatementType.Not:
-                        farg = nodes.Pop();
-                        nodes.Push(new NotNode(t, farg));
-                        break;
-                    case StatementType.Equality:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new EqualityNode(farg, sarg));
-                        break;
-                    case StatementType.Diff:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new DiffNode(farg, sarg));
-                        break;
-                    case StatementType.Greater:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new GreaterNode(farg, sarg));
-                        break;
-                    case StatementType.GreaterEqual:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new GreaterEqualNode(farg, sarg));
-                        break;
-                    case StatementType.Less:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new LessNode(farg, sarg));
-                        break;
-                    case StatementType.LessEqual:
-                        sarg = nodes.Pop();
-                        farg = nodes.Pop();
-                        nodes.Push(new LessEqualNode(farg, sarg));
-                        break;
-                    case StatementType.In:
-                    case StatementType.NotIn:
-                        var args = nodes.Pop();
-
-                        //handling cases when there is only one argument (ie. "@a in (21)"). In such case, 
-                        //ShuntingYard algorithm won't know if it point to casual expression or 'special' vararg expression (1,2,...).
-                        if(!(args is ArgListNode))
-                        {
-                            args = new ArgListNode(new[] { args });
-                        }
-
-                        var partOfDate = nodes.Pop();
-                        if (t.TokenType == StatementType.In)
-                            nodes.Push(new InNode(partOfDate, args));
-                        else
-                            nodes.Push(new NotInNode(partOfDate, args));
-                        break;
-                    case StatementType.Numeric:
-                        nodes.Push(new NumericNode(t));
-                        break;
-                    case StatementType.Word:
-                        nodes.Push(new WordNode(t));
-                        break;
-                    case StatementType.Function:
-                        var functionToken = t as FunctionToken;
-
-                        if(functionToken == null)
-                            throw new NullReferenceException(nameof(functionToken));
-
-                        if (string.IsNullOrEmpty(functionToken.Value))
-                            throw new FunctionHasEmptyOrNullNameException();
-
-                        var argsNode = nodes.Pop() as ArgListNode;
-                        var typesOfArgs = argsNode.Descendants.Select(f => f.ReturnType).ToArray();
-
-                        MethodInfo methodDeclaration = null;
-
-                        if(!_resolver.TryResolveMethod(functionToken.Value, typesOfArgs, out methodDeclaration))
-                            throw new MethodDeclarationNotFoundedException();
-
-                        nodes.Push(new FunctionNode(functionToken, argsNode, methodDeclaration.ReturnType));
-                        break;
-                    case StatementType.VarArg:
-                        var varArg = t as VarArgToken;
-                        var arguments = new List<RdlSyntaxNode>();
-                        for(var f = 0; f < varArg.Arguments; ++f)
-                        {
-                            arguments.Add(nodes.Pop());
-                        }
-                        arguments.Reverse();
-                        nodes.Push(new ArgListNode(arguments));
-                        break;
-                    case StatementType.Var:
-                        nodes.Push(new VarNode(t as VarToken));
-                        break;
-                    case StatementType.Else:
-                        var elseNode = new ElseNode(t, nodes.Pop());
-                        var whenThenExpressions = new List<WhenThenNode>();
-                        while (nodes.Peek() is WhenThenNode)
-                        {
-                            var whenNode = nodes.Pop() as WhenThenNode;
-                            whenThenExpressions.Add(whenNode);
-                        }
-                        nodes.Push(new CaseNode(t, whenThenExpressions.ToArray(), elseNode));
-                        break;
-                    case StatementType.When:
-                        nodes.Push(new WhenNode(t, nodes.Pop()));
-                        break;
-                    case StatementType.Then:
-                        var thenNode = new ThenNode(t, nodes.Pop());
-                        nodes.Push(new WhenThenNode(nodes.Pop(), thenNode));
-                        break;
-                    case StatementType.CaseWhenEsac:
-                        var oldLexer = _cLexer;
-                        _cLexer = new LexerComplexTokensDecorator(new Lexer(_cLexer.Query, Parser.Lexer.DefinitionSet.CaseWhen));
-                        _cLexer.ChangePosition(t.Span.Start);
-                        nodes.Push(ComposeCaseWhenEsac());
-                        _cLexer = oldLexer;
+                        Consume(StatementType.Or);
+                        node = new OrNode(node, ComposeEqualityOperators());
                         break;
                     default:
                         throw new NotSupportedException();
                 }
             }
-            return nodes.Pop();
+            return node;
         }
 
-        private RdlSyntaxNode ComposeCaseWhenEsac()
+        private RdlSyntaxNode ComposeEqualityOperators()
         {
-            Consume(CurrentToken.TokenType);
-            switch(CurrentToken.TokenType)
+            RdlSyntaxNode node = ComposeArithmeticOperators(Precendence.Level1);
+            while (IsEqualityOperator(Current))
             {
+                switch (Current.TokenType)
+                {
+                    case StatementType.GreaterEqual:
+                        Consume(StatementType.GreaterEqual);
+                        node = new GreaterEqualNode(node, ComposeEqualityOperators());
+                        break;
+                        case StatementType.Greater:
+                        Consume(StatementType.Greater);
+                        node = new GreaterNode(node, ComposeEqualityOperators());
+                        break;
+                    case StatementType.LessEqual:
+                        Consume(StatementType.LessEqual);
+                        node = new LessEqualNode(node, ComposeEqualityOperators());
+                        break;
+                    case StatementType.Less:
+                        Consume(StatementType.Less);
+                        node = new LessNode(node, ComposeEqualityOperators());
+                        break;
+                    case StatementType.Equality:
+                        Consume(StatementType.Equality);
+                        node = new EqualityNode(node, ComposeEqualityOperators());
+                        break;
+                    case StatementType.Diff:
+                        Consume(StatementType.Diff);
+                        node = new DiffNode(node, ComposeEqualityOperators());
+                        break;
+                    case StatementType.Between:
+                        node = new BetweenNode(ConsumeAndGetToken(), node, ComposeAndSkip(f => f.ComposeArithmeticOperators(Precendence.Level1), StatementType.And), ComposeArithmeticOperators(Precendence.Level1));
+                        break;
+                    case StatementType.Not:
+                        Consume(StatementType.Not);
+                        node = new NotNode(Current, node);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+
+            return node;
+        }
+
+        private RdlSyntaxNode ComposeArithmeticOperators(Precendence precendence)
+        {
+            RdlSyntaxNode node = null;
+            switch (precendence)
+            {
+                case Precendence.Level1:
+                {
+                    node = ComposeArithmeticOperators(Precendence.Level2);
+                    while (IsArithmeticOperator(Current, Precendence.Level1))
+                    {
+                        switch (Current.TokenType)
+                        {
+                            case StatementType.Star:
+                                Consume(StatementType.Star);
+                                node = new StarNode(node, ComposeBaseTypes());
+                                break;
+                            case StatementType.FSlash:
+                                Consume(StatementType.FSlash);
+                                node = new FSlashNode(node, ComposeBaseTypes());
+                                break;
+                            case StatementType.Mod:
+                                Consume(StatementType.Mod);
+                                node = new ModuloNode(node, ComposeBaseTypes());
+                                break;
+                            case StatementType.In:
+                                Consume(StatementType.In);
+                                node = new InNode(node, ComposeArgs());
+                                break;
+                            case StatementType.NotIn:
+                                Consume(StatementType.NotIn);
+                                node = new NotInNode(node, ComposeArgs());
+                                break;
+                        }
+                    }
+                    break;
+                }
+                case Precendence.Level2:
+                {
+                    node = ComposeArithmeticOperators(Precendence.Level3);
+                    while (IsArithmeticOperator(Current, Precendence.Level2))
+                    {
+                        switch (Current.TokenType)
+                        {
+                            case StatementType.Plus:
+                                Consume(StatementType.Plus);
+                                node = new AddNode(node, ComposeBaseTypes());
+                                break;
+                            case StatementType.Hyphen:
+                                Consume(StatementType.Hyphen);
+                                node = new HyphenNode(node, ComposeBaseTypes());
+                                break;
+                        }
+                    }
+                    break;
+                }
+                case Precendence.Level3:
+                    node = ComposeBaseTypes();
+                    break;
+            }
+            return node;
+        }
+
+        private TNode SkipComposeSkip<TNode>(StatementType pStatenent, Func<RdlParser, TNode> parserAction, StatementType aStatement)
+        {
+            Consume(pStatenent);
+            return ComposeAndSkip(parserAction, aStatement);
+        }
+
+        private TNode SkipAndCompose<TNode>(Func<RdlParser, TNode> parserAction, StatementType statement)
+        {
+            Consume(statement);
+            return parserAction(this);
+        }
+
+        private TNode ComposeAndSkip<TNode>(Func<RdlParser, TNode> parserAction, StatementType statement)
+        {
+            var node = parserAction(this);
+            Consume(statement);
+            return node;
+        }
+
+        private RdlSyntaxNode ComposeBaseTypes()
+        {
+            switch (Current.TokenType)
+            {
+                case StatementType.Numeric:
+                    return new NumericNode(ConsumeAndGetToken(StatementType.Numeric));
+                case StatementType.Word:
+                    return new WordNode(ConsumeAndGetToken(StatementType.Word));
+                case StatementType.Var:
+                    return new VarNode(ConsumeAndGetToken(StatementType.Var) as VarToken);
                 case StatementType.Case:
-                    Consume(CurrentToken.TokenType);
-                    return new CaseNode(LastToken, ConsumeWhenNodes(), ConsumeEndNode());
+                    return new CaseNode(ConsumeAndGetToken(), ComposeWhenThenNodes(), ComposeAndSkip(f => ComposeElseNode(), StatementType.CaseEnd));
+                case StatementType.Function:
+                    var func = Current as FunctionToken;
+
+                    if(func == null)
+                        throw new ArgumentNullException();
+
+                    Consume(StatementType.Function);
+
+                    var args = ComposeArgs();
+                    var argsTypes = args.Descendants.Select(f => f.ReturnType).ToArray();
+
+                    MethodInfo registeredMethod;
+                    if(_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
+                        return new FunctionNode(func, args, registeredMethod.ReturnType);
+                    throw new MethodNotFoundedException();
+                case StatementType.LeftParenthesis:
+                    return SkipComposeSkip(StatementType.LeftParenthesis, f => f.ComposeWhere(), StatementType.RightParenthesis);
             }
             throw new NotSupportedException();
         }
 
-        private WhenThenNode[] ConsumeWhenNodes()
+        private ArgListNode ComposeArgs()
         {
-            var nodes = new List<WhenThenNode>();
-            var parser = new RdlWhereParser();
-            while (CurrentToken.TokenType == StatementType.When)
+            List<RdlSyntaxNode> args = new List<RdlSyntaxNode>();
+
+            Consume(StatementType.LeftParenthesis);
+
+            if (Current.TokenType != StatementType.RightParenthesis)
             {
-                Consume(StatementType.When);
-                var whenToken = LastToken;
-                _cLexer.DisableEnumerationWhen(StatementType.Then);
-                var whenNode = parser.Parse(_cLexer);
-                CurrentToken = _cLexer.CurrentToken();
-                LastToken = _cLexer.LastToken();
-                var thenToken = CurrentToken;
-                Consume(StatementType.Then);
-                _cLexer.DisableEnumerationWhen(StatementType.When, StatementType.Else);
-                var thenNode = parser.Parse(_cLexer);
-                CurrentToken = _cLexer.CurrentToken();
-                LastToken = _cLexer.LastToken();
-                nodes.Add(new WhenThenNode(new WhenNode(whenToken, ComposePostfix(whenNode)), new ThenNode(thenToken, ComposePostfix(thenNode))));
+                do
+                {
+                    if (Current.TokenType == StatementType.Comma)
+                        Consume(Current.TokenType);
+
+                    args.Add(ComposeWhere());
+                } while (Current.TokenType == StatementType.Comma);
+            }
+
+            Consume(StatementType.RightParenthesis);
+
+            return new ArgListNode(args);
+        }
+
+        private WhenThenNode[] ComposeWhenThenNodes()
+        {
+            List<WhenThenNode> nodes = new List<WhenThenNode>();
+
+            while (!IsElseNode(Current))
+            {
+                WhenNode when = null; 
+                ThenNode then = null;
+
+                switch (Current.TokenType)
+                {
+                    case StatementType.When:
+                        when = new WhenNode(ConsumeAndGetToken(), ComposeWhere());
+                        goto case StatementType.Then;
+                    case StatementType.Then:
+                        then = new ThenNode(ConsumeAndGetToken(), ComposeWhere());
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                if (when == null || then == null)
+                    throw new NullReferenceException();
+
+                nodes.Add(new WhenThenNode(when, then));
             }
 
             return nodes.ToArray();
         }
 
-        private ElseNode ConsumeEndNode()
+        private ElseNode ComposeElseNode()
         {
-            Consume(StatementType.Else);
-            _cLexer.DisableEnumerationWhen(StatementType.CaseEnd);
-            var parser = new RdlWhereParser();
-            var elseNode = parser.Parse(_cLexer);
-            CurrentToken = _cLexer.CurrentToken();
-            LastToken = _cLexer.LastToken();
-            Consume(StatementType.CaseEnd);
-            return new ElseNode(LastToken, ComposePostfix(elseNode));
+            switch (Current.TokenType)
+            {
+                case StatementType.Else:
+                    return new ElseNode(ConsumeAndGetToken(), ComposeEqualityOperators());
+            }
+            throw new NotSupportedException();
         }
 
+        private Token ConsumeAndGetToken(StatementType expected)
+        {
+            var token = Current;
+            Consume(expected);
+            return token;
+        }
+
+        private bool IsElseNode(Token current)
+            => current.TokenType == StatementType.Else;
+
+        private Token ConsumeAndGetToken()
+            => ConsumeAndGetToken(Current.TokenType);
+
+        private bool IsArithmeticOperator(Token currentToken, Precendence precendence)
+        {
+            switch (precendence)
+            {
+                case Precendence.Level1:
+                    return currentToken.TokenType == StatementType.Star ||
+                           currentToken.TokenType == StatementType.FSlash ||
+                           currentToken.TokenType == StatementType.Mod ||
+                           currentToken.TokenType == StatementType.In ||
+                           currentToken.TokenType == StatementType.NotIn;
+                case Precendence.Level2:
+                    return currentToken.TokenType == StatementType.Plus ||
+                            currentToken.TokenType == StatementType.Hyphen;
+                case Precendence.Level3:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool IsEqualityOperator(Token currentToken)
+            => currentToken.TokenType == StatementType.Greater ||
+               currentToken.TokenType == StatementType.GreaterEqual ||
+               currentToken.TokenType == StatementType.Less ||
+               currentToken.TokenType == StatementType.LessEqual ||
+               currentToken.TokenType == StatementType.Equality ||
+               currentToken.TokenType == StatementType.Not ||
+               currentToken.TokenType == StatementType.Diff ||
+               currentToken.TokenType == StatementType.Between;
+
+        private static bool IsQueryOperator(Token currentToken) 
+            => currentToken.TokenType == StatementType.And || currentToken.TokenType == StatementType.Or;
+        
+        private new void Consume(StatementType tokenType)
+        {
+            if (Current.TokenType.Equals(tokenType))
+            {
+                Lexer.NextToken();
+                return;
+            }
+            throw new UnexpectedTokenException<StatementType>(Lexer.Position, Current);
+        }
 
         private RdlSyntaxNode ComposeRepeat()
         {
             RepeatEveryNode node = null;
-            var repeat = LastToken;
-            switch(CurrentToken.TokenType)
+            var repeat = Last;
+            switch(Current.TokenType)
             {
                 case StatementType.Every:
-                    var every = CurrentToken;
+                    var every = Current;
                     Consume(StatementType.Every);
-                    if(CurrentToken.TokenType == StatementType.Numeric)
+                    if(Current.TokenType == StatementType.Numeric)
                     {
-                        var numeric = CurrentToken;
+                        var numeric = Current;
                         Consume(StatementType.Numeric);
                         node = new NumericConsequentRepeatEveryNode(
-                            new Token("repeat every", StatementType.Repeat, new TQL.Core.Tokens.TextSpan(repeat.Span.Start, CurrentToken.Span.End - repeat.Span.Start)), 
+                            new Token("repeat every", StatementType.Repeat, new TQL.Core.Tokens.TextSpan(repeat.Span.Start, Current.Span.End - repeat.Span.Start)), 
                             numeric as NumericToken,
-                            CurrentToken as WordToken);
+                            Current as WordToken);
                     }
                     else
                     {
-                        node = new RepeatEveryNode(LastToken, CurrentToken);
+                        node = new RepeatEveryNode(Last, Current);
                     }
-                    Consume(CurrentToken.TokenType);
+                    Consume(Current.TokenType);
                     break;
                 default:
-                    node = new RepeatEveryNode(repeat, CurrentToken);
+                    node = new RepeatEveryNode(repeat, Current);
                     break;
             }
             return node;

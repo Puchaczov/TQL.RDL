@@ -67,6 +67,8 @@
     <Compile Include="Instructions\AddNumericToDatetime.cs" />
     <Compile Include="Instructions\AddNumericToNumeric.cs" />
     <Compile Include="Instructions\AndInstruction.cs" />
+    <Compile Include="Instructions\BetweenDatetime.cs" />
+    <Compile Include="Instructions\BetweenNumeric.cs" />
     <Compile Include="Instructions\BreakInstruction.cs" />
     <Compile Include="Instructions\DebuggerTrap.cs" />
     <Compile Include="Instructions\DiffDatetime.cs" />

@@ -262,25 +262,43 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_WithDay()
         {
             EvaluateQuery(@"
-                repeat every hours where 1 = 
+                repeat every minutes where 1 = 
                     (case 
-                        when GetWeekOfMonth() = 1 and GetDayOfWeek() % 2 = 0 and not IsWorkingDay()
-                        then GetHour() = 0
-                        when GetWeekOfMonth() = 2 and IsWorkingDay()
-                        then GetHour() in (7,8)
-                        when GetWeekOfMonth() = 3
-                        then GetHour() = 20
-                        when GetWeekOfMonth() = 4 and GetDayOfWeek() in (monday, friday)
-                        then GetHour() in (7,15)
-                        when GetWeekOfMonth() in (4,5)
-                        then IsWorkingDay()
+                        when GetDay() = 1 and GetHour() between 9 and 11
+                        then GetMinute() % 5 = 0
+                        when IsLastDayOfMonth()
+                        then GetHour() = 5 and GetMinute() = 0 and GetSecond() = 0 
                         else 0
                     esac)
                 start at '01.01.2017' stop at '01.02.2017'
             ",
+            string.Empty, 
             string.Empty,
-            string.Empty,
-            (x) => true);
+            x => x == DateTimeOffset.Parse("01.01.2017 09:00:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:05:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:10:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:15:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:20:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:25:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:30:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:35:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:40:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:45:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:50:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 09:55:00"),
+
+            x => x == DateTimeOffset.Parse("01.01.2017 10:00:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:05:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:10:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:15:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:20:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:25:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:30:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:35:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:40:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:45:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:50:00"),
+            x => x == DateTimeOffset.Parse("01.01.2017 10:55:00"));
         }
 
         [TestMethod]

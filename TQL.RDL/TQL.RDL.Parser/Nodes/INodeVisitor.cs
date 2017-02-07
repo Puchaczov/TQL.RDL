@@ -35,5 +35,6 @@
         void Visit(ElseNode node);
         void Visit(CaseNode node);
         void Visit(WhenThenNode node);
+        void Visit(BetweenNode node);
     }
 }

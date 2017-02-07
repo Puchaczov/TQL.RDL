@@ -431,4 +431,35 @@ namespace RDL.Parser.Nodes
 
         public override int GetHashCode() => ToString().GetHashCode();
     }
+
+    public class BetweenNode : RdlSyntaxNode
+    {
+        private readonly Token _betweenToken;
+
+        public BetweenNode(Token betweenToken, RdlSyntaxNode exp, RdlSyntaxNode minNode, RdlSyntaxNode maxNode)
+        {
+            Descendants = new[] {exp, minNode, maxNode};
+            _betweenToken = betweenToken;
+        }
+
+        public override RdlSyntaxNode[] Descendants { get; }
+
+        public RdlSyntaxNode Expression => Descendants[0];
+
+        public RdlSyntaxNode Min => Descendants[1];
+
+        public RdlSyntaxNode Max => Descendants[2];
+
+        public override TextSpan FullSpan => new TextSpan(Expression.FullSpan.Start, Max.FullSpan.End - Expression.FullSpan.Start);
+
+        public override bool IsLeaf => false;
+
+        public override Type ReturnType => typeof(Boolean);
+
+        public override Token Token => _betweenToken;
+
+        public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
+
+        public override string ToString() => $"{Expression} between {Min} and {Max}";
+    }
 }
