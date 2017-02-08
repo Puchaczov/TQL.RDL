@@ -36,12 +36,23 @@ namespace TQL.RDL.Evaluator.Helpers
             };
         }
 
+        /// <summary>
+        /// Determine if passed word is language keyword.
+        /// </summary>
+        /// <param name="keyword">The keyword.</param>
+        /// <returns>True is word is language keyword, else false.</returns>
         public static bool IsKeyword(this string keyword)
         {
             int result;
             return TryGetKeyword(keyword, out result);
         }
 
+        /// <summary>
+        /// Checks if word is language keyword and get appropiate mapped numeric.
+        /// </summary>
+        /// <param name="keyword">The keyword.</param>
+        /// <param name="result">Number mapped to passed keyword.</param>
+        /// <returns>True is word is language keyword, else false.</returns>
         public static bool TryGetKeyword(this string keyword, out int result)
         {
             if (string.IsNullOrEmpty(keyword))

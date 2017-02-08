@@ -8,7 +8,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <summary>
         /// Performs comparsion betwen two numeric values in stack and determine if it's greater 
         /// </summary>
-        /// <param name="machine"></param>
+        /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
         {
             machine.Values.Push(machine.Values.Pop() < machine.Values.Pop() ? 1 : 0);

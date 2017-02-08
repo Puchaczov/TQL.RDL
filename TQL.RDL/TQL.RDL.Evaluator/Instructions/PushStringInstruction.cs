@@ -22,7 +22,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Push value to stack.
+        /// Push value onto the stack.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -32,9 +32,9 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// 
+        /// Stringify object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>string representation of object.</returns>
         public override string ToString() => $"PUSH STRING '{_value}'";
     }
 }
