@@ -120,6 +120,6 @@ namespace TQL.RDL.Evaluator
 
         public IRdlInstruction[] Instructions { get; }
 
-        public Stack<string> Strings { get; private set; }
+        public Stack<string> Strings { get; }
     }
 }

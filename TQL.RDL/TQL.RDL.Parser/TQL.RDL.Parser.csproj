@@ -37,10 +37,13 @@
     <Compile Include="Exceptions\MethodDeclarationNotFoundedException.cs" />
     <Compile Include="Exceptions\MethodNotFoundedException.cs" />
     <Compile Include="Exceptions\FunctionHasEmptyOrNullNameException.cs" />
+    <Compile Include="Helpers\RdlSyntaxNodeHelper.cs" />
     <Compile Include="IMethodDeclarationResolver.cs" />
     <Compile Include="MethodDeclaration.cs" />
+    <Compile Include="Nodes\CachedFunctionNode.cs" />
     <Compile Include="Nodes\NotNode.cs" />
     <Compile Include="Nodes\NumericConsequentRepeatEveryNode.cs" />
+    <Compile Include="Nodes\StoreValueFunctionNode.cs" />
     <Compile Include="PartOfDate.cs" />
     <Compile Include="Tokens\CaseWhenEsacToken.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
@@ -49,7 +52,7 @@
     <Compile Include="Nodes\BinaryNode.cs" />
     <Compile Include="Nodes\ConstantNode.cs" />
     <Compile Include="Nodes\DateTimeNode.cs" />
-    <Compile Include="Nodes\FunctionNode.cs" />
+    <Compile Include="Nodes\RawFunctionNode.cs" />
     <Compile Include="Nodes\INodeVisitor.cs" />
     <Compile Include="Nodes\LeafNode.cs" />
     <Compile Include="Nodes\NumericNode.cs" />
@@ -64,7 +67,6 @@
     <Compile Include="Nodes\WordNode.cs" />
     <Compile Include="LexerComplexTokensDecorator.cs" />
     <Compile Include="RDLParser.cs" />
-    <Compile Include="RdlArithmeticParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tokens\CommaToken.cs" />
     <Compile Include="Tokens\DiffToken.cs" />

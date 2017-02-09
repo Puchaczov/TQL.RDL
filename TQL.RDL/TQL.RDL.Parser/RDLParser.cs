@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using RDL.Parser.Exceptions;
+using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
 using RDL.Parser.Tokens;
 using TQL.Core.Exceptions;
@@ -18,6 +19,7 @@ namespace RDL.Parser
         private readonly TimeSpan _zone;
         private readonly LexerComplexTokensDecorator _cLexer;
         private readonly IMethodDeclarationResolver _resolver;
+        private readonly IDictionary<int, int> _functionCallOccurence;
 
         private enum Precendence : Int16
         {
@@ -28,7 +30,7 @@ namespace RDL.Parser
 
         private Token _current;
 
-        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci, IMethodDeclarationResolver resolver)
+        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci, IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
         {
             _cLexer = lexer;
 
@@ -36,7 +38,12 @@ namespace RDL.Parser
             _formats = formats;
             _ci = ci;
             _resolver = resolver;
+            _functionCallOccurence = functionCallOccurence;
+
+            _functionCallOccurence.Clear();
         }
+
+        public IDictionary<int, int> FunctionCallOccurence => _functionCallOccurence;
 
         private Token Current => _cLexer.CurrentToken();
 
@@ -288,8 +295,18 @@ namespace RDL.Parser
                     var argsTypes = args.Descendants.Select(f => f.ReturnType).ToArray();
 
                     MethodInfo registeredMethod;
-                    if(_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
-                        return new FunctionNode(func, args, registeredMethod.ReturnType);
+                    if (_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
+                    {
+                        var function = new RawFunctionNode(func, args, registeredMethod.ReturnType);
+                        var hashCodedFunction = function.Stringify().GetHashCode();
+
+                        if (!_functionCallOccurence.ContainsKey(hashCodedFunction))
+                            _functionCallOccurence.Add(hashCodedFunction, 1);
+                        else
+                            _functionCallOccurence[hashCodedFunction] += 1;
+
+                        return function;
+                    }
                     throw new MethodNotFoundedException();
                 case StatementType.LeftParenthesis:
                     return SkipComposeSkip(StatementType.LeftParenthesis, f => f.ComposeWhere(), StatementType.RightParenthesis);

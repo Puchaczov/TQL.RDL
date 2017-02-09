@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RDL.Parser;
@@ -195,10 +196,10 @@ namespace TQL.RDL.Parser.Tests
             Assert.AreEqual(typeof(WhereConditionsNode), node.Descendants[1].GetType());
 
             Assert.IsTrue(node.Descendants[1].Descendants.OfType<AndNode>().Any());
-            Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<FunctionNode>().Any());
+            Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<RawFunctionNode>().Any());
             Assert.IsTrue(node.Descendants[1].Descendants[0].Descendants.OfType<DiffNode>().Any());
 
-            var functionNode = node.Descendants[1].Descendants[0].Descendants.OfType<FunctionNode>().First();
+            var functionNode = node.Descendants[1].Descendants[0].Descendants.OfType<RawFunctionNode>().First();
 
             Assert.AreEqual("MyFunction4", functionNode.Name);
 
@@ -244,9 +245,9 @@ namespace TQL.RDL.Parser.Tests
 
             Assert.AreEqual(2, node.Descendants.Length);
 
-            Assert.IsTrue(node.Descendants[1].Descendants.OfType<FunctionNode>().Any());
-            Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].GetType());
-            Assert.IsTrue(typeof(FunctionNode) == node.Descendants[1].Descendants[0].Descendants[0].GetType());
+            Assert.IsTrue(node.Descendants[1].Descendants.OfType<RawFunctionNode>().Any());
+            Assert.IsTrue(typeof(RawFunctionNode) == node.Descendants[1].Descendants[0].GetType());
+            Assert.IsTrue(typeof(RawFunctionNode) == node.Descendants[1].Descendants[0].Descendants[0].GetType());
         }
 
         [TestMethod]
@@ -268,9 +269,9 @@ namespace TQL.RDL.Parser.Tests
             var node = Parse("repeat every days where GetDay() between GetMonth() and GetYear()");
 
             Assert.IsInstanceOfType(node.Descendants[1].Descendants[0], typeof(BetweenNode));
-            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[0], typeof(FunctionNode));
-            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[1], typeof(FunctionNode));
-            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[2], typeof(FunctionNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[0], typeof(RawFunctionNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[1], typeof(RawFunctionNode));
+            Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[2], typeof(RawFunctionNode));
         }
 
         private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)
@@ -291,7 +292,7 @@ namespace TQL.RDL.Parser.Tests
             var lexer = new LexerComplexTokensDecorator(query);
             var parser = new RdlParser(lexer, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
                 "dd.M.yyyy"
-            }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver());
+            }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver(), new Dictionary<int, int>());
             return parser.ComposeRootComponents();
         }
     }

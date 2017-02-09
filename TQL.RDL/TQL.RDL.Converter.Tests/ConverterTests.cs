@@ -108,9 +108,6 @@ namespace TQL.RDL.Converter.Tests
         }
 
         [BindableMethod]
-        public static bool TestC([InjectReferenceTime] DateTimeOffset date, string a, string b, long c, long d)
-        {
-            return true;
-        }
+        public static bool TestC([InjectReferenceTime] DateTimeOffset date, string a, string b, long c, long d) => true;
     }
 }

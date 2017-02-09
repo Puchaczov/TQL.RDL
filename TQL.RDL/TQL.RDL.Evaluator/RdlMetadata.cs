@@ -88,7 +88,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Tries match function as if it weren't annoted. Assume that method specified parameters explicitly.
+        /// Tries match function as if it weren't annotated. Assume that method specified parameters explicitly.
         /// </summary>
         /// <param name="name">Function name</param>
         /// <param name="methodArgs">Types of method arguments</param>

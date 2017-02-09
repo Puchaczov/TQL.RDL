@@ -4,9 +4,9 @@ using TQL.RDL.Evaluator.Instructions;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
-    public sealed class RdlDebuggerSymbolGenerator : RdlCodeGenerator
+    public sealed class DebuggerSymbolGenerator : CodeGenerator
     {
-        public RdlDebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext)
+        public DebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext)
             : base(gm, callMethodContext)
         { }
 
@@ -19,7 +19,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public override void Visit(CaseNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(ElseNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(EqualityNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
-        public override void Visit(FunctionNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
+        public override void Visit(RawFunctionNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(FSlashNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(GreaterEqualNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(WhereConditionsNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));

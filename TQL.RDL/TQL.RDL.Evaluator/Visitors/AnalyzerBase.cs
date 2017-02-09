@@ -201,12 +201,24 @@ namespace TQL.RDL.Evaluator.Visitors
         /// Visit Function node.
         /// </summary>
         /// <param name="node">Fuction node of AST</param>
-        public abstract void Visit(FunctionNode node);
+        public abstract void Visit(RawFunctionNode node);
 
         /// <summary>
         /// Visit Not node.
         /// </summary>
         /// <param name="notNode">Not node of AST.</param>
         public abstract void Visit(NotNode notNode);
+
+        /// <summary>
+        /// Visit CachedFunction node.
+        /// </summary>
+        /// <param name="node">CachedFunction node of AST.</param>
+        public abstract void Visit(CachedFunctionNode node);
+
+        /// <summary>
+        /// Visit StoreValueFunction node.
+        /// </summary>
+        /// <param name="node">StoreValueFunction node of AST.</param>
+        public abstract void Visit(StoreValueFunctionNode node);
     }
 }

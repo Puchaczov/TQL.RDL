@@ -107,7 +107,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <summary>
         /// Gets instruction short description
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Stringified object.</returns>
         public override string ToString() => string.Format($"CALL {_info.Name}");
     }
 }

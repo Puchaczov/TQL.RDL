@@ -8,6 +8,10 @@ namespace TQL.RDL.Evaluator.Instructions
 {
     class BetweenNumeric : IRdlInstruction
     {
+        /// <summary>
+        /// Performs check if the value is between other values.
+        /// </summary>
+        /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
         {
             var max = machine.Values.Pop();

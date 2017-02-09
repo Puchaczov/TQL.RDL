@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using RDL.Parser;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
@@ -9,7 +10,7 @@ using TQL.RDL.Evaluator.Instructions;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
-    public class RdlCodeGenerator : INodeVisitor
+    public class CodeGenerator : INodeVisitor
     {
         #region Protected Getters / Setters
 
@@ -172,6 +173,69 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
+        /// Performs "Function" specific operations.
+        /// </summary>
+        /// <param name="node">The "Function" node.</param>
+        public virtual void Visit(RawFunctionNode node)
+        {
+            MethodInfo methodInfo;
+            Visit(node, out methodInfo);
+        }
+
+        /// <summary>
+        /// Performs "Function" specific operations.
+        /// </summary>
+        /// <param name="node">The "Function" node.</param>
+        /// <param name="foundedMethod">The founded .NET method.</param>
+        private void Visit(RawFunctionNode node, out MethodInfo foundedMethod)
+        {
+            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
+            var registeredMethod = _metadatas.GetMethod(node.Name, argTypes);
+            foundedMethod = registeredMethod;
+            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length));
+        }
+        
+        /// <summary>
+        /// Call function and store it's value.
+        /// </summary>
+        /// <param name="node"></param>
+        public void Visit(StoreValueFunctionNode node)
+        {
+            MethodInfo methodInfo;
+            Visit(node as RawFunctionNode, out methodInfo);
+
+            switch (node.ReturnType.Name)
+            {
+                case nameof(DateTimeOffset):
+                    Instructions.Add(new CopyAndStoreValue<DateTimeOffset>(methodInfo, (x) => x.Datetimes.Peek()));
+                    break;
+                default:
+                    Instructions.Add(new CopyAndStoreValue<long>(methodInfo, (x) => x.Values.Peek()));
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Restores value of invoked function.
+        /// </summary>
+        /// <param name="node"></param>
+        public void Visit(CachedFunctionNode node)
+        {
+            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
+            var registeredFunction = _metadatas.GetMethod(node.Name, argTypes);
+
+            switch (registeredFunction.ReturnType.Name)
+            {
+                case nameof(DateTimeOffset):
+                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Datetimes.Push((DateTimeOffset)o)));
+                    break;
+                default:
+                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Values.Push((long)o)));
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Performs "Equality" specific operations.
         /// </summary>
         /// <param name="node">The "Equality" node.</param>
@@ -266,18 +330,6 @@ namespace TQL.RDL.Evaluator.Visitors
                     Instructions.Add(new PushStringInstruction(node.Token.Value));
                     break;
             }
-        }
-
-        /// <summary>
-        /// Performs "Function" specific operations.
-        /// </summary>
-        /// <param name="node">The "Function" node.</param>
-        public virtual void Visit(FunctionNode node)
-        {
-            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
-            var registeredFunction = _metadatas.GetMethod(node.Name, argTypes);
-            
-            Instructions.Add(new CallExternal(_callMethodContext, registeredFunction, argTypes.Length));
         }
 
         /// <summary>
@@ -503,7 +555,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="callMethodContext">object that contains methods to invoke.</param>
-        public RdlCodeGenerator(RdlMetadata metadatas, object callMethodContext)
+        public CodeGenerator(RdlMetadata metadatas, object callMethodContext)
             : this(metadatas, DateTimeOffset.UtcNow, callMethodContext)
         { }
 
@@ -513,7 +565,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="startAt">Starting from parameter.</param>
         /// <param name="callMethodContext">object that contains methods to invoke.</param>
-        private RdlCodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext)
+        private CodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext)
         {
             _variables = new MemoryVariables();
             _functions = new Stack<List<IRdlInstruction>>();

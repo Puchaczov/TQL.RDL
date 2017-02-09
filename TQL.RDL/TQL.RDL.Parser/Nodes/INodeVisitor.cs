@@ -2,7 +2,7 @@
 {
     public interface INodeVisitor
     {
-        void Visit(FunctionNode node);
+        void Visit(RawFunctionNode node);
         void Visit(WordNode node);
         void Visit(WhereConditionsNode node);
         void Visit(StartAtNode node);
@@ -36,5 +36,7 @@
         void Visit(CaseNode node);
         void Visit(WhenThenNode node);
         void Visit(BetweenNode node);
+        void Visit(CachedFunctionNode node);
+        void Visit(StoreValueFunctionNode node);
     }
 }

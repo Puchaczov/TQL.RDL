@@ -236,7 +236,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public override void Visit(WordNode node)
         { }
 
-        public override void Visit(FunctionNode node)
+        public override void Visit(RawFunctionNode node)
         {
             try
             {
@@ -269,7 +269,7 @@ namespace TQL.RDL.Evaluator.Visitors
             AddSemanticError(node.FullSpan, AnalysisMessage.MixedTypesNotAllowed, SemanticErrorKind.MixedValues);
         }
 
-        private void ReportUnknownFunctionCall(FunctionNode node)
+        private void ReportUnknownFunctionCall(RawFunctionNode node)
         {
             AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.UnknownFunctionCall, node.Name, node.Args.Descendants.Select(f => f.ReturnType.Name).ToArray()), SyntaxErrorKind.UnsupportedFunctionCall);
         }
@@ -366,6 +366,14 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         public override void Visit(BetweenNode node)
+        {
+        }
+
+        public override void Visit(CachedFunctionNode node)
+        {
+        }
+
+        public override void Visit(StoreValueFunctionNode node)
         {
         }
     }

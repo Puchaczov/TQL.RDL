@@ -70,6 +70,7 @@
     <Compile Include="Instructions\BetweenDatetime.cs" />
     <Compile Include="Instructions\BetweenNumeric.cs" />
     <Compile Include="Instructions\BreakInstruction.cs" />
+    <Compile Include="Instructions\CopyAndStoreValue.cs" />
     <Compile Include="Instructions\DebuggerTrap.cs" />
     <Compile Include="Instructions\DiffDatetime.cs" />
     <Compile Include="Instructions\DiffNumeric.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Instructions\PushDateTimeInstruction.cs" />
     <Compile Include="Instructions\PushNumericInstruction.cs" />
     <Compile Include="Instructions\PushStringInstruction.cs" />
+    <Compile Include="Instructions\RestoreValue.cs" />
     <Compile Include="Instructions\SubtractNumeric.cs" />
     <Compile Include="IVmTracker.cs" />
     <Compile Include="MemoryVariables.cs" />
@@ -109,15 +111,19 @@
     <Compile Include="RdlMetadata.cs" />
     <Compile Include="Registers.cs" />
     <Compile Include="Visitors\AnalyzerBase.cs" />
+    <Compile Include="Visitors\ExtendedTraverser.cs" />
     <Compile Include="Visitors\RDLQueryValidator.cs" />
-    <Compile Include="Visitors\RDLCodeGenerator.cs" />
-    <Compile Include="Visitors\RDLDebuggerSymbolGenerator.cs" />
+    <Compile Include="Visitors\CodeGenerator.cs" />
+    <Compile Include="Visitors\DebuggerSymbolGenerator.cs" />
     <Compile Include="RDLVirtualMachine.cs" />
     <Compile Include="Instructions\IRdlInstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Visitors\CodeGenerationTraverser.cs" />
+    <Compile Include="Visitors\Traverser.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Collections.Concurrent">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Facades\System.Collections.Concurrent.dll</HintPath>
+    </Reference>
     <Reference Include="TQL.Common, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TQL.Common.1.1.1\lib\portable45-net45+win8+wp8+wpa81\TQL.Common.dll</HintPath>
       <Private>True</Private>

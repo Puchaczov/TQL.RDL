@@ -1,4 +1,5 @@
-﻿using RDL.Parser;
+﻿using System.Collections.Generic;
+using RDL.Parser;
 using RDL.Parser.Nodes;
 using RDL.Parser.Tokens;
 using TQL.Core.Converters;
@@ -33,12 +34,18 @@ namespace TQL.RDL.Converter
             : base(throwOnError)
         {
             _throwOnError = throwOnError;
+            MethodOccurences = new Dictionary<int, int>();
         }
 
         /// <summary>
         /// Gets metadata cache object
         /// </summary>
         protected abstract RdlMetadata Metdatas { get; }
+
+        /// <summary>
+        /// Gets how many time function occured.
+        /// </summary>
+        protected IDictionary<int, int> MethodOccurences { get; }
 
         /// <summary>
         /// Parse requested query into Abstract Syntax Tree
@@ -53,9 +60,9 @@ namespace TQL.RDL.Converter
             RdlParser parser = null;
 
             if (request.Formats == null || request.Formats.Length == 0)
-                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, _defaultFormats, request.CultureInfo, new MethodDeclarationResolver(Metdatas));
+                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, _defaultFormats, request.CultureInfo, new MethodDeclarationResolver(Metdatas), MethodOccurences);
             else
-                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo, new MethodDeclarationResolver(Metdatas));
+                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo, new MethodDeclarationResolver(Metdatas), MethodOccurences);
 
             return parser.ComposeRootComponents();
         }

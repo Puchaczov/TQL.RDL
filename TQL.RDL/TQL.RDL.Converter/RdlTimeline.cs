@@ -47,14 +47,17 @@ namespace TQL.RDL.Converter
         private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest<TMethodsAggregator> request)
         {
             var coretnessChecker = new RdlQueryValidator(Metdatas);
-            var queryValidatorTraverser = new CodeGenerationTraverser(coretnessChecker);
+            var queryValidatorTraverser = new Traverser(coretnessChecker);
             ast.Accept(queryValidatorTraverser);
 
             if (!coretnessChecker.IsValid)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
-            var codeGenerator = request.Debuggable ? new RdlDebuggerSymbolGenerator(Metdatas, request.MethodsAggregator) : new RdlCodeGenerator(Metdatas, request.MethodsAggregator);
-            var codeGenerationTraverseVisitor = new CodeGenerationTraverser(codeGenerator);
+            var codeGenerator = request.Debuggable 
+                ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator) : 
+                new CodeGenerator(Metdatas, request.MethodsAggregator);
+
+            var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences);
 
             ast.Accept(codeGenerationTraverseVisitor);
             var evaluator = codeGenerator.VirtualMachine;

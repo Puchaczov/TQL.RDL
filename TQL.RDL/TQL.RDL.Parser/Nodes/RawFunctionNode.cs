@@ -5,16 +5,15 @@ using TQL.Core.Tokens;
 
 namespace RDL.Parser.Nodes
 {
-    public class FunctionNode : RdlSyntaxNode
+    public class RawFunctionNode : RdlSyntaxNode
     {
         private readonly FunctionToken _functionName;
-        private readonly Type _returnType;
 
-        public FunctionNode(FunctionToken functionName, ArgListNode args, Type returnType)
+        public RawFunctionNode(FunctionToken functionName, ArgListNode args, Type returnType)
         {
             _functionName = functionName;
             Args = args;
-            _returnType = returnType;
+            ReturnType = returnType;
         }
 
         public override RdlSyntaxNode[] Descendants => Args.Descendants;
@@ -35,7 +34,7 @@ namespace RDL.Parser.Nodes
 
         public string Name => Token.Value;
 
-        public override Type ReturnType => _returnType;
+        public override Type ReturnType { get; }
 
         public ArgListNode Args { get; }
 
