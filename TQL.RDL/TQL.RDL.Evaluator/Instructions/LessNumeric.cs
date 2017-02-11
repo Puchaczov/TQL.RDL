@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class LessNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion betwen two numeric values in stack and determine if it's less 
+        ///     Performs comparsion betwen two numeric values in stack and determine if it's less
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
@@ -16,7 +16,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "LESS-NUMERIC";

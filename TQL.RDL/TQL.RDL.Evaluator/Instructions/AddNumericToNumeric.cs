@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class AddNumericToNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Adds two values poped from stack
+        ///     Adds two values poped from stack
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
@@ -16,7 +16,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Gets instruction short description
+        ///     Gets instruction short description
         /// </summary>
         /// <returns>Description.</returns>
         public override string ToString() => "ADD";

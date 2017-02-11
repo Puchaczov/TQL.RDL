@@ -14,9 +14,9 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         private readonly List<VisitationMessage> _errors;
 
-        private readonly List<Exception> CriticalErrors;
-
         private readonly RdlMetadata _metadatas;
+
+        private readonly List<Exception> CriticalErrors;
 
         private bool _startAtOccured;
 
@@ -28,23 +28,24 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         public IEnumerable<VisitationMessage> Errors => E;
-        private IReadOnlyList<VisitationMessage> E => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
+
+        private IReadOnlyList<VisitationMessage> E
+            => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
         public bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
 
         public override void Visit(WhereConditionsNode node)
-        { }
+        {
+        }
 
         public override void Visit(RepeatEveryNode node)
         {
             try
             {
                 if (node.DatePart == PartOfDate.Unknown)
-                {
                     ReportUnknownRepeatEveryDatePartFraction(node);
-                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 CriticalErrors.Add(e);
             }
@@ -61,7 +62,7 @@ namespace TQL.RDL.Evaluator.Visitors
             {
                 var temp = node.DateTime;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 CriticalErrors.Add(e);
             }
@@ -74,7 +75,6 @@ namespace TQL.RDL.Evaluator.Visitors
 
         public override void Visit(ArgListNode node)
         {
-
         }
 
         public override void Visit(NumericNode node)
@@ -108,37 +108,30 @@ namespace TQL.RDL.Evaluator.Visitors
 
         public override void Visit(ThenNode node)
         {
-            if(node.Descendants.Length == 0)
-            {
+            if (node.Descendants.Length == 0)
                 ReportLackOfThenExpression(node);
-            }
         }
 
         public override void Visit(CaseNode node)
         {
-            if(node.WhenThenExpressions.Length == 0)
-            {
+            if (node.WhenThenExpressions.Length == 0)
                 ReportLackOfWhenThenExpression(node);
-            }
         }
 
         public override void Visit(WhenThenNode node)
-        { }
+        {
+        }
 
         public override void Visit(ElseNode node)
         {
-            if(node.Descendants.Length == 0)
-            {
+            if (node.Descendants.Length == 0)
                 ReportLackOfElseReturnExpression(node);
-            }
         }
 
         public override void Visit(WhenNode node)
         {
-            if(node.Descendants.Length == 0)
-            {
+            if (node.Descendants.Length == 0)
                 ReportLackOfWhenReturnExpression(node);
-            }
         }
 
         public override void Visit(StarNode node)
@@ -152,7 +145,8 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         public override void Visit(NumericConsequentRepeatEveryNode node)
-        { }
+        {
+        }
 
         public override void Visit(LessNode node)
         {
@@ -165,7 +159,8 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         public override void Visit(VarNode node)
-        { }
+        {
+        }
 
         public override void Visit(NotInNode node)
         {
@@ -185,18 +180,14 @@ namespace TQL.RDL.Evaluator.Visitors
 
                 var hasMixedTypes = false;
                 foreach (var desc in node.Right.Descendants)
-                {
                     if (dstType != desc.ReturnType && !CanBeGeneralized(node.Left, desc))
                     {
                         hasMixedTypes = true;
                         break;
                     }
-                }
 
                 if (hasMixedTypes)
-                {
                     ReportHasMixedTypes(node);
-                }
             }
             catch (Exception e)
             {
@@ -215,7 +206,7 @@ namespace TQL.RDL.Evaluator.Visitors
             {
                 _startAtOccured = true;
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 CriticalErrors.Add(exc);
             }
@@ -234,16 +225,15 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         public override void Visit(WordNode node)
-        { }
+        {
+        }
 
         public override void Visit(RawFunctionNode node)
         {
             try
             {
                 if (!_metadatas.HasMethod(node.Name, node.Args.Descendants.Select(f => f.ReturnType).ToArray()))
-                {
                     ReportUnknownFunctionCall(node);
-                }
             }
             catch (Exception e)
             {
@@ -253,10 +243,8 @@ namespace TQL.RDL.Evaluator.Visitors
 
         public override void Visit(RootScriptNode node)
         {
-            if(!_startAtOccured)
-            {
+            if (!_startAtOccured)
                 ReportStartAtRequired();
-            }
         }
 
         private void ReportStartAtRequired()
@@ -271,17 +259,22 @@ namespace TQL.RDL.Evaluator.Visitors
 
         private void ReportUnknownFunctionCall(RawFunctionNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.UnknownFunctionCall, node.Name, node.Args.Descendants.Select(f => f.ReturnType.Name).ToArray()), SyntaxErrorKind.UnsupportedFunctionCall);
+            AddSyntaxError(node.FullSpan,
+                string.Format(AnalysisMessage.UnknownFunctionCall, node.Name,
+                    node.Args.Descendants.Select(f => f.ReturnType.Name).ToArray()),
+                SyntaxErrorKind.UnsupportedFunctionCall);
         }
 
         private void ReportUnknownRepeatEveryDatePartFraction(RepeatEveryNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.RepeateEveryContainsUnknownDatePartFraction, node.Token.Value), SyntaxErrorKind.WrongKeyword);
+            AddSyntaxError(node.FullSpan,
+                string.Format(AnalysisMessage.RepeateEveryContainsUnknownDatePartFraction, node.Token.Value),
+                SyntaxErrorKind.WrongKeyword);
         }
 
         private void AddSemanticError(TextSpan span, string message, SemanticErrorKind kind)
         {
-            AddSemanticError(new[] { span }, message, kind);
+            AddSemanticError(new[] {span}, message, kind);
         }
 
         private void AddSemanticError(TextSpan[] spans, string message, SemanticErrorKind kind)
@@ -299,22 +292,22 @@ namespace TQL.RDL.Evaluator.Visitors
             var left = node.Left.ReturnType.GetUnderlyingNullable();
             var right = node.Right.ReturnType.GetUnderlyingNullable();
             if (!RdlMetadata.IsTypePossibleToConvert(left, right) && !CanBeGeneralized(node))
-            {
-                AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name), SyntaxErrorKind.ImproperType);
-            }
+                AddSyntaxError(node.FullSpan,
+                    string.Format(AnalysisMessage.ReturnTypesAreNotTheSame, nodeName, left.Name, right.Name),
+                    SyntaxErrorKind.ImproperType);
         }
 
         /// <summary>
-        /// Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
-        /// ie. monday = 4 or month in (may,...,december)
+        ///     Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
+        ///     ie. monday = 4 or month in (may,...,december)
         /// </summary>
         /// <param name="node">Node do check.</param>
         /// <returns>true if can be generalized, else false.</returns>
         private bool CanBeGeneralized(BinaryNode node) => CanBeGeneralized(node.Left, node.Right);
 
         /// <summary>
-        /// Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
-        /// ie. monday = 4 or month in (may,...,december)
+        ///     Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
+        ///     ie. monday = 4 or month in (may,...,december)
         /// </summary>
         /// <param name="left">Node do check.</param>
         /// <param name="right">Node do check.</param>
@@ -334,35 +327,40 @@ namespace TQL.RDL.Evaluator.Visitors
 
         private void ReportLackOfWhenThenExpression(CaseNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenThenExpression, node), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenThenExpression, node),
+                SyntaxErrorKind.LackOfExpression);
         }
 
         private void ReportLackOfThenExpression(ThenNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfThenReturnExpression, node), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfThenReturnExpression, node),
+                SyntaxErrorKind.LackOfExpression);
         }
 
         private void ReportLackOfElseReturnExpression(ElseNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfElseReturnExpression, node.Parent), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfElseReturnExpression, node.Parent),
+                SyntaxErrorKind.LackOfExpression);
         }
 
         private void ReportLackOfWhenReturnExpression(WhenNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenReturnExpression, node.Parent), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenReturnExpression, node.Parent),
+                SyntaxErrorKind.LackOfExpression);
         }
 
         private void ReportArgListIsEmpty(ArgListNode node)
         {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty), SyntaxErrorKind.LackOfExpression);
+            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty),
+                SyntaxErrorKind.LackOfExpression);
         }
 
         public override void Visit(NotNode node)
         {
             if (node.Descendant.ReturnType != typeof(bool))
-            {
-                AddSemanticError(node.FullSpan, string.Format(AnalysisMessage.BadType, node.Descendant.ReturnType.Name, nameof(Boolean)), SemanticErrorKind.MixedValues);
-            }
+                AddSemanticError(node.FullSpan,
+                    string.Format(AnalysisMessage.BadType, node.Descendant.ReturnType.Name, nameof(Boolean)),
+                    SemanticErrorKind.MixedValues);
         }
 
         public override void Visit(BetweenNode node)

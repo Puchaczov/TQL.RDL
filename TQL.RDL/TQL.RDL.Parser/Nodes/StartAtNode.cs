@@ -5,10 +5,10 @@ namespace RDL.Parser.Nodes
 {
     public class StartAtNode : ConstantNode
     {
-        private Token _token;
         private readonly LeafNode _when;
+        private Token _token;
 
-        public StartAtNode(Token token, LeafNode when) 
+        public StartAtNode(Token token, LeafNode when)
             : base(when)
         {
             _token = token;

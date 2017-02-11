@@ -10,12 +10,12 @@ namespace RDL.Parser.Nodes
             Token = token;
         }
 
+        public override Token Token { get; }
+        public override Type ReturnType => typeof(bool);
+
         public override void Accept(INodeVisitor visitor)
         {
             visitor.Visit(this);
         }
-
-        public override Token Token { get; }
-        public override Type ReturnType => typeof(Boolean);
     }
 }

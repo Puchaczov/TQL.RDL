@@ -6,14 +6,15 @@ namespace TQL.RDL.Evaluator.Instructions
     public class InInstructionNumeric : InInstruction<long>
     {
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         public InInstructionNumeric()
             : base(x => x.Values.Pop())
-        { }
+        {
+        }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "IN-NUMERIC";

@@ -6,8 +6,9 @@ namespace RDL.Parser.Tokens
     {
         public const string TokenText = "none";
 
-        public NoneToken() 
-            : base(string.Empty, StatementType.None, new TextSpan(0,0))
-        { }
+        public NoneToken()
+            : base(string.Empty, StatementType.None, new TextSpan(0, 0))
+        {
+        }
     }
 }

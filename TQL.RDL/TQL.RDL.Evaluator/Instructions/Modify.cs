@@ -9,9 +9,9 @@ namespace TQL.RDL.Evaluator.Instructions
         public delegate DateTimeOffset Fun(DateTimeOffset value);
 
         private readonly Fun _fun;
-        
+
         /// <summary>
-        /// Initialize instance.
+        ///     Initialize instance.
         /// </summary>
         /// <param name="fun">Function to modify reference time.</param>
         public Modify(Fun fun)
@@ -20,7 +20,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Performs modyfication on reference time.
+        ///     Performs modyfication on reference time.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -30,7 +30,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "MODIFY";

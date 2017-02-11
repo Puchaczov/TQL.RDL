@@ -9,32 +9,32 @@ namespace TQL.RDL.Evaluator.ErrorHandling
 
         protected VisitationMessage(TextSpan[] spans, string message)
         {
-            this.Message = message;
-            this._spans = spans;
+            Message = message;
+            _spans = spans;
         }
 
         /// <summary>
-        /// Represents message that should will be returned to user.
+        ///     Represents message that should will be returned to user.
         /// </summary>
         protected string Message { get; }
 
         /// <summary>
-        /// Significance of message.
+        ///     Significance of message.
         /// </summary>
         public abstract MessageLevel Level { get; }
 
         /// <summary>
-        /// Code of that message
+        ///     Code of that message
         /// </summary>
         public abstract Codes Code { get; }
 
         /// <summary>
-        /// Places in text where these items refer.
+        ///     Places in text where these items refer.
         /// </summary>
         public IReadOnlyCollection<TextSpan> Spans => _spans;
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns></returns>
         public abstract override string ToString();

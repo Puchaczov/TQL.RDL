@@ -12,7 +12,8 @@ namespace RDL.Parser.Exceptions
         {
         }
 
-        public FunctionHasEmptyOrNullNameException(string message, Exception innerException) : base(message, innerException)
+        public FunctionHasEmptyOrNullNameException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

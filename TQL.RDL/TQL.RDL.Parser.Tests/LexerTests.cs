@@ -37,7 +37,7 @@ namespace TQL.RDL.Parser.Tests
                 StatementType.EndOfFile);
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void CheckProducedTokents_CaseWhenQuery_ShouldPass()
         {
             var query = "repeat every day where @a > (case when (1 <> 2) then (5) else (4) esac)";
@@ -141,16 +141,15 @@ namespace TQL.RDL.Parser.Tests
 
             Token current = null;
             while ((current = lexer.NextToken()).TokenType != StatementType.EndOfFile)
-            {
                 lst.Add(current);
-            }
             lst.Add(current);
             return lst.ToArray();
         }
 
-        private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens, params StatementType[] types)
+        private static void CheckTokenized_ShouldReturnOrderedToken(string query, Token[] tokens,
+            params StatementType[] types)
         {
-            for(var i = 0; i < tokens.Length; ++i)
+            for (var i = 0; i < tokens.Length; ++i)
             {
                 var span = tokens[i].Span;
                 var substr = query.Substring(span.Start, span.Length);

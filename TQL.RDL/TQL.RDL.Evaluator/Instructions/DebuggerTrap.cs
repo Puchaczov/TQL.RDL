@@ -23,7 +23,8 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly RdlSyntaxNode _node;
         private readonly ExpressionState _state;
 
-        public DebuggerTrap(RdlSyntaxNode node, ExpressionState state, OnExpressionBegin expBeginCallback, OnExpressionEnd expEndCallback)
+        public DebuggerTrap(RdlSyntaxNode node, ExpressionState state, OnExpressionBegin expBeginCallback,
+            OnExpressionEnd expEndCallback)
         {
             _node = node;
             _state = state;
@@ -33,7 +34,7 @@ namespace TQL.RDL.Evaluator.Instructions
 
         public void Run(RdlVirtualMachine machine)
         {
-            switch(_state)
+            switch (_state)
             {
                 case ExpressionState.Before:
                     _expBeginCallback(_node, machine);

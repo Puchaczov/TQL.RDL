@@ -14,14 +14,17 @@ namespace TQL.RDL.Converter.Tests
         [TestMethod]
         public void Converter_CheckIsMethodRegistered_ShouldPass()
         {
-            var request = new ConvertionRequest<ConverterTests>("repeat every 5 seconds where TestA(@current) and TestB(@current) start at '06.06.2016 14:00:00'", TimeZoneInfo.Local, TimeZoneInfo.Local, false, null);
+            var request =
+                new ConvertionRequest<ConverterTests>(
+                    "repeat every 5 seconds where TestA(@current) and TestB(@current) start at '06.06.2016 14:00:00'",
+                    TimeZoneInfo.Local, TimeZoneInfo.Local, false, null);
 
             var timeline = new RdlTimeline<ConverterTests>(false);
 
             var response = timeline.Convert(request);
 
             response.Output.NextFire();
-            
+
             Assert.IsTrue(_testACalled);
             Assert.IsTrue(_testBCalled);
         }
@@ -53,13 +56,17 @@ namespace TQL.RDL.Converter.Tests
         [TestMethod]
         public void Converter_IsConvertible_ShouldBe()
         {
-            TestDefaultMethods("repeat every days where GetDay() in (21) and GetMonth() = 5 start at '21.05.1991 00:04:24'", "21.05.1991 00:04:24");
+            TestDefaultMethods(
+                "repeat every days where GetDay() in (21) and GetMonth() = 5 start at '21.05.1991 00:04:24'",
+                "21.05.1991 00:04:24");
         }
 
         [TestMethod]
         public void Converter_CallingConventionTest_ShouldPass()
         {
-            TestMethods<ConverterTests>("repeat every days where TestC('adsad', 'qeqwew', 256, 4) and TestC('adsad', 'qeqwew', 256, 4) start at '21.05.1991 00:04:24'", "21.05.1991 00:04:24");
+            TestMethods<ConverterTests>(
+                "repeat every days where TestC('adsad', 'qeqwew', 256, 4) and TestC('adsad', 'qeqwew', 256, 4) start at '21.05.1991 00:04:24'",
+                "21.05.1991 00:04:24");
         }
 
         [TestMethod]
@@ -78,7 +85,8 @@ namespace TQL.RDL.Converter.Tests
 
         private void TestMethods<TMethods>(string query, string fireTime) where TMethods : new()
         {
-            var request = new ConvertionRequest<TMethods>(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new[] {
+            var request = new ConvertionRequest<TMethods>(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new[]
+            {
                 "dd.M.yyyy",
                 "dd.M.yyyy hh:mm:ss"
             });

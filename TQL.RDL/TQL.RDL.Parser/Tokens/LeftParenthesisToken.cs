@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public LeftParenthesisToken(TextSpan textSpan)
             : base(TokenText, StatementType.LeftParenthesis, textSpan)
-        { }
+        {
+        }
     }
 }

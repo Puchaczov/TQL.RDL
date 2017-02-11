@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class GreaterDatetime : IRdlInstruction
     {
         /// <summary>
-        /// Determine if one datetime on stack is greater than other.
+        ///     Determine if one datetime on stack is greater than other.
         /// </summary>
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)

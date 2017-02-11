@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class GreaterEqualNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Determine if two values on stack are greter or equal
+        ///     Determine if two values on stack are greter or equal
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)

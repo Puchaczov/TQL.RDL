@@ -7,7 +7,7 @@ namespace TQL.RDL.Evaluator.Enumerators
     public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>
     {
         /// <summary>
-        /// Create instance of tree enumerator
+        ///     Create instance of tree enumerator
         /// </summary>
         /// <param name="node">Abstract Syntax Tree</param>
         public ArythmeticEnumerator(RdlSyntaxNode node)
@@ -17,12 +17,14 @@ namespace TQL.RDL.Evaluator.Enumerators
         }
 
         /// <summary>
-        /// Dispose unused elements
+        ///     Dispose unused elements
         /// </summary>
-        public override void Dispose() { }
+        public override void Dispose()
+        {
+        }
 
         /// <summary>
-        /// Determine if next element to visit exist
+        ///     Determine if next element to visit exist
         /// </summary>
         /// <returns>Next node to visit exist</returns>
         public override bool MoveNext()
@@ -71,7 +73,7 @@ namespace TQL.RDL.Evaluator.Enumerators
         }
 
         /// <summary>
-        /// Reset enumerator to start from root
+        ///     Reset enumerator to start from root
         /// </summary>
         public override void Reset()
         {

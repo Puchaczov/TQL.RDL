@@ -7,7 +7,8 @@ namespace TQL.RDL.Evaluator
 {
     public class RdlVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
-        public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions, DateTimeOffset? stopAt, DateTimeOffset startAt)
+        public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions,
+            DateTimeOffset? stopAt, DateTimeOffset startAt)
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
@@ -28,26 +29,14 @@ namespace TQL.RDL.Evaluator
 
         public DateTimeOffset ReferenceTime
         {
-            get
-            {
-                return (DateTimeOffset)Variables["current"];
-            }
-            set
-            {
-                Variables["current"] = value;
-            }
+            get { return (DateTimeOffset) Variables["current"]; }
+            set { Variables["current"] = value; }
         }
 
         public DateTimeOffset? LastlyFound
         {
-            get
-            {
-                return (DateTimeOffset?)Variables["lastlyFound"];
-            }
-            set
-            {
-                Variables["lastlyFound"] = value;
-            }
+            get { return (DateTimeOffset?) Variables["lastlyFound"]; }
+            set { Variables["lastlyFound"] = value; }
         }
 
         public bool Break { get; set; }
@@ -60,17 +49,13 @@ namespace TQL.RDL.Evaluator
 
         public DateTimeOffset? NextFire()
         {
-            if(ReferenceTime < StartAt)
-            {
+            if (ReferenceTime < StartAt)
                 ReferenceTime = StartAt;
-            }
 
-            if(ReferenceTime > StopAt)
-            {
+            if (ReferenceTime > StopAt)
                 Exit = true;
-            }
 
-            while(true)
+            while (true)
             {
                 if (Exit)
                     return null;

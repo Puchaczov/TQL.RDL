@@ -7,6 +7,6 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         C03, //SemanticError
         C04, //Information
         C05, //Tip
-        C06  //Undefined
+        C06 //Undefined
     }
 }

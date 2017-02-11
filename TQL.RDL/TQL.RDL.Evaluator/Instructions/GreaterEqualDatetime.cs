@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class GreaterEqualDatetime : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion between two datetimes on stack.
+        ///     Performs comparsion between two datetimes on stack.
         /// </summary>
         /// <param name="machine">Virtual machine on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)

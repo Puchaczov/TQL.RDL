@@ -9,9 +9,9 @@ namespace RDL.Parser
     internal class LexerEnumerator : IEnumerator<Token>
     {
         private readonly StatementType[] _abortOnToken;
+        private readonly ILexer<Token> _lexer;
         private Token _current;
         private bool _firstValueEnumerated;
-        private readonly ILexer<Token> _lexer;
 
         public LexerEnumerator(ILexer<Token> lexer, params StatementType[] abortOnToken)
         {
@@ -40,7 +40,7 @@ namespace RDL.Parser
             if (_abortOnToken.Contains(_current.TokenType))
                 return false;
 
-            switch(_current.TokenType)
+            switch (_current.TokenType)
             {
                 case StatementType.EndOfFile:
                     return false;
@@ -54,6 +54,7 @@ namespace RDL.Parser
         }
 
         public void Dispose()
-        { }
+        {
+        }
     }
 }

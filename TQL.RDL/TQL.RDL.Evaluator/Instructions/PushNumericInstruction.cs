@@ -8,7 +8,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly long _value;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="value">Value that have to be pushed onto the stack.</param>
         public PushNumericInstruction(long value)
@@ -17,7 +17,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Push value onto the stack.
+        ///     Push value onto the stack.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -27,7 +27,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"PUSH {_value}";

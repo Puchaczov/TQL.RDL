@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class MultiplyNumerics : IRdlInstruction
     {
         /// <summary>
-        /// Multiply two numeric values.
+        ///     Multiply two numeric values.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

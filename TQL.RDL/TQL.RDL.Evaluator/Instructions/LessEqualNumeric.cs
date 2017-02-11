@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class LessEqualNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion betwen two numeric values in stack and determine if it's less or equal. 
+        ///     Performs comparsion betwen two numeric values in stack and determine if it's less or equal.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -16,7 +16,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "LESSEQUAL";

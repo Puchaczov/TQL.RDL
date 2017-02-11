@@ -8,7 +8,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly string _label;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="label">Define place to jump.</param>
         public JumpToLabel(string label)
@@ -17,7 +17,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Assign instruction pointer based on label.
+        ///     Assign instruction pointer based on label.
         /// </summary>
         /// <param name="machine">Virtual machine on that code will be executed.</param>
         public void Run(RdlVirtualMachine machine)
@@ -26,7 +26,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"JMP {_label}";

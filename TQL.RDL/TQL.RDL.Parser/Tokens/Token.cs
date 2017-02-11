@@ -7,9 +7,10 @@ namespace RDL.Parser.Tokens
     [DebuggerDisplay("{Value} of type {TokenType},nq")]
     public class Token : GenericToken<StatementType>, IEquatable<Token>
     {
-        public Token(string value, StatementType type, TextSpan span) 
+        public Token(string value, StatementType type, TextSpan span)
             : base(value, type, span)
-        { }
+        {
+        }
 
         public bool Equals(Token other) => other.TokenType == TokenType && other.Value == Value;
 
@@ -18,14 +19,10 @@ namespace RDL.Parser.Tokens
         public override bool Equals(object obj)
         {
             var token = obj as Token;
-            if(token == null)
-            {
+            if (token == null)
                 return false;
-            }
-            if(ReferenceEquals(obj, this))
-            {
+            if (ReferenceEquals(obj, this))
                 return true;
-            }
             return TokenType == token.TokenType && Value == token.Value;
         }
 

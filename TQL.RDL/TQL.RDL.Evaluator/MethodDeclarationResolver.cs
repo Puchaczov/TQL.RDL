@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using RDL.Parser;
-using RDL.Parser.Helpers;
-using TQL.RDL.Evaluator.Attributes;
 
 namespace TQL.RDL.Evaluator
 {
@@ -13,16 +9,16 @@ namespace TQL.RDL.Evaluator
         private readonly RdlMetadata _metadata;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="metadata">Metadatas.</param>
         public MethodDeclarationResolver(RdlMetadata metadata)
         {
-            this._metadata = metadata;
+            _metadata = metadata;
         }
 
         /// <summary>
-        /// Determine which method should be called for passed arguments.
+        ///     Determine which method should be called for passed arguments.
         /// </summary>
         /// <param name="name">Method to found.</param>
         /// <param name="callArgs">Types of function arguments.</param>

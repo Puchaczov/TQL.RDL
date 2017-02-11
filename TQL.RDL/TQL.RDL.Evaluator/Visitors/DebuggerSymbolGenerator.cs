@@ -8,7 +8,8 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         public DebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext)
             : base(gm, callMethodContext)
-        { }
+        {
+        }
 
         public override void Visit(AddNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(OrNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
@@ -25,7 +26,10 @@ namespace TQL.RDL.Evaluator.Visitors
         public override void Visit(WhereConditionsNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(HyphenNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(ModuloNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
-        public override void Visit(NumericConsequentRepeatEveryNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
+
+        public override void Visit(NumericConsequentRepeatEveryNode node)
+            => ProduceDebuggerInstructions(node, n => base.Visit(n));
+
         public override void Visit(ThenNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(RootScriptNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));
         public override void Visit(WhenNode node) => ProduceDebuggerInstructions(node, n => base.Visit(n));

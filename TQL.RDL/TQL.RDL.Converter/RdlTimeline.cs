@@ -6,18 +6,19 @@ using RDL.Parser.Nodes;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Interfaces;
-using TQL.RDL.Evaluator.Attributes;
-using TQL.RDL.Evaluator.Visitors;
 using TQL.RDL.Converter.Exceptions;
 using TQL.RDL.Evaluator;
+using TQL.RDL.Evaluator.Attributes;
+using TQL.RDL.Evaluator.Visitors;
 
 namespace TQL.RDL.Converter
 {
-    public class RdlTimeline<TMethodsAggregator> : AbstractConverter<IFireTimeEvaluator, TMethodsAggregator>, IConvertible<ConvertionRequest<TMethodsAggregator>, ConvertionResponse<IFireTimeEvaluator>> 
+    public class RdlTimeline<TMethodsAggregator> : AbstractConverter<IFireTimeEvaluator, TMethodsAggregator>,
+        IConvertible<ConvertionRequest<TMethodsAggregator>, ConvertionResponse<IFireTimeEvaluator>>
         where TMethodsAggregator : new()
     {
         /// <summary>
-        /// Instantiate to evaluator converter.
+        ///     Instantiate to evaluator converter.
         /// </summary>
         /// <param name="throwOnError">Allow errors to be aggregated or rethrowed immediatelly</param>
         public RdlTimeline(bool throwOnError = false)
@@ -27,24 +28,26 @@ namespace TQL.RDL.Converter
         }
 
         /// <summary>
-        /// It's just metadata cache.
+        ///     It's just metadata cache.
         /// </summary>
         protected override RdlMetadata Metdatas { get; } = new RdlMetadata();
 
         /// <summary>
-        /// Convert user request into reponse that contains evaluator
+        ///     Convert user request into reponse that contains evaluator
         /// </summary>
         /// <param name="request">Query convertion request</param>
         /// <returns>Response with evaluator</returns>
-        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest<TMethodsAggregator> request) => base.Convert(request, ast => Convert(ast, request));
+        public ConvertionResponse<IFireTimeEvaluator> Convert(ConvertionRequest<TMethodsAggregator> request)
+            => base.Convert(request, ast => Convert(ast, request));
 
         /// <summary>
-        /// Convert Abstract Syntax Tree to Virtual Machine object with associated virtual code for such machine
+        ///     Convert Abstract Syntax Tree to Virtual Machine object with associated virtual code for such machine
         /// </summary>
         /// <param name="ast">Abstract Syntax Tree.</param>
         /// <param name="request">Request used by user to perform convertion.</param>
         /// <returns>Object that allows evaluate next occurences</returns>
-        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast, ConvertionRequest<TMethodsAggregator> request)
+        private ConvertionResponse<IFireTimeEvaluator> Convert(RootScriptNode ast,
+            ConvertionRequest<TMethodsAggregator> request)
         {
             var coretnessChecker = new RdlQueryValidator(Metdatas);
             var queryValidatorTraverser = new Traverser(coretnessChecker);
@@ -53,9 +56,9 @@ namespace TQL.RDL.Converter
             if (!coretnessChecker.IsValid)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
-            var codeGenerator = request.Debuggable 
-                ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator) : 
-                new CodeGenerator(Metdatas, request.MethodsAggregator);
+            var codeGenerator = request.Debuggable
+                ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator)
+                : new CodeGenerator(Metdatas, request.MethodsAggregator);
 
             var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences);
 
@@ -64,11 +67,13 @@ namespace TQL.RDL.Converter
 
             if (evaluator == null)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
-            return request.Source == request.Target ? new ConvertionResponse<IFireTimeEvaluator>(evaluator) : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
+            return request.Source == request.Target
+                ? new ConvertionResponse<IFireTimeEvaluator>(evaluator)
+                : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
         }
 
         /// <summary>
-        /// Register methods of TMethodsAggregator that are properly annotated.
+        ///     Register methods of TMethodsAggregator that are properly annotated.
         /// </summary>
         private void RegisterQueryMethods()
         {
@@ -89,7 +94,7 @@ namespace TQL.RDL.Converter
         }
 
         /// <summary>
-        /// Checks if method fit injection conditions.
+        ///     Checks if method fit injection conditions.
         /// </summary>
         /// <param name="method">method that will be analysed.</param>
         private void CheckMethodHasInjectableOptionalOrDefaultParameters(MethodInfo method)
@@ -105,7 +110,7 @@ namespace TQL.RDL.Converter
         }
 
         /// <summary>
-        /// Construct convertion reposne if fatal error occured
+        ///     Construct convertion reposne if fatal error occured
         /// </summary>
         /// <param name="exc">Fatal exception that had been thrown.</param>
         /// <returns>Convertion response with that fail.</returns>

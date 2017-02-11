@@ -11,7 +11,8 @@ namespace RDL.Parser.Nodes
     {
         public AndNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -23,7 +24,8 @@ namespace RDL.Parser.Nodes
     {
         public OrNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -35,7 +37,8 @@ namespace RDL.Parser.Nodes
     {
         public InNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -47,7 +50,8 @@ namespace RDL.Parser.Nodes
     {
         public DiffNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -59,17 +63,22 @@ namespace RDL.Parser.Nodes
     {
         public CommaNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => string.Format("{0},{1}", Left, Right);
-        public override void Accept(INodeVisitor visitor) { }
+
+        public override void Accept(INodeVisitor visitor)
+        {
+        }
     }
 
     public class EqualityNode : BinaryNode
     {
         public EqualityNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -81,7 +90,8 @@ namespace RDL.Parser.Nodes
     {
         public GreaterNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -93,7 +103,8 @@ namespace RDL.Parser.Nodes
     {
         public GreaterEqualNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -105,7 +116,8 @@ namespace RDL.Parser.Nodes
     {
         public LessNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -117,7 +129,8 @@ namespace RDL.Parser.Nodes
     {
         public LessEqualNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -127,9 +140,10 @@ namespace RDL.Parser.Nodes
 
     public class NotInNode : InNode
     {
-        public NotInNode(RdlSyntaxNode left, RdlSyntaxNode right) 
+        public NotInNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 
@@ -142,7 +156,8 @@ namespace RDL.Parser.Nodes
     {
         public AddNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => ToString("+");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -152,7 +167,8 @@ namespace RDL.Parser.Nodes
     {
         public HyphenNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => ToString("-");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -162,7 +178,8 @@ namespace RDL.Parser.Nodes
     {
         public ModuloNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => ToString("%");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -172,7 +189,8 @@ namespace RDL.Parser.Nodes
     {
         public StarNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => ToString("*");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -182,7 +200,8 @@ namespace RDL.Parser.Nodes
     {
         public FSlashNode(RdlSyntaxNode left, RdlSyntaxNode right)
             : base(left, right)
-        { }
+        {
+        }
 
         public override string ToString() => ToString("/");
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
@@ -199,7 +218,8 @@ namespace RDL.Parser.Nodes
 
         public override RdlSyntaxNode[] Descendants => _args;
 
-        public override TextSpan FullSpan => new TextSpan(_args[0].FullSpan.Start, _args[_args.Length - 1].FullSpan.End - _args[0].FullSpan.Start);
+        public override TextSpan FullSpan
+            => new TextSpan(_args[0].FullSpan.Start, _args[_args.Length - 1].FullSpan.End - _args[0].FullSpan.Start);
 
         public override bool IsLeaf => false;
 
@@ -217,7 +237,7 @@ namespace RDL.Parser.Nodes
                 builder.Append(_args[i]);
                 builder.Append(", ");
             }
-            if(_args.Length > 0)
+            if (_args.Length > 0)
                 builder.Append(_args[_args.Length - 1]);
             return builder.ToString();
         }
@@ -244,10 +264,8 @@ namespace RDL.Parser.Nodes
             get
             {
                 //TO DO: much better implementation of this: register variable in global metadata and use it here
-                if(_token.Value != "current")
-                {
+                if (_token.Value != "current")
                     return typeof(long);
-                }
                 return typeof(DateTimeOffset);
             }
         }
@@ -286,7 +304,7 @@ namespace RDL.Parser.Nodes
 
     public class WhenNode : UnaryNode
     {
-        public WhenNode(Token token, RdlSyntaxNode when) 
+        public WhenNode(Token token, RdlSyntaxNode when)
             : base(when)
         {
             Token = token;
@@ -348,7 +366,6 @@ namespace RDL.Parser.Nodes
 
             When.SetParent(this);
             Then.SetParent(this);
-
         }
 
         public WhenNode When => Descendants[0] as WhenNode;
@@ -358,14 +375,13 @@ namespace RDL.Parser.Nodes
 
         public CaseNode Parent { get; private set; }
 
-        public int ArrayOrder {
+        public int ArrayOrder
+        {
             get
             {
-                for(int i = 0, j = Parent.Descendants.Count(); i < j; ++i)
-                {
+                for (int i = 0, j = Parent.Descendants.Count(); i < j; ++i)
                     if (Parent.Descendants[i] == this)
                         return i;
-                }
                 return -1;
             }
         }
@@ -398,21 +414,20 @@ namespace RDL.Parser.Nodes
             Expressions = nodes;
             Else = node;
 
-            foreach(var item in nodes)
-            {
+            foreach (var item in nodes)
                 item.SetParent(this);
-            }
 
             _caseToken = caseToken;
 
-            Descendants = Expressions.Concat(new RdlSyntaxNode[1] { Else }).ToArray();
+            Descendants = Expressions.Concat(new RdlSyntaxNode[1] {Else}).ToArray();
         }
 
         public override RdlSyntaxNode[] Descendants { get; }
 
         public RdlSyntaxNode[] WhenThenExpressions => Expressions;
 
-        public override TextSpan FullSpan => new TextSpan(_caseToken.Span.Start, Else.FullSpan.End - _caseToken.Span.Start);
+        public override TextSpan FullSpan
+            => new TextSpan(_caseToken.Span.Start, Else.FullSpan.End - _caseToken.Span.Start);
 
         public override bool IsLeaf => false;
 
@@ -434,12 +449,10 @@ namespace RDL.Parser.Nodes
 
     public class BetweenNode : RdlSyntaxNode
     {
-        private readonly Token _betweenToken;
-
         public BetweenNode(Token betweenToken, RdlSyntaxNode exp, RdlSyntaxNode minNode, RdlSyntaxNode maxNode)
         {
             Descendants = new[] {exp, minNode, maxNode};
-            _betweenToken = betweenToken;
+            Token = betweenToken;
         }
 
         public override RdlSyntaxNode[] Descendants { get; }
@@ -450,13 +463,14 @@ namespace RDL.Parser.Nodes
 
         public RdlSyntaxNode Max => Descendants[2];
 
-        public override TextSpan FullSpan => new TextSpan(Expression.FullSpan.Start, Max.FullSpan.End - Expression.FullSpan.Start);
+        public override TextSpan FullSpan
+            => new TextSpan(Expression.FullSpan.Start, Max.FullSpan.End - Expression.FullSpan.Start);
 
         public override bool IsLeaf => false;
 
-        public override Type ReturnType => typeof(Boolean);
+        public override Type ReturnType => typeof(bool);
 
-        public override Token Token => _betweenToken;
+        public override Token Token { get; }
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 

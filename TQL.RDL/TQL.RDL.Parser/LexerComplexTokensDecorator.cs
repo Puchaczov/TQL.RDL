@@ -7,9 +7,9 @@ namespace RDL.Parser
 {
     public class LexerComplexTokensDecorator : ILexer<Token>, IEnumerable<Token>
     {
-        private StatementType[] _disableEnumerationForTokens;
         private readonly Lexer _lexer;
         private readonly bool _skipWhiteSpaces;
+        private StatementType[] _disableEnumerationForTokens;
 
         public LexerComplexTokensDecorator(Lexer lexer)
         {
@@ -40,10 +40,8 @@ namespace RDL.Parser
         public Token NextToken()
         {
             var token = _lexer.NextToken();
-            while(_skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
-            {
+            while (_skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
                 token = _lexer.NextToken();
-            }
             return token;
         }
 

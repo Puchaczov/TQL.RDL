@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TQL.RDL.Evaluator.Helpers
 {
     public static class DateTimeOffsetHelper
     {
         /// <summary>
-        /// Get week of month by simply check 
-        /// if day of month is between multiplicy of seven and seven days after that date
+        ///     Get week of month by simply check
+        ///     if day of month is between multiplicy of seven and seven days after that date
         /// </summary>
         /// <param name="datetime"></param>
         /// <returns>Week of month</returns>
@@ -30,10 +26,10 @@ namespace TQL.RDL.Evaluator.Helpers
         }
 
         /// <summary>
-        /// Get week of month by check 
-        /// if day of month is between some date and seven days after that date.
-        /// It take care of considered DayOfWeek that starts week and 
-        /// take care of some months doesn't start from considered DayOfWeek
+        ///     Get week of month by check
+        ///     if day of month is between some date and seven days after that date.
+        ///     It take care of considered DayOfWeek that starts week and
+        ///     take care of some months doesn't start from considered DayOfWeek
         /// </summary>
         /// <param name="datetime"></param>
         /// <returns>Week of month</returns>
@@ -49,18 +45,16 @@ namespace TQL.RDL.Evaluator.Helpers
             {
                 whichWeek = 1;
                 while (operationalDay.DayOfWeek != startDayOfWeek)
-                {
                     operationalDay = operationalDay.AddDays(1);
-                }
             }
 
             if (day >= operationalDay.Day && day < operationalDay.Day + 7)
                 return whichWeek + 1;
-            else if (day >= operationalDay.Day + 7 && day < operationalDay.Day + 14)
+            if (day >= operationalDay.Day + 7 && day < operationalDay.Day + 14)
                 return whichWeek + 2;
-            else if (day >= operationalDay.Day + 14 && day < operationalDay.Day + 21)
+            if (day >= operationalDay.Day + 14 && day < operationalDay.Day + 21)
                 return whichWeek + 3;
-            else if (day >= operationalDay.Day + 21 && day < operationalDay.Day + 28)
+            if (day >= operationalDay.Day + 21 && day < operationalDay.Day + 28)
                 return whichWeek + 4;
             return whichWeek;
         }

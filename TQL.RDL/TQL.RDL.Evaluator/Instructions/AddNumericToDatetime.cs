@@ -10,7 +10,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly int _value;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="partOfDate">Part of date that will be modified.</param>
         /// <param name="value">Value that will be added to datetime.</param>
@@ -21,7 +21,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Initialize object
+        ///     Initialize object
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
@@ -51,7 +51,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Gets instruction short description
+        ///     Gets instruction short description
         /// </summary>
         /// <returns>Stringified object.</returns>
         public override string ToString() => "ADD";

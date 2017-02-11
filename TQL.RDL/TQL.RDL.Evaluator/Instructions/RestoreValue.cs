@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TQL.RDL.Evaluator.Instructions
 {
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     class RestoreValue : IRdlInstruction
     {
-        private readonly Action<RdlVirtualMachine, object> _restoreValueFunc;
         private readonly MethodInfo _registeredFunction;
+        private readonly Action<RdlVirtualMachine, object> _restoreValueFunc;
 
         /// <summary>
-        /// Initialize instance.
+        ///     Initialize instance.
         /// </summary>
         /// <param name="registeredFunction">Method that invokation result have to be restored.</param>
         /// <param name="restoreValueFunc">Function that copy result from memory.</param>
@@ -26,7 +22,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Copies invocation result from memory.
+        ///     Copies invocation result from memory.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

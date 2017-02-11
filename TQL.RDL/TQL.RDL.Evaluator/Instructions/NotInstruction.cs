@@ -7,7 +7,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class NotInstruction : IRdlInstruction
     {
         /// <summary>
-        /// Perform negate operation on value.
+        ///     Perform negate operation on value.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -17,7 +17,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "NOT";

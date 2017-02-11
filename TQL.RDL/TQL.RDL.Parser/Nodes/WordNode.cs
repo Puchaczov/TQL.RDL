@@ -7,7 +7,8 @@ namespace RDL.Parser.Nodes
     {
         public WordNode(Token token)
             : base(token)
-        { }
+        {
+        }
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 

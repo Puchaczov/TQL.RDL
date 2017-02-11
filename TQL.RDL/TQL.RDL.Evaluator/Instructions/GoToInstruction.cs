@@ -8,7 +8,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly int _newInstructionPtr;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="newInstructionPtr">Value that determine next instruction that will be performed.</param>
         public GoToInstruction(int newInstructionPtr)
@@ -17,7 +17,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Sets new instruction pointer value.
+        ///     Sets new instruction pointer value.
         /// </summary>
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)
@@ -26,9 +26,9 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Gets instruction short description
+        ///     Gets instruction short description
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"GOTO { _newInstructionPtr }";
+        public override string ToString() => $"GOTO {_newInstructionPtr}";
     }
 }

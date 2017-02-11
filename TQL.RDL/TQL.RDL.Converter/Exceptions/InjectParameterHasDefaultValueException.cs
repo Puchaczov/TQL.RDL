@@ -12,7 +12,8 @@ namespace TQL.RDL.Converter.Exceptions
         {
         }
 
-        public InjectParameterHasDefaultValueException(string message, Exception innerException) : base(message, innerException)
+        public InjectParameterHasDefaultValueException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using RDL.Parser.Helpers;
 using TQL.RDL.Evaluator.Attributes;
@@ -11,12 +10,12 @@ namespace TQL.RDL.Evaluator.Instructions
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public class CallExternal : IRdlInstruction
     {
+        private readonly int _callParamsCount;
         private readonly MethodInfo _info;
         private readonly object _obj;
-        private readonly int _callParamsCount;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="obj">object on that method will be executed</param>
         /// <param name="info">method to execute</param>
@@ -29,14 +28,14 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Performs call on object.
+        ///     Performs call on object.
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
         {
             var parameters = _info.GetParameters();
             var toInjectParams = parameters.GetParametersWithAttribute<InjectTypeAttribute>();
-            
+
             var args = new List<object>();
 
             foreach (var parameterInfo in toInjectParams)
@@ -79,19 +78,17 @@ namespace TQL.RDL.Evaluator.Instructions
                 throw new ArgumentException();
 
             for (var i = 0; i < countOfUnsetParameters; ++i)
-            {
                 args.Add(Type.Missing);
-            }
 
             var result = _info.Invoke(_obj, args.ToArray());
 
             switch (_info.ReturnType.GetUnderlyingNullable().Name)
             {
                 case nameof(DateTimeOffset):
-                    machine.Datetimes.Push((DateTimeOffset)result);
+                    machine.Datetimes.Push((DateTimeOffset) result);
                     break;
                 case nameof(String):
-                    machine.Strings.Push((string)result);
+                    machine.Strings.Push((string) result);
                     break;
                 case nameof(Boolean):
                 case nameof(Int16):
@@ -105,7 +102,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Gets instruction short description
+        ///     Gets instruction short description
         /// </summary>
         /// <returns>Stringified object.</returns>
         public override string ToString() => string.Format($"CALL {_info.Name}");

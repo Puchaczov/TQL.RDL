@@ -183,7 +183,8 @@ namespace TQL.RDL.Parser.Tests
             Assert.AreEqual(typeof(StopAtNode), node.Descendants[1].GetType());
 
             Assert.IsTrue(node.Descendants[1].Descendants[0].GetType() == typeof(DateTimeNode));
-            Assert.IsTrue((node.Descendants[1].Descendants[0] as DateTimeNode).DateTime == DateTimeOffset.Parse("2016.05.21"));
+            Assert.IsTrue((node.Descendants[1].Descendants[0] as DateTimeNode).DateTime ==
+                          DateTimeOffset.Parse("2016.05.21"));
         }
 
         [TestMethod]
@@ -274,7 +275,8 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsInstanceOfType(node.Descendants[1].Descendants[0].Descendants[2], typeof(RawFunctionNode));
         }
 
-        private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left, string right)
+        private void TestOperator_Simple<TOperatorNode, TLeftOperand, TRightOperand>(string op, string left,
+            string right)
         {
             var node = Parse(string.Format("repeat every seconds where {1} {0} {2}", op, left, right));
 
@@ -290,7 +292,8 @@ namespace TQL.RDL.Parser.Tests
         private static RootScriptNode Parse(string query)
         {
             var lexer = new LexerComplexTokensDecorator(query);
-            var parser = new RdlParser(lexer, TimeZoneInfo.Local.BaseUtcOffset, new string[1] {
+            var parser = new RdlParser(lexer, TimeZoneInfo.Local.BaseUtcOffset, new string[1]
+            {
                 "dd.M.yyyy"
             }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver(), new Dictionary<int, int>());
             return parser.ComposeRootComponents();

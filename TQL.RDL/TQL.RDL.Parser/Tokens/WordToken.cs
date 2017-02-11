@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public WordToken(string value, TextSpan span)
             : base(value, StatementType.Word, span)
-        { }
+        {
+        }
     }
 }

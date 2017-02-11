@@ -7,14 +7,14 @@ namespace RDL.Parser.Helpers
     public static class TypeHelper
     {
         /// <summary>
-        /// Gets the typename from type.
+        ///     Gets the typename from type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>Name of type.</returns>
         public static string GetTypeName(this Type type) => GetUnderlyingNullable(type).Name;
 
         /// <summary>
-        /// Gets internal type of Nullable<T> or type if not nullable.
+        ///     Gets internal type of Nullable<T> or type if not nullable.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The type.</returns>
@@ -28,23 +28,25 @@ namespace RDL.Parser.Helpers
         }
 
         /// <summary>
-        /// Gets the optional parameters count.
+        ///     Gets the optional parameters count.
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public static int CountOptionalParameters(this ParameterInfo[] parameters) => parameters.Count(f => f.IsOptional);
+        public static int CountOptionalParameters(this ParameterInfo[] parameters)
+            => parameters.Count(f => f.IsOptional);
 
         /// <summary>
-        /// Gets amount of parameters that are not marked by some attribute.
+        ///     Gets amount of parameters that are not marked by some attribute.
         /// </summary>
         /// <typeparam name="TType">The attribute type</typeparam>
         /// <param name="parameters">The Parameters</param>
         /// <returns>Count of parameters that aren't marked by attribute</returns>
-        public static int CountWithoutParametersAnnotatedBy<TType>(this ParameterInfo[] parameters) where TType : Attribute
+        public static int CountWithoutParametersAnnotatedBy<TType>(this ParameterInfo[] parameters)
+            where TType : Attribute
             => parameters.Count(f => f.GetCustomAttribute<TType>() == null);
 
         /// <summary>
-        /// Gets parameters that doesn't have annotation of type TType
+        ///     Gets parameters that doesn't have annotation of type TType
         /// </summary>
         /// <typeparam name="TType">The annotation</typeparam>
         /// <param name="parameters">Parameters to filter</param>
@@ -54,7 +56,7 @@ namespace RDL.Parser.Helpers
             => parameters.Where(f => f.GetCustomAttribute<TType>() == null).ToArray();
 
         /// <summary>
-        /// Gets the parameters that are annotated by some attribute
+        ///     Gets the parameters that are annotated by some attribute
         /// </summary>
         /// <typeparam name="TType">The type.</typeparam>
         /// <param name="parameters">Parameters that will be filtered.</param>

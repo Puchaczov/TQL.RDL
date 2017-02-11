@@ -7,7 +7,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class DiffDatetime : IRdlInstruction
     {
         /// <summary>
-        /// Determine if two datetime values stored on stack are the same
+        ///     Determine if two datetime values stored on stack are the same
         /// </summary>
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)

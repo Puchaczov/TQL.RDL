@@ -10,7 +10,7 @@ namespace RDL.Parser.Nodes
             Value = node;
         }
 
-        public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[] { Value };
+        public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[] {Value};
 
         public override TextSpan FullSpan => Value.FullSpan;
 
@@ -20,6 +20,8 @@ namespace RDL.Parser.Nodes
 
         public LeafNode Value { get; }
 
-        public override void Accept(INodeVisitor visitor) { }
+        public override void Accept(INodeVisitor visitor)
+        {
+        }
     }
 }

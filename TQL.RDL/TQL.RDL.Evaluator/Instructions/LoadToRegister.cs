@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly long _value;
 
         /// <summary>
-        /// Initialize instance.
+        ///     Initialize instance.
         /// </summary>
         /// <param name="reg">Register that will hold the value.</param>
         /// <param name="value"></param>
@@ -20,17 +20,17 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Assign value to one of registers.
+        ///     Assign value to one of registers.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
         {
-            machine.Registers[(short)_register] = _value;
+            machine.Registers[(short) _register] = _value;
             machine.InstructionPointer += 1;
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"LDReg {_register}, {_value}";

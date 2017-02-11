@@ -9,14 +9,6 @@ namespace TQL.RDL.Evaluator.Tests
     {
         private RdlMetadata manager;
 
-        private class TestMethodClass
-        {
-            public void MethodA() { }
-            public void MethodA(int param1) { }
-            public void MethodA(int param1, int param2) { }
-            public void MethodA(int param1, int param2, int param3, string param4 = null) { }
-        }
-
         [TestInitialize]
         public void Initialize()
         {
@@ -28,10 +20,12 @@ namespace TQL.RDL.Evaluator.Tests
         public void HasMethod_CheckMethodExists_ShouldPass()
         {
             Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[0]));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[1] { typeof(int) }));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[2] { typeof(int), typeof(int) }));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[4] { typeof(int), typeof(int), typeof(int), typeof(string) }));
-            Assert.IsFalse(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[4] { typeof(int), typeof(int), typeof(int), typeof(object) }));
+            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(int)}));
+            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[2] {typeof(int), typeof(int)}));
+            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA),
+                new Type[4] {typeof(int), typeof(int), typeof(int), typeof(string)}));
+            Assert.IsFalse(manager.HasMethod(nameof(TestMethodClass.MethodA),
+                new Type[4] {typeof(int), typeof(int), typeof(int), typeof(object)}));
         }
 
         [TestMethod]
@@ -46,6 +40,25 @@ namespace TQL.RDL.Evaluator.Tests
         public void GetMethod_MethodNotExist_ShouldThrow()
         {
             var method = manager.GetMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(object)});
+        }
+
+        private class TestMethodClass
+        {
+            public void MethodA()
+            {
+            }
+
+            public void MethodA(int param1)
+            {
+            }
+
+            public void MethodA(int param1, int param2)
+            {
+            }
+
+            public void MethodA(int param1, int param2, int param3, string param4 = null)
+            {
+            }
         }
     }
 }

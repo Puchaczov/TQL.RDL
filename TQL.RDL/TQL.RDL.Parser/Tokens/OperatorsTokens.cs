@@ -8,7 +8,8 @@ namespace RDL.Parser.Tokens
 
         public AndToken(TextSpan span)
             : base(TokenText, StatementType.And, span)
-        { }
+        {
+        }
     }
 
     public class OrToken : Token
@@ -17,7 +18,8 @@ namespace RDL.Parser.Tokens
 
         public OrToken(TextSpan span)
             : base(TokenText, StatementType.Or, span)
-        { }
+        {
+        }
     }
 
     public class WhereToken : Token
@@ -26,7 +28,8 @@ namespace RDL.Parser.Tokens
 
         public WhereToken(TextSpan span)
             : base(TokenText, StatementType.Where, span)
-        { }
+        {
+        }
     }
 
     public class InToken : Token
@@ -35,7 +38,8 @@ namespace RDL.Parser.Tokens
 
         public InToken(TextSpan span)
             : base(TokenText, StatementType.In, span)
-        { }
+        {
+        }
     }
 
     public class IsToken : Token
@@ -44,7 +48,8 @@ namespace RDL.Parser.Tokens
 
         public IsToken(TextSpan span)
             : base(TokenText, StatementType.Is, span)
-        { }
+        {
+        }
     }
 
     public class NotInToken : Token
@@ -53,7 +58,8 @@ namespace RDL.Parser.Tokens
 
         public NotInToken(TextSpan span)
             : base(TokenText, StatementType.NotIn, span)
-        { }
+        {
+        }
     }
 
     public class NotToken : Token
@@ -62,7 +68,8 @@ namespace RDL.Parser.Tokens
 
         public NotToken(TextSpan span)
             : base(TokenText, StatementType.Not, span)
-        { }
+        {
+        }
     }
 
     public class EveryToken : Token
@@ -71,7 +78,8 @@ namespace RDL.Parser.Tokens
 
         public EveryToken(TextSpan span)
             : base(TokenText, StatementType.Every, span)
-        { }
+        {
+        }
     }
 
     public class PlusToken : Token
@@ -80,7 +88,8 @@ namespace RDL.Parser.Tokens
 
         public PlusToken(TextSpan span)
             : base(TokenText, StatementType.Plus, span)
-        { }
+        {
+        }
     }
 
     public class ModuloToken : Token
@@ -89,7 +98,8 @@ namespace RDL.Parser.Tokens
 
         public ModuloToken(TextSpan span)
             : base(TokenText, StatementType.Mod, span)
-        { }
+        {
+        }
     }
 
     public class StarToken : Token
@@ -98,7 +108,8 @@ namespace RDL.Parser.Tokens
 
         public StarToken(TextSpan span)
             : base(TokenText, StatementType.Star, span)
-        { }
+        {
+        }
     }
 
     public class FSlashToken : Token
@@ -107,7 +118,8 @@ namespace RDL.Parser.Tokens
 
         public FSlashToken(TextSpan span)
             : base(TokenText, StatementType.FSlash, span)
-        { }
+        {
+        }
     }
 
     public class HyphenToken : Token
@@ -116,7 +128,8 @@ namespace RDL.Parser.Tokens
 
         public HyphenToken(TextSpan span)
             : base(TokenText, StatementType.Hyphen, span)
-        { }
+        {
+        }
     }
 
     public class GreaterToken : Token
@@ -125,7 +138,8 @@ namespace RDL.Parser.Tokens
 
         public GreaterToken(TextSpan span)
             : base(TokenText, StatementType.Greater, span)
-        { }
+        {
+        }
     }
 
     public class GreaterEqualToken : Token
@@ -134,7 +148,8 @@ namespace RDL.Parser.Tokens
 
         public GreaterEqualToken(TextSpan span)
             : base(TokenText, StatementType.GreaterEqual, span)
-        { }
+        {
+        }
     }
 
     public class LessToken : Token
@@ -143,7 +158,8 @@ namespace RDL.Parser.Tokens
 
         public LessToken(TextSpan span)
             : base(TokenText, StatementType.Less, span)
-        { }
+        {
+        }
     }
 
     public class LessEqualToken : Token
@@ -152,7 +168,8 @@ namespace RDL.Parser.Tokens
 
         public LessEqualToken(TextSpan span)
             : base(TokenText, StatementType.LessEqual, span)
-        { }
+        {
+        }
     }
 
     public class RepeatToken : Token
@@ -161,7 +178,8 @@ namespace RDL.Parser.Tokens
 
         public RepeatToken(TextSpan span)
             : base(TokenText, StatementType.Repeat, span)
-        { }
+        {
+        }
     }
 
     public class StartAtToken : Token
@@ -170,7 +188,8 @@ namespace RDL.Parser.Tokens
 
         public StartAtToken(TextSpan span)
             : base(TokenText, StatementType.StartAt, span)
-        { }
+        {
+        }
     }
 
     public class StopAtToken : Token
@@ -179,7 +198,8 @@ namespace RDL.Parser.Tokens
 
         public StopAtToken(TextSpan span)
             : base(TokenText, StatementType.StopAt, span)
-        { }
+        {
+        }
     }
 
     public class VarToken : Token
@@ -188,7 +208,8 @@ namespace RDL.Parser.Tokens
 
         public VarToken(string value, TextSpan span)
             : base(value, StatementType.Var, span)
-        { }
+        {
+        }
 
         public override string ToString() => string.Format("@{0}", Value);
     }
@@ -205,7 +226,8 @@ namespace RDL.Parser.Tokens
 
         public VarArgToken(string name)
             : base(name, StatementType.VarArg, new TextSpan(0, 0))
-        { }
+        {
+        }
 
         public int Arguments { get; }
     }
@@ -216,7 +238,8 @@ namespace RDL.Parser.Tokens
 
         public FunctionToken(string fname, TextSpan span)
             : base(fname, StatementType.Function, span)
-        { }
+        {
+        }
 
         public override string ToString() => Value;
     }
@@ -227,7 +250,8 @@ namespace RDL.Parser.Tokens
 
         public CaseToken(TextSpan span)
             : base(TokenText, StatementType.Case, span)
-        { }
+        {
+        }
     }
 
     public class WhenToken : Token
@@ -236,7 +260,8 @@ namespace RDL.Parser.Tokens
 
         public WhenToken(TextSpan span)
             : base(TokenText, StatementType.When, span)
-        { }
+        {
+        }
     }
 
     public class ThenToken : Token
@@ -245,7 +270,8 @@ namespace RDL.Parser.Tokens
 
         public ThenToken(TextSpan span)
             : base(TokenText, StatementType.Then, span)
-        { }
+        {
+        }
     }
 
     public class ElseToken : Token
@@ -254,7 +280,8 @@ namespace RDL.Parser.Tokens
 
         public ElseToken(TextSpan span)
             : base(TokenText, StatementType.Else, span)
-        { }
+        {
+        }
     }
 
     public class CaseEndToken : Token
@@ -263,14 +290,16 @@ namespace RDL.Parser.Tokens
 
         public CaseEndToken(TextSpan span)
             : base(TokenText, StatementType.CaseEnd, span)
-        { }
+        {
+        }
     }
 
     public class BetweenAndToken : Token
     {
         public BetweenAndToken(TextSpan span)
             : base(string.Empty, StatementType.BetweenAnd, span)
-        { }
+        {
+        }
     }
 
     public class BetweenToken : Token
@@ -279,6 +308,7 @@ namespace RDL.Parser.Tokens
 
         public BetweenToken(TextSpan span)
             : base(string.Empty, StatementType.Between, span)
-        { }
+        {
+        }
     }
 }

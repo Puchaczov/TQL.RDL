@@ -5,7 +5,7 @@ namespace TQL.RDL.Evaluator
 {
     public class MemoryVariables : Dictionary<string, object>
     {
-        public DateTimeOffset Current => (DateTimeOffset)base["current"];
+        public DateTimeOffset Current => (DateTimeOffset) base["current"];
         public int Second => Current.Second;
         public int Minute => Current.Minute;
         public int Hour => Current.Hour;

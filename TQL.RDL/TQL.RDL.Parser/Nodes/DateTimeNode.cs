@@ -10,7 +10,7 @@ namespace RDL.Parser.Nodes
         private readonly string[] _formats;
         private TimeSpan _zone;
 
-        public DateTimeNode(Token token, TimeSpan zone, string[] formats, CultureInfo ci) 
+        public DateTimeNode(Token token, TimeSpan zone, string[] formats, CultureInfo ci)
             : base(token)
         {
             _zone = zone;

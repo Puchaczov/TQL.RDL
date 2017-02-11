@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class ModuloNumericToNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Performs modulo operation on numeric values.
+        ///     Performs modulo operation on numeric values.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)
@@ -18,7 +18,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => "MOD";

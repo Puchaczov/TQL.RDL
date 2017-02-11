@@ -13,7 +13,7 @@ namespace RDL.Parser.Nodes
 
         public override bool IsLeaf => false;
 
-        public override RdlSyntaxNode[] Descendants => new[] { _node };
+        public override RdlSyntaxNode[] Descendants => new[] {_node};
 
         public virtual RdlSyntaxNode Descendant => Descendants[0];
 

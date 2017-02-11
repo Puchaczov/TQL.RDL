@@ -17,7 +17,8 @@ namespace RDL.Parser.Nodes
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
-        public override TextSpan FullSpan => new TextSpan(_repeatEvery.Span.Start, _timeToken.Span.End - _repeatEvery.Span.Start);
+        public override TextSpan FullSpan
+            => new TextSpan(_repeatEvery.Span.Start, _timeToken.Span.End - _repeatEvery.Span.Start);
 
         public override bool IsLeaf => true;
 
@@ -27,7 +28,7 @@ namespace RDL.Parser.Nodes
         {
             get
             {
-                switch(Token.Value)
+                switch (Token.Value)
                 {
                     case "seconds":
                         return PartOfDate.Seconds;

@@ -8,7 +8,7 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         private static readonly Dictionary<SemanticErrorKind, Codes> Codes;
 
         /// <summary>
-        /// Initialize static fields.
+        ///     Initialize static fields.
         /// </summary>
         static SemanticError()
         {
@@ -16,19 +16,19 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         }
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="span">Text position where such error occur.</param>
         /// <param name="message">Message that identify that error.</param>
         /// <param name="kind">Kind of error</param>
         public SemanticError(TextSpan span, string message, SemanticErrorKind kind)
-            : base(new[] { span }, message)
+            : base(new[] {span}, message)
         {
             Kind = kind;
         }
 
         /// <summary>
-        /// Initialize object
+        ///     Initialize object
         /// </summary>
         /// <param name="spans">Positions where such error occur.</param>
         /// <param name="message">Message that identify that error.</param>
@@ -40,22 +40,22 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         }
 
         /// <summary>
-        /// Level of significance (Error)
+        ///     Level of significance (Error)
         /// </summary>
         public override MessageLevel Level => MessageLevel.Error;
 
         /// <summary>
-        /// Kind of information
+        ///     Kind of information
         /// </summary>
         private SemanticErrorKind Kind { get; }
 
         /// <summary>
-        /// Information level
+        ///     Information level
         /// </summary>
         public override Codes Code => Codes[Kind];
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"{Kind}/{Message}";

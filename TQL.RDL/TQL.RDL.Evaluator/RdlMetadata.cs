@@ -11,24 +11,24 @@ namespace TQL.RDL.Evaluator
 {
     public class RdlMetadata
     {
-        private readonly Dictionary<string, List<MethodInfo>> _methods;
-
         private static readonly Dictionary<Type, Type[]> TypeCompatibilityTable;
+        private readonly Dictionary<string, List<MethodInfo>> _methods;
 
         static RdlMetadata()
         {
             TypeCompatibilityTable = new Dictionary<Type, Type[]>
             {
-                {typeof(Boolean), new Type[] {typeof(Boolean)}},
-                {typeof(Int16), new Type[] {typeof(Int16), typeof(Boolean)}},
-                {typeof(Int32), new Type[] {typeof(Int32), typeof(Int16), typeof(Boolean)}},
-                {typeof(Int64), new Type[] { typeof(Int64), typeof(Int32), typeof(Int16), typeof(Boolean)}},
-                {typeof(DateTimeOffset), new Type[] {typeof(DateTimeOffset)} },
-                {typeof(String), new Type[] {typeof(String) } }
+                {typeof(bool), new[] {typeof(bool)}},
+                {typeof(short), new[] {typeof(short), typeof(bool)}},
+                {typeof(int), new[] {typeof(int), typeof(short), typeof(bool)}},
+                {typeof(long), new[] {typeof(long), typeof(int), typeof(short), typeof(bool)}},
+                {typeof(DateTimeOffset), new[] {typeof(DateTimeOffset)}},
+                {typeof(string), new[] {typeof(string)}}
             };
         }
+
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         public RdlMetadata()
         {
@@ -36,7 +36,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Gets retrun type of function.
+        ///     Gets retrun type of function.
         /// </summary>
         /// <param name="function">Function name</param>
         /// <param name="args">Function args</param>
@@ -48,7 +48,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Gets method that fits name and types of arguments passed.
+        ///     Gets method that fits name and types of arguments passed.
         /// </summary>
         /// <param name="name">Function name</param>
         /// <param name="methodArgs">Types of method arguments</param>
@@ -56,7 +56,7 @@ namespace TQL.RDL.Evaluator
         public MethodInfo GetMethod(string name, Type[] methodArgs)
         {
             var index = -1;
-            if(!TryGetAnnotatedMethod(name, methodArgs, out index))
+            if (!TryGetAnnotatedMethod(name, methodArgs, out index))
                 throw new MethodNotFoundedException();
 
             return _methods[name][index];
@@ -76,7 +76,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Determine if manager registered function with passed names and types of arguments.
+        ///     Determine if manager registered function with passed names and types of arguments.
         /// </summary>
         /// <param name="name">Function name</param>
         /// <param name="methodArgs">Types of method arguments</param>
@@ -88,7 +88,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Tries match function as if it weren't annotated. Assume that method specified parameters explicitly.
+        ///     Tries match function as if it weren't annotated. Assume that method specified parameters explicitly.
         /// </summary>
         /// <param name="name">Function name</param>
         /// <param name="methodArgs">Types of method arguments</param>
@@ -109,21 +109,21 @@ namespace TQL.RDL.Evaluator
                 var method = methods[i];
                 var parameters = method.GetParameters();
 
-                if(parameters.Length != methodArgs.Length)
+                if (parameters.Length != methodArgs.Length)
                     continue;
 
                 var hasMatchedArgTypes = true;
 
-                for (int j = 0; j < parameters.Length; ++j)
+                for (var j = 0; j < parameters.Length; ++j)
                 {
-                    if(parameters[j].ParameterType.GetUnderlyingNullable() == methodArgs[j])
+                    if (parameters[j].ParameterType.GetUnderlyingNullable() == methodArgs[j])
                         continue;
 
                     hasMatchedArgTypes = false;
                     break;
                 }
 
-                if(!hasMatchedArgTypes)
+                if (!hasMatchedArgTypes)
                     continue;
 
                 index = i;
@@ -135,7 +135,7 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Determine if there are registered functions with specific names and types of arguments.
+        ///     Determine if there are registered functions with specific names and types of arguments.
         /// </summary>
         /// <param name="name">Function name</param>
         /// <param name="methodArgs">Types of method arguments</param>
@@ -161,8 +161,9 @@ namespace TQL.RDL.Evaluator
                 var parametersToInject = allParameters - notAnnotatedParametersCount;
 
                 //Wrong amount of argument's. That's not our function.
-                if (HasMoreArgumentsThanMethodDefinitionContains(methodArgs, notAnnotatedParametersCount) || 
-                    !CanUseSomeArgumentsAsDefaultParameters(methodArgs, notAnnotatedParametersCount, optionalParametersCount))
+                if (HasMoreArgumentsThanMethodDefinitionContains(methodArgs, notAnnotatedParametersCount) ||
+                    !CanUseSomeArgumentsAsDefaultParameters(methodArgs, notAnnotatedParametersCount,
+                        optionalParametersCount))
                     continue;
 
                 var parametersToSkip = parametersToInject;
@@ -174,10 +175,10 @@ namespace TQL.RDL.Evaluator
                     //So it is possible to call function with such value. 
                     //That's why GetUnderlyingNullable exists here.
                     if (IsTypePossibleToConvert(
-                        parameters[f + parametersToSkip].ParameterType.GetUnderlyingNullable(), 
+                        parameters[f + parametersToSkip].ParameterType.GetUnderlyingNullable(),
                         methodArgs[f].GetUnderlyingNullable()))
                         continue;
-                    
+
                     hasMatchedArgTypes = false;
                     break;
                 }
@@ -194,34 +195,36 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Determine if there is more or equal values to pass to function that required parameters 
-        /// and less or equal parameters than function definition has.
+        ///     Determine if there is more or equal values to pass to function that required parameters
+        ///     and less or equal parameters than function definition has.
         /// </summary>
         /// <param name="methodArgs">Passed arguments to function.</param>
         /// <param name="parametersCount">All parameters count.</param>
         /// <param name="optionalParametersCount">Optional parameters count.</param>
         /// <returns></returns>
-        private static bool CanUseSomeArgumentsAsDefaultParameters(IReadOnlyCollection<Type> methodArgs, int parametersCount, int optionalParametersCount)
+        private static bool CanUseSomeArgumentsAsDefaultParameters(IReadOnlyCollection<Type> methodArgs,
+            int parametersCount, int optionalParametersCount)
         {
-            return ((methodArgs.Count >= (parametersCount - optionalParametersCount)) && methodArgs.Count <= parametersCount);
+            return methodArgs.Count >= parametersCount - optionalParametersCount && methodArgs.Count <= parametersCount;
         }
 
         /// <summary>
-        /// Determine if passed arguments amount is greater than function can contain.
+        ///     Determine if passed arguments amount is greater than function can contain.
         /// </summary>
         /// <param name="methodArgs">Passed arguments.</param>
         /// <param name="parametersCount">Parameters amount.</param>
         /// <returns></returns>
-        private static bool HasMoreArgumentsThanMethodDefinitionContains(IReadOnlyList<Type> methodArgs, int parametersCount) => methodArgs.Count > parametersCount;
+        private static bool HasMoreArgumentsThanMethodDefinitionContains(IReadOnlyList<Type> methodArgs,
+            int parametersCount) => methodArgs.Count > parametersCount;
 
         /// <summary>
-        /// Register new method.
+        ///     Register new method.
         /// </summary>
         /// <param name="methodInfo">Method to register.</param>
         public void RegisterMethod(MethodInfo methodInfo) => RegisterMethod(methodInfo.Name, methodInfo);
 
         /// <summary>
-        /// Register new method.
+        ///     Register new method.
         /// </summary>
         /// <param name="name">Name of method.</param>
         /// <param name="methodInfo">Method to register.</param>
@@ -230,11 +233,11 @@ namespace TQL.RDL.Evaluator
             if (_methods.ContainsKey(name))
                 _methods[name].Add(methodInfo);
             else
-                _methods.Add(name, new List<MethodInfo> { methodInfo });
+                _methods.Add(name, new List<MethodInfo> {methodInfo});
         }
 
         /// <summary>
-        /// Register methods of some name of some type
+        ///     Register methods of some name of some type
         /// </summary>
         /// <typeparam name="TType">Type where methods will be searched.</typeparam>
         /// <param name="methodName">Name of method to register.</param>
@@ -249,35 +252,31 @@ namespace TQL.RDL.Evaluator
         }
 
         /// <summary>
-        /// Gets declaration list of registered methods identified by it's name.
+        ///     Gets declaration list of registered methods identified by it's name.
         /// </summary>
         /// <param name="methodName">The method name.</param>
         /// <returns>Array of method declarations.</returns>
         public MethodDeclaration[] GetListOfUsedMethods(string methodName)
         {
             if (_methods.ContainsKey(methodName))
-            {
                 return _methods[methodName].Select(f => new MethodDeclaration(f)).ToArray();
-            }
             throw new MethodNotFoundedException();
         }
 
         /// <summary>
-        /// Gets declaration list of all registered methods.
+        ///     Gets declaration list of all registered methods.
         /// </summary>
         /// <returns>Array of method declarations.</returns>
         public MethodDeclaration[] GetListOfUsedMethods()
         {
-            List<MethodDeclaration> methods = new List<MethodDeclaration>();
+            var methods = new List<MethodDeclaration>();
             foreach (var m in _methods)
-            {
                 methods.AddRange(GetListOfUsedMethods(m.Key));
-            }
             return methods.ToArray();
         }
 
         /// <summary>
-        /// Determine if type can be safely converted to another type.
+        ///     Determine if type can be safely converted to another type.
         /// </summary>
         /// <param name="to">To what type will be converted.</param>
         /// <param name="from">From what type will be converted.</param>
@@ -285,9 +284,7 @@ namespace TQL.RDL.Evaluator
         public static bool IsTypePossibleToConvert(Type to, Type from)
         {
             if (TypeCompatibilityTable.ContainsKey(to))
-            {
                 return TypeCompatibilityTable[to].Any(f => f == from);
-            }
             return false;
         }
     }

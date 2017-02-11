@@ -24,7 +24,8 @@ namespace RDL.Parser.Nodes
             {
                 if (Args.Descendants.Length == 0)
                     return new TextSpan(_functionName.Span.Start, _functionName.Span.Length);
-                return new TextSpan(_functionName.Span.Start, Args.Descendants[Args.Descendants.Length - 1].FullSpan.End - _functionName.Span.Start);
+                return new TextSpan(_functionName.Span.Start,
+                    Args.Descendants[Args.Descendants.Length - 1].FullSpan.End - _functionName.Span.Start);
             }
         }
 
@@ -40,6 +41,7 @@ namespace RDL.Parser.Nodes
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => _functionName.ToString() + '(' + string.Join<RdlSyntaxNode>(",", Args.Descendants) + ')';
+        public override string ToString()
+            => _functionName.ToString() + '(' + string.Join<RdlSyntaxNode>(",", Args.Descendants) + ')';
     }
 }

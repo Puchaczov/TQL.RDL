@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class GreaterNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion betwen two numeric values in stack and determine if it's greater 
+        ///     Performs comparsion betwen two numeric values in stack and determine if it's greater
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

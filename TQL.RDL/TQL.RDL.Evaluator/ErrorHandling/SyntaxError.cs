@@ -6,9 +6,9 @@ namespace TQL.RDL.Evaluator.ErrorHandling
     public class SyntaxError : VisitationMessage
     {
         private static readonly Dictionary<SyntaxErrorKind, Codes> Codes;
-        
+
         /// <summary>
-        /// Initialize static fields.
+        ///     Initialize static fields.
         /// </summary>
         static SyntaxError()
         {
@@ -22,7 +22,7 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         }
 
         /// <summary>
-        /// Initialize object
+        ///     Initialize object
         /// </summary>
         /// <param name="spans">Positions where such error occur.</param>
         /// <param name="message">Message that identify that error.</param>
@@ -34,32 +34,33 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         }
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="span">Text position where such error occur.</param>
         /// <param name="message">Message that identify that error.</param>
         /// <param name="kind">Kind of error</param>
         public SyntaxError(TextSpan span, string message, SyntaxErrorKind kind)
-            : this(new[] { span }, message, kind)
-        { }
+            : this(new[] {span}, message, kind)
+        {
+        }
 
         /// <summary>
-        /// Significance level of message.
+        ///     Significance level of message.
         /// </summary>
         public override MessageLevel Level => MessageLevel.Error;
 
         /// <summary>
-        /// Kind of message.
+        ///     Kind of message.
         /// </summary>
         public SyntaxErrorKind Kind { get; }
 
         /// <summary>
-        /// Code of message.
+        ///     Code of message.
         /// </summary>
         public override Codes Code => Codes[Kind];
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"{Kind}/{Message}";

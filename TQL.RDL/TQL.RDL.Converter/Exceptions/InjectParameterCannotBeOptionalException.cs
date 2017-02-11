@@ -12,7 +12,8 @@ namespace TQL.RDL.Converter.Exceptions
         {
         }
 
-        public InjectParameterCannotBeOptionalException(string message, Exception innerException) : base(message, innerException)
+        public InjectParameterCannotBeOptionalException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }

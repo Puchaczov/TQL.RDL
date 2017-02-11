@@ -7,7 +7,7 @@ namespace TQL.RDL.Evaluator.Enumerators
     public abstract class EnumeratorBase<TStoreType> : IEnumerator<RdlSyntaxNode> where TStoreType : new()
     {
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="root">Root node where enumeration will start from.</param>
         public EnumeratorBase(RdlSyntaxNode root)
@@ -16,28 +16,28 @@ namespace TQL.RDL.Evaluator.Enumerators
         }
 
         /// <summary>
-        /// Get element that is enumerated.
+        ///     Get element that is enumerated.
         /// </summary>
         public RdlSyntaxNode Current { get; protected set; }
 
         /// <summary>
-        /// Get element that is enumereted.
+        ///     Get element that is enumereted.
         /// </summary>
         object IEnumerator.Current => Current;
 
         /// <summary>
-        /// Dispose element
+        ///     Dispose element
         /// </summary>
         public abstract void Dispose();
 
         /// <summary>
-        /// Causes enumerator to move to next element.
+        ///     Causes enumerator to move to next element.
         /// </summary>
         /// <returns>Move to the next element passed.</returns>
         public abstract bool MoveNext();
 
         /// <summary>
-        /// Reset enumerator to start from root element.
+        ///     Reset enumerator to start from root element.
         /// </summary>
         public abstract void Reset();
 

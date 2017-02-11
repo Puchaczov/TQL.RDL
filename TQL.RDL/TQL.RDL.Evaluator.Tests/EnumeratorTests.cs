@@ -13,20 +13,27 @@ namespace TQL.RDL.Evaluator.Tests
         public void Enumerator_EnumerateKeywords_ShouldPass()
         {
             //"case when 1 then 2 when 3 then 4 else 0"
-            var rootComponent = new RootScriptNode(new RdlSyntaxNode[] {
+            var rootComponent = new RootScriptNode(new RdlSyntaxNode[]
+            {
                 new CaseNode(
                     new Token("case", StatementType.Case, new TextSpan(0, 0)),
-                    new[] {
+                    new[]
+                    {
                         new WhenThenNode(
-                            new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))),
-                            new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("2", StatementType.Numeric, new TextSpan())))
+                            new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()),
+                                new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))),
+                            new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()),
+                                new NumericNode(new Token("2", StatementType.Numeric, new TextSpan())))
                         ),
                         new WhenThenNode(
-                            new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("3", StatementType.Numeric, new TextSpan()))),
-                            new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()), new NumericNode(new Token("4", StatementType.Numeric, new TextSpan())))
+                            new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()),
+                                new NumericNode(new Token("3", StatementType.Numeric, new TextSpan()))),
+                            new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()),
+                                new NumericNode(new Token("4", StatementType.Numeric, new TextSpan())))
                         )
-                    }, 
-                    new ElseNode(new Token("else", StatementType.Else, new TextSpan()), new NumericNode(new Token("0", StatementType.Numeric, new TextSpan()))))
+                    },
+                    new ElseNode(new Token("else", StatementType.Else, new TextSpan()),
+                        new NumericNode(new Token("0", StatementType.Numeric, new TextSpan()))))
             });
 
             var enumerator = new KeywordEnumerator(rootComponent);
@@ -67,7 +74,8 @@ namespace TQL.RDL.Evaluator.Tests
         {
             //"7 * ( 8 + 1 ) - 4"
             var rootComponent = new RootScriptNode(
-                new RdlSyntaxNode[] {
+                new RdlSyntaxNode[]
+                {
                     new HyphenNode(
                         new StarNode(
                             new NumericNode(

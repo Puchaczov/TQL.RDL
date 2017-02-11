@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public EqualityToken(TextSpan span)
             : base(TokenText, StatementType.Equality, span)
-        { }
+        {
+        }
     }
 }

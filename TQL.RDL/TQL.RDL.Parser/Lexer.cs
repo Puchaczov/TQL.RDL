@@ -7,9 +7,10 @@ namespace RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {
-        public Lexer(string input) : 
+        public Lexer(string input) :
             base(input, new NoneToken(), DefinitionSets.General)
-        { }
+        {
+        }
 
         public string Query => input;
 
@@ -25,7 +26,7 @@ namespace RDL.Parser
             var tokenText = match.Value;
             var token = GetTokenCandidate(tokenText, matchedDefinition);
 
-            switch(token)
+            switch (token)
             {
                 case StatementType.And:
                     return new AndToken(new TextSpan(Position, tokenText.Length));
@@ -98,7 +99,7 @@ namespace RDL.Parser
                 case StatementType.WhiteSpace:
                     return new WhiteSpaceToken(new TextSpan(Position, tokenText.Length));
             }
-            
+
             if (matchedDefinition.Regex.ToString() == TokenRegexDefinition.KWordBracketed)
                 return new WordToken(match.Groups[1].Value, new TextSpan(Position + 1, match.Groups[1].Value.Length));
             return new WordToken(tokenText, new TextSpan(Position, tokenText.Length));
@@ -176,20 +177,14 @@ namespace RDL.Parser
 
             if (string.IsNullOrWhiteSpace(tokenText))
                 return StatementType.WhiteSpace;
-            
+
             if (matchedDefinition.Regex.ToString() == TokenRegexDefinition.Function)
-            {
                 return StatementType.Function;
-            }
             var number = 0;
             if (int.TryParse(tokenText, out number) && !tokenText.Contains(" "))
-            {
                 return StatementType.Numeric;
-            }
-            if(matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
-            {
+            if (matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
                 return StatementType.Var;
-            }
 
             return StatementType.Word;
         }
@@ -240,7 +235,8 @@ namespace RDL.Parser
 
         private static class DefinitionSets
         {
-            public static TokenDefinition[] General => new[] {
+            public static TokenDefinition[] General => new[]
+            {
                 new TokenDefinition(TokenRegexDefinition.KAnd),
                 new TokenDefinition(TokenRegexDefinition.KCase),
                 new TokenDefinition(TokenRegexDefinition.KWhen),
@@ -276,7 +272,7 @@ namespace RDL.Parser
                 new TokenDefinition(TokenRegexDefinition.KWhere),
                 new TokenDefinition(TokenRegexDefinition.KWhiteSpace),
                 new TokenDefinition(TokenRegexDefinition.KVar),
-                new TokenDefinition(TokenRegexDefinition.Function), 
+                new TokenDefinition(TokenRegexDefinition.Function),
                 new TokenDefinition(TokenRegexDefinition.KWordBracketed, RegexOptions.ECMAScript),
                 new TokenDefinition(TokenRegexDefinition.KWord, RegexOptions.Singleline)
             };

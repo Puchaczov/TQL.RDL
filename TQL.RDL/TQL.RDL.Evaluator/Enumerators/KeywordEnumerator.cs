@@ -6,34 +6,34 @@ namespace TQL.RDL.Evaluator.Enumerators
     public class KeywordEnumerator : EnumeratorBase<Stack<VisitationState>>, IEnumerator<RdlSyntaxNode>
     {
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="root">Root element where enumeration will start from.</param>
-        public KeywordEnumerator(RdlSyntaxNode root) 
+        public KeywordEnumerator(RdlSyntaxNode root)
             : base(root)
         {
             Stack.Push(new VisitationState(root));
         }
 
         /// <summary>
-        /// Dispose enumerator.
+        ///     Dispose enumerator.
         /// </summary>
-        public override void Dispose() { }
+        public override void Dispose()
+        {
+        }
 
         /// <summary>
-        /// Causes enumerator to move to next element.
+        ///     Causes enumerator to move to next element.
         /// </summary>
         /// <returns>Move to the next element passed.</returns>
         public override bool MoveNext()
         {
-            while(Stack.Count > 0)
+            while (Stack.Count > 0)
             {
                 var node = Stack.Pop();
 
-                for(var i = node.Node.Descendants.Length - 1; i >= 0; --i)
-                {
+                for (var i = node.Node.Descendants.Length - 1; i >= 0; --i)
                     Stack.Push(new VisitationState(node.Node.Descendants[i]));
-                }
 
                 Current = node.Node;
                 return true;
@@ -42,7 +42,7 @@ namespace TQL.RDL.Evaluator.Enumerators
         }
 
         /// <summary>
-        /// Reset enumerator to start from root element.
+        ///     Reset enumerator to start from root element.
         /// </summary>
         public override void Reset()
         {

@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public EndOfFileToken(TextSpan span)
             : base(string.Empty, StatementType.EndOfFile, span)
-        { }
+        {
+        }
     }
 }

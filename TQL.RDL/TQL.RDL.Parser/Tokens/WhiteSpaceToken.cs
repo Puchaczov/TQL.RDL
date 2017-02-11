@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public WhiteSpaceToken(TextSpan span)
             : base(TokenText, StatementType.WhiteSpace, span)
-        { }
+        {
+        }
     }
 }

@@ -10,22 +10,22 @@ namespace RDL.Parser.Nodes
     public abstract class RdlSyntaxNode : SyntaxNodeBase<INodeVisitor, StatementType>
     {
         /// <summary>
-        /// Get child items of node.
+        ///     Get child items of node.
         /// </summary>
         public abstract RdlSyntaxNode[] Descendants { get; }
 
         /// <summary>
-        /// Token assigned to node.
+        ///     Token assigned to node.
         /// </summary>
         public abstract Token Token { get; }
 
         /// <summary>
-        /// Get return type associated to expression
+        ///     Get return type associated to expression
         /// </summary>
         public abstract Type ReturnType { get; }
 
         /// <summary>
-        /// Return flattened representation of node including it's Descendants.
+        ///     Return flattened representation of node including it's Descendants.
         /// </summary>
         /// <returns></returns>
         public override string ToString()

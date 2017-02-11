@@ -7,7 +7,7 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         private readonly Exception _exc;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="exc">Catched exception.</param>
         public FatalVisitError(Exception exc)
@@ -17,19 +17,19 @@ namespace TQL.RDL.Evaluator.ErrorHandling
         }
 
         /// <summary>
-        /// Group information identifier (FatalError)
+        ///     Group information identifier (FatalError)
         /// </summary>
         public override Codes Code => Codes.C01;
 
         /// <summary>
-        /// Message level of information (Error)
+        ///     Message level of information (Error)
         /// </summary>
         public override MessageLevel Level => MessageLevel.Error;
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"{ Code }/{Level}/{Message}";
+        public override string ToString() => $"{Code}/{Level}/{Message}";
     }
 }

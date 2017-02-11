@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly DateTimeOffset _value;
 
         /// <summary>
-        /// Initialize instance.
+        ///     Initialize instance.
         /// </summary>
         /// <param name="value">Value to be pushed on stack.</param>
         public PushDateTimeInstruction(DateTimeOffset value)
@@ -18,7 +18,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Push passed value onto the stack.
+        ///     Push passed value onto the stack.
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
@@ -28,7 +28,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Stringify object.
+        ///     Stringify object.
         /// </summary>
         /// <returns>string representation of object.</returns>
         public override string ToString() => $"PUSH {_value}";

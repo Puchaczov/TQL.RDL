@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public DiffToken(TextSpan span)
             : base(TokenText, StatementType.Diff, span)
-        { }
+        {
+        }
     }
 }

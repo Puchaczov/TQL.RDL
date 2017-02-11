@@ -15,22 +15,15 @@ namespace RDL.Parser
     public class RdlParser : ParserBase<Token, StatementType>
     {
         private readonly CultureInfo _ci;
-        private readonly string[] _formats;
-        private readonly TimeSpan _zone;
         private readonly LexerComplexTokensDecorator _cLexer;
+        private readonly string[] _formats;
         private readonly IMethodDeclarationResolver _resolver;
-        private readonly IDictionary<int, int> _functionCallOccurence;
-
-        private enum Precendence : Int16
-        {
-            Level1,
-            Level2,
-            Level3
-        }
+        private readonly TimeSpan _zone;
 
         private Token _current;
 
-        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci, IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
+        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci,
+            IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
         {
             _cLexer = lexer;
 
@@ -38,12 +31,12 @@ namespace RDL.Parser
             _formats = formats;
             _ci = ci;
             _resolver = resolver;
-            _functionCallOccurence = functionCallOccurence;
+            FunctionCallOccurence = functionCallOccurence;
 
-            _functionCallOccurence.Clear();
+            FunctionCallOccurence.Clear();
         }
 
-        public IDictionary<int, int> FunctionCallOccurence => _functionCallOccurence;
+        public IDictionary<int, int> FunctionCallOccurence { get; }
 
         private Token Current => _cLexer.CurrentToken();
 
@@ -62,10 +55,8 @@ namespace RDL.Parser
             Consume(StatementType.None);
             for (; Current.TokenType != StatementType.EndOfFile; ++i)
             {
-                while(Current.TokenType == StatementType.WhiteSpace)
-                {
+                while (Current.TokenType == StatementType.WhiteSpace)
                     Consume(StatementType.WhiteSpace);
-                }
                 rootComponents.Add(ComposeSegmentComponents());
             }
             return new RootScriptNode(rootComponents.ToArray());
@@ -73,7 +64,7 @@ namespace RDL.Parser
 
         private RdlSyntaxNode ComposeSegmentComponents()
         {
-            switch(Current.TokenType)
+            switch (Current.TokenType)
             {
                 case StatementType.Repeat:
                     Consume(StatementType.Repeat);
@@ -97,7 +88,7 @@ namespace RDL.Parser
             var startAtToken = Last;
             var token = Current;
             Consume(Current.TokenType);
-            switch(token.TokenType)
+            switch (token.TokenType)
             {
                 case StatementType.Var:
                     return new StartAtNode(startAtToken, new VarNode(token as VarToken));
@@ -124,9 +115,8 @@ namespace RDL.Parser
 
         private RdlSyntaxNode ComposeWhere()
         {
-            RdlSyntaxNode node = ComposeEqualityOperators();
+            var node = ComposeEqualityOperators();
             while (IsQueryOperator(Current))
-            {
                 switch (Current.TokenType)
                 {
                     case StatementType.And:
@@ -140,22 +130,20 @@ namespace RDL.Parser
                     default:
                         throw new NotSupportedException();
                 }
-            }
             return node;
         }
 
         private RdlSyntaxNode ComposeEqualityOperators()
         {
-            RdlSyntaxNode node = ComposeArithmeticOperators(Precendence.Level1);
+            var node = ComposeArithmeticOperators(Precendence.Level1);
             while (IsEqualityOperator(Current))
-            {
                 switch (Current.TokenType)
                 {
                     case StatementType.GreaterEqual:
                         Consume(StatementType.GreaterEqual);
                         node = new GreaterEqualNode(node, ComposeEqualityOperators());
                         break;
-                        case StatementType.Greater:
+                    case StatementType.Greater:
                         Consume(StatementType.Greater);
                         node = new GreaterNode(node, ComposeEqualityOperators());
                         break;
@@ -176,7 +164,9 @@ namespace RDL.Parser
                         node = new DiffNode(node, ComposeEqualityOperators());
                         break;
                     case StatementType.Between:
-                        node = new BetweenNode(ConsumeAndGetToken(), node, ComposeAndSkip(f => f.ComposeArithmeticOperators(Precendence.Level1), StatementType.And), ComposeArithmeticOperators(Precendence.Level1));
+                        node = new BetweenNode(ConsumeAndGetToken(), node,
+                            ComposeAndSkip(f => f.ComposeArithmeticOperators(Precendence.Level1), StatementType.And),
+                            ComposeArithmeticOperators(Precendence.Level1));
                         break;
                     case StatementType.Not:
                         Consume(StatementType.Not);
@@ -185,7 +175,6 @@ namespace RDL.Parser
                     default:
                         throw new NotSupportedException();
                 }
-            }
 
             return node;
         }
@@ -199,7 +188,6 @@ namespace RDL.Parser
                 {
                     node = ComposeArithmeticOperators(Precendence.Level2);
                     while (IsArithmeticOperator(Current, Precendence.Level1))
-                    {
                         switch (Current.TokenType)
                         {
                             case StatementType.Star:
@@ -223,14 +211,12 @@ namespace RDL.Parser
                                 node = new NotInNode(node, ComposeArgs());
                                 break;
                         }
-                    }
                     break;
                 }
                 case Precendence.Level2:
                 {
                     node = ComposeArithmeticOperators(Precendence.Level3);
                     while (IsArithmeticOperator(Current, Precendence.Level2))
-                    {
                         switch (Current.TokenType)
                         {
                             case StatementType.Plus:
@@ -242,7 +228,6 @@ namespace RDL.Parser
                                 node = new HyphenNode(node, ComposeBaseTypes());
                                 break;
                         }
-                    }
                     break;
                 }
                 case Precendence.Level3:
@@ -252,7 +237,8 @@ namespace RDL.Parser
             return node;
         }
 
-        private TNode SkipComposeSkip<TNode>(StatementType pStatenent, Func<RdlParser, TNode> parserAction, StatementType aStatement)
+        private TNode SkipComposeSkip<TNode>(StatementType pStatenent, Func<RdlParser, TNode> parserAction,
+            StatementType aStatement)
         {
             Consume(pStatenent);
             return ComposeAndSkip(parserAction, aStatement);
@@ -282,11 +268,12 @@ namespace RDL.Parser
                 case StatementType.Var:
                     return new VarNode(ConsumeAndGetToken(StatementType.Var) as VarToken);
                 case StatementType.Case:
-                    return new CaseNode(ConsumeAndGetToken(), ComposeWhenThenNodes(), ComposeAndSkip(f => ComposeElseNode(), StatementType.CaseEnd));
+                    return new CaseNode(ConsumeAndGetToken(), ComposeWhenThenNodes(),
+                        ComposeAndSkip(f => ComposeElseNode(), StatementType.CaseEnd));
                 case StatementType.Function:
                     var func = Current as FunctionToken;
 
-                    if(func == null)
+                    if (func == null)
                         throw new ArgumentNullException();
 
                     Consume(StatementType.Function);
@@ -300,28 +287,28 @@ namespace RDL.Parser
                         var function = new RawFunctionNode(func, args, registeredMethod.ReturnType);
                         var hashCodedFunction = function.Stringify().GetHashCode();
 
-                        if (!_functionCallOccurence.ContainsKey(hashCodedFunction))
-                            _functionCallOccurence.Add(hashCodedFunction, 1);
+                        if (!FunctionCallOccurence.ContainsKey(hashCodedFunction))
+                            FunctionCallOccurence.Add(hashCodedFunction, 1);
                         else
-                            _functionCallOccurence[hashCodedFunction] += 1;
+                            FunctionCallOccurence[hashCodedFunction] += 1;
 
                         return function;
                     }
                     throw new MethodNotFoundedException();
                 case StatementType.LeftParenthesis:
-                    return SkipComposeSkip(StatementType.LeftParenthesis, f => f.ComposeWhere(), StatementType.RightParenthesis);
+                    return SkipComposeSkip(StatementType.LeftParenthesis, f => f.ComposeWhere(),
+                        StatementType.RightParenthesis);
             }
             throw new NotSupportedException();
         }
 
         private ArgListNode ComposeArgs()
         {
-            List<RdlSyntaxNode> args = new List<RdlSyntaxNode>();
+            var args = new List<RdlSyntaxNode>();
 
             Consume(StatementType.LeftParenthesis);
 
             if (Current.TokenType != StatementType.RightParenthesis)
-            {
                 do
                 {
                     if (Current.TokenType == StatementType.Comma)
@@ -329,7 +316,6 @@ namespace RDL.Parser
 
                     args.Add(ComposeWhere());
                 } while (Current.TokenType == StatementType.Comma);
-            }
 
             Consume(StatementType.RightParenthesis);
 
@@ -338,11 +324,11 @@ namespace RDL.Parser
 
         private WhenThenNode[] ComposeWhenThenNodes()
         {
-            List<WhenThenNode> nodes = new List<WhenThenNode>();
+            var nodes = new List<WhenThenNode>();
 
             while (!IsElseNode(Current))
             {
-                WhenNode when = null; 
+                WhenNode when = null;
                 ThenNode then = null;
 
                 switch (Current.TokenType)
@@ -401,7 +387,7 @@ namespace RDL.Parser
                            currentToken.TokenType == StatementType.NotIn;
                 case Precendence.Level2:
                     return currentToken.TokenType == StatementType.Plus ||
-                            currentToken.TokenType == StatementType.Hyphen;
+                           currentToken.TokenType == StatementType.Hyphen;
                 case Precendence.Level3:
                     return true;
             }
@@ -419,9 +405,9 @@ namespace RDL.Parser
                currentToken.TokenType == StatementType.Diff ||
                currentToken.TokenType == StatementType.Between;
 
-        private static bool IsQueryOperator(Token currentToken) 
+        private static bool IsQueryOperator(Token currentToken)
             => currentToken.TokenType == StatementType.And || currentToken.TokenType == StatementType.Or;
-        
+
         private new void Consume(StatementType tokenType)
         {
             if (Current.TokenType.Equals(tokenType))
@@ -436,17 +422,18 @@ namespace RDL.Parser
         {
             RepeatEveryNode node = null;
             var repeat = Last;
-            switch(Current.TokenType)
+            switch (Current.TokenType)
             {
                 case StatementType.Every:
                     var every = Current;
                     Consume(StatementType.Every);
-                    if(Current.TokenType == StatementType.Numeric)
+                    if (Current.TokenType == StatementType.Numeric)
                     {
                         var numeric = Current;
                         Consume(StatementType.Numeric);
                         node = new NumericConsequentRepeatEveryNode(
-                            new Token("repeat every", StatementType.Repeat, new TQL.Core.Tokens.TextSpan(repeat.Span.Start, Current.Span.End - repeat.Span.Start)), 
+                            new Token("repeat every", StatementType.Repeat,
+                                new TQL.Core.Tokens.TextSpan(repeat.Span.Start, Current.Span.End - repeat.Span.Start)),
                             numeric as NumericToken,
                             Current as WordToken);
                     }
@@ -461,6 +448,13 @@ namespace RDL.Parser
                     break;
             }
             return node;
+        }
+
+        private enum Precendence : short
+        {
+            Level1,
+            Level2,
+            Level3
         }
     }
 }

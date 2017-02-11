@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class DiffNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Determine if two values on stack are different
+        ///     Determine if two values on stack are different
         /// </summary>
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)

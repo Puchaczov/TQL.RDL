@@ -5,7 +5,6 @@ using System.Reflection;
 using RDL.Parser;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
-using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Instructions;
 
 namespace TQL.RDL.Evaluator.Visitors
@@ -15,28 +14,27 @@ namespace TQL.RDL.Evaluator.Visitors
         #region Protected Getters / Setters
 
         /// <summary>
-        /// Gets the list that can store generated instructions.
+        ///     Gets the list that can store generated instructions.
         /// </summary>
         protected List<IRdlInstruction> Instructions => _functions.Peek();
 
         #endregion
 
         /// <summary>
-        /// Gets or sets the virtual machine.
+        ///     Gets or sets the virtual machine.
         /// </summary>
         public RdlVirtualMachine VirtualMachine { get; private set; }
 
         /// <summary>
-        /// Performs "WHERE" specific operations.
+        ///     Performs "WHERE" specific operations.
         /// </summary>
         /// <param name="node">The WhereConditions node.</param>
         public virtual void Visit(WhereConditionsNode node)
         {
-
         }
 
         /// <summary>
-        /// Performs "StartAt" specific operations.
+        ///     Performs "StartAt" specific operations.
         /// </summary>
         /// <param name="node">The StartAt node.</param>
         public virtual void Visit(StartAtNode node)
@@ -45,7 +43,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "StopAt" specific operations.
+        ///     Performs "StopAt" specific operations.
         /// </summary>
         /// <param name="node">The StopAt node.</param>
         public virtual void Visit(StopAtNode node)
@@ -54,12 +52,12 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "RepeatEvery" specific operations.
+        ///     Performs "RepeatEvery" specific operations.
         /// </summary>
         /// <param name="node">The RepeatEvery node.</param>
         public virtual void Visit(RepeatEveryNode node)
         {
-            switch(node.DatePart)
+            switch (node.DatePart)
             {
                 case PartOfDate.Seconds:
                     _generateNext = datetime => datetime.AddSeconds(node.Value);
@@ -83,7 +81,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "NumericConsequentRepeatEvery" specific operations.
+        ///     Performs "NumericConsequentRepeatEvery" specific operations.
         /// </summary>
         /// <param name="node">The NumericConsequentRepeatEvery node.</param>
         public virtual void Visit(NumericConsequentRepeatEveryNode node)
@@ -92,7 +90,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Or" specific operations.
+        ///     Performs "Or" specific operations.
         /// </summary>
         /// <param name="node">The "Or" node.</param>
         public virtual void Visit(OrNode node)
@@ -101,7 +99,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "DateTime" specific operations.
+        ///     Performs "DateTime" specific operations.
         /// </summary>
         /// <param name="node">The "DateTime" node.</param>
         public virtual void Visit(DateTimeNode node)
@@ -110,7 +108,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "NotIn" specific operations.
+        ///     Performs "NotIn" specific operations.
         /// </summary>
         /// <param name="node">The "NotIn" node.</param>
         public virtual void Visit(NotInNode node)
@@ -120,12 +118,12 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Var" specific operations.
+        ///     Performs "Var" specific operations.
         /// </summary>
         /// <param name="node">The "Not" node.</param>
         public virtual void Visit(VarNode node)
         {
-            switch(node.Token.Value)
+            switch (node.Token.Value)
             {
                 case "second":
                     Instructions.Add(new LoadNumericVariableInstruction(v => v.Second));
@@ -149,13 +147,13 @@ namespace TQL.RDL.Evaluator.Visitors
                     Instructions.Add(new LoadDateTimeVariableInstruction(v => v.Current));
                     break;
                 case "weekday":
-                    Instructions.Add(new LoadNumericVariableInstruction(v => (int)v.DayOfWeek));
+                    Instructions.Add(new LoadNumericVariableInstruction(v => (int) v.DayOfWeek));
                     break;
             }
         }
 
         /// <summary>
-        /// Performs "Numeric" specific operations.
+        ///     Performs "Numeric" specific operations.
         /// </summary>
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(NumericNode node)
@@ -164,7 +162,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "ArgList" specific operations.
+        ///     Performs "ArgList" specific operations.
         /// </summary>
         /// <param name="node">The "ArgList" node.</param>
         public virtual void Visit(ArgListNode node)
@@ -173,7 +171,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Function" specific operations.
+        ///     Performs "Function" specific operations.
         /// </summary>
         /// <param name="node">The "Function" node.</param>
         public virtual void Visit(RawFunctionNode node)
@@ -183,40 +181,27 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Function" specific operations.
-        /// </summary>
-        /// <param name="node">The "Function" node.</param>
-        /// <param name="foundedMethod">The founded .NET method.</param>
-        private void Visit(RawFunctionNode node, out MethodInfo foundedMethod)
-        {
-            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
-            var registeredMethod = _metadatas.GetMethod(node.Name, argTypes);
-            foundedMethod = registeredMethod;
-            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length));
-        }
-        
-        /// <summary>
-        /// Call function and store it's value.
+        ///     Call function and store it's value.
         /// </summary>
         /// <param name="node"></param>
         public void Visit(StoreValueFunctionNode node)
         {
             MethodInfo methodInfo;
-            Visit(node as RawFunctionNode, out methodInfo);
+            Visit(node, out methodInfo);
 
             switch (node.ReturnType.Name)
             {
                 case nameof(DateTimeOffset):
-                    Instructions.Add(new CopyAndStoreValue<DateTimeOffset>(methodInfo, (x) => x.Datetimes.Peek()));
+                    Instructions.Add(new CopyAndStoreValue<DateTimeOffset>(methodInfo, x => x.Datetimes.Peek()));
                     break;
                 default:
-                    Instructions.Add(new CopyAndStoreValue<long>(methodInfo, (x) => x.Values.Peek()));
+                    Instructions.Add(new CopyAndStoreValue<long>(methodInfo, x => x.Values.Peek()));
                     break;
             }
         }
 
         /// <summary>
-        /// Restores value of invoked function.
+        ///     Restores value of invoked function.
         /// </summary>
         /// <param name="node"></param>
         public void Visit(CachedFunctionNode node)
@@ -227,16 +212,16 @@ namespace TQL.RDL.Evaluator.Visitors
             switch (registeredFunction.ReturnType.Name)
             {
                 case nameof(DateTimeOffset):
-                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Datetimes.Push((DateTimeOffset)o)));
+                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Datetimes.Push((DateTimeOffset) o)));
                     break;
                 default:
-                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Values.Push((long)o)));
+                    Instructions.Add(new RestoreValue(registeredFunction, (m, o) => m.Values.Push((long) o)));
                     break;
             }
         }
 
         /// <summary>
-        /// Performs "Equality" specific operations.
+        ///     Performs "Equality" specific operations.
         /// </summary>
         /// <param name="node">The "Equality" node.</param>
         public virtual void Visit(EqualityNode node)
@@ -245,7 +230,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Diff" specific operations.
+        ///     Performs "Diff" specific operations.
         /// </summary>
         /// <param name="node">The "Diff" node.</param>
         public virtual void Visit(DiffNode node)
@@ -254,12 +239,12 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "In" specific operations.
+        ///     Performs "In" specific operations.
         /// </summary>
         /// <param name="node">The "In" node.</param>
         public virtual void Visit(InNode node)
         {
-            switch(node.Left.ReturnType.GetTypeName())
+            switch (node.Left.ReturnType.GetTypeName())
             {
                 case nameof(Int64):
                     ExpressionGenerateIn<InInstructionNumeric>(node);
@@ -271,7 +256,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "And" specific operations.
+        ///     Performs "And" specific operations.
         /// </summary>
         /// <param name="node">The "And" node.</param>
         public virtual void Visit(AndNode node)
@@ -280,7 +265,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "RootScript" specific operations.
+        ///     Performs "RootScript" specific operations.
         /// </summary>
         /// <param name="node">The "RootScript" node.</param>
         public virtual void Visit(RootScriptNode node)
@@ -293,7 +278,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Word" specific operations.
+        ///     Performs "Word" specific operations.
         /// </summary>
         /// <param name="node">The "Word" node.</param>
         public virtual void Visit(WordNode node)
@@ -333,7 +318,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Greater" specific operations.
+        ///     Performs "Greater" specific operations.
         /// </summary>
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(GreaterNode node)
@@ -342,7 +327,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "GreaterEqual" specific operations.
+        ///     Performs "GreaterEqual" specific operations.
         /// </summary>
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(GreaterEqualNode node)
@@ -351,7 +336,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Less" specific operations.
+        ///     Performs "Less" specific operations.
         /// </summary>
         /// <param name="node">The "Less" node.</param>
         public virtual void Visit(LessNode node)
@@ -360,7 +345,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "LessEqual" specific operations.
+        ///     Performs "LessEqual" specific operations.
         /// </summary>
         /// <param name="node">The "LessEqual" node.</param>
         public virtual void Visit(LessEqualNode node)
@@ -369,7 +354,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Add" specific operations.
+        ///     Performs "Add" specific operations.
         /// </summary>
         /// <param name="node">The "Add" node.</param>
         public virtual void Visit(AddNode node)
@@ -378,7 +363,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Modulo" specific operations.
+        ///     Performs "Modulo" specific operations.
         /// </summary>
         /// <param name="node">The "Modulo" node.</param>
         public virtual void Visit(ModuloNode node)
@@ -387,7 +372,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Star" specific operations.
+        ///     Performs "Star" specific operations.
         /// </summary>
         /// <param name="node">The "Star" node.</param>
         public virtual void Visit(StarNode node)
@@ -396,40 +381,35 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "FSlash" specific operations.
+        ///     Performs "FSlash" specific operations.
         /// </summary>
         /// <param name="node">The "FSlash" node.</param>
         public virtual void Visit(FSlashNode node)
         {
-            if(node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
-            {
+            if (node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
                 Instructions.Add(new DivideNumeric());
-            }
         }
 
         /// <summary>
-        /// Performs "Hyphen" specific operations.
+        ///     Performs "Hyphen" specific operations.
         /// </summary>
         /// <param name="node">The "Hyphen" node.</param>
         public virtual void Visit(HyphenNode node)
         {
             if (node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
-            {
                 Instructions.Add(new SubtractNumeric());
-            }
         }
 
         /// <summary>
-        /// Performs "Case" specific operations.
+        ///     Performs "Case" specific operations.
         /// </summary>
         /// <param name="node">The "Case" node.</param>
         public virtual void Visit(CaseNode node)
         {
-
         }
 
         /// <summary>
-        /// Performs "WhenThen" specific operations.
+        ///     Performs "WhenThen" specific operations.
         /// </summary>
         /// <param name="node">The "WhenThen" node.</param>
         public virtual void Visit(WhenThenNode node)
@@ -438,7 +418,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "When" specific operations.
+        ///     Performs "When" specific operations.
         /// </summary>
         /// <param name="node">The "When" node.</param>
         public virtual void Visit(WhenNode node)
@@ -452,12 +432,13 @@ namespace TQL.RDL.Evaluator.Visitors
             else
             {
                 var nextWhenNode = node.Parent.Parent.Descendants[node.Parent.ArrayOrder + 1];
-                Instructions.Add(new JumpToLabelNotEqual($"when_{nextWhenNode.FullSpan.Start}{nextWhenNode.FullSpan.End}"));
+                Instructions.Add(
+                    new JumpToLabelNotEqual($"when_{nextWhenNode.FullSpan.Start}{nextWhenNode.FullSpan.End}"));
             }
         }
 
         /// <summary>
-        /// Performs "Then" specific operations.
+        ///     Performs "Then" specific operations.
         /// </summary>
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(ThenNode node)
@@ -466,13 +447,12 @@ namespace TQL.RDL.Evaluator.Visitors
             Instructions.Add(new JumpToLabel($"esac_{elseSpan.Start}{elseSpan.End}"));
 
             if (node.Parent.ArrayOrder == node.Parent.Parent.WhenThenExpressions.Count() - 1)
-            {
-                _labels.Add($"else_{node.Parent.Parent.Else.FullSpan.Start}{node.Parent.Parent.Else.FullSpan.End}", Instructions.Count);
-            }
+                _labels.Add($"else_{node.Parent.Parent.Else.FullSpan.Start}{node.Parent.Parent.Else.FullSpan.End}",
+                    Instructions.Count);
         }
 
         /// <summary>
-        /// Performs "Else" specific operations.
+        ///     Performs "Else" specific operations.
         /// </summary>
         /// <param name="node">The "Else" node.</param>
         public virtual void Visit(ElseNode node)
@@ -481,7 +461,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Not" specific operations.
+        ///     Performs "Not" specific operations.
         /// </summary>
         /// <param name="node">The "Not" node.</param>
         public void Visit(NotNode node)
@@ -490,7 +470,7 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        /// Performs "Between" specific operations.
+        ///     Performs "Between" specific operations.
         /// </summary>
         /// <param name="node">The "Between" node.</param>
         public void Visit(BetweenNode node)
@@ -505,8 +485,21 @@ namespace TQL.RDL.Evaluator.Visitors
                     break;
                 case nameof(DateTimeOffset):
                     Instructions.Add(new BetweenDatetime());
-                    break;               
+                    break;
             }
+        }
+
+        /// <summary>
+        ///     Performs "Function" specific operations.
+        /// </summary>
+        /// <param name="node">The "Function" node.</param>
+        /// <param name="foundedMethod">The founded .NET method.</param>
+        private void Visit(RawFunctionNode node, out MethodInfo foundedMethod)
+        {
+            var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
+            var registeredMethod = _metadatas.GetMethod(node.Name, argTypes);
+            foundedMethod = registeredMethod;
+            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length));
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)
@@ -516,13 +509,13 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         private void ExpressionGenerateLeftToRightInstructions<TOperator>(BinaryNode node)
-            where TOperator: IRdlInstruction, new()
+            where TOperator : IRdlInstruction, new()
         {
             Instructions.Add(new TOperator());
         }
 
-        private void ExpressionGenerateInstructions<TNumericOp>(BinaryNode node) 
-            where TNumericOp: IRdlInstruction, new()
+        private void ExpressionGenerateInstructions<TNumericOp>(BinaryNode node)
+            where TNumericOp : IRdlInstruction, new()
         {
             Instructions.Add(new TNumericOp());
         }
@@ -551,16 +544,17 @@ namespace TQL.RDL.Evaluator.Visitors
         #region Constructors
 
         /// <summary>
-        /// Instantiate code generator instance.
+        ///     Instantiate code generator instance.
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="callMethodContext">object that contains methods to invoke.</param>
         public CodeGenerator(RdlMetadata metadatas, object callMethodContext)
             : this(metadatas, DateTimeOffset.UtcNow, callMethodContext)
-        { }
+        {
+        }
 
         /// <summary>
-        /// Instantiate code generator object with custom startAt
+        ///     Instantiate code generator object with custom startAt
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="startAt">Starting from parameter.</param>

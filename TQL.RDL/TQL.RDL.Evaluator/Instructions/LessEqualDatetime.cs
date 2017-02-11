@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class LessEqualDatetime : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion betwen two datetime values in stack and determine if it's less or equal. 
+        ///     Performs comparsion betwen two datetime values in stack and determine if it's less or equal.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

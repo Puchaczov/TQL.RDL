@@ -7,14 +7,15 @@ namespace TQL.RDL.Evaluator.Instructions
     public class InInstructionDatetime : InInstruction<DateTimeOffset>
     {
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         public InInstructionDatetime()
             : base(x => x.Datetimes.Pop())
-        { }
+        {
+        }
 
         /// <summary>
-        /// Represents short information about instruction.
+        ///     Represents short information about instruction.
         /// </summary>
         /// <returns></returns>
         public override string ToString() => "IN-DATETIME";

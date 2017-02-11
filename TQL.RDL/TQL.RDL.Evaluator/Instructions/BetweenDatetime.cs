@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TQL.RDL.Evaluator.Instructions
 {
     class BetweenDatetime : IRdlInstruction
     {
         /// <summary>
-        /// Performs check if the value is between other values.
+        ///     Performs check if the value is between other values.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

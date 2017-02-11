@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly Func<MemoryVariables, int> _loadFun;
 
         /// <summary>
-        /// Initialize instance.
+        ///     Initialize instance.
         /// </summary>
         /// <param name="func">Function to gets numeric variable from memory.</param>
         public LoadNumericVariableInstruction(Func<MemoryVariables, int> func)
@@ -18,7 +18,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Perform stored function to retrieve variable from memory and push it on stack.
+        ///     Perform stored function to retrieve variable from memory and push it on stack.
         /// </summary>
         /// <param name="machine">The virtual machine.</param>
         public void Run(RdlVirtualMachine machine)

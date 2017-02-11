@@ -8,7 +8,7 @@ namespace RDL.Parser.Nodes
     {
         protected BinaryNode(RdlSyntaxNode left, RdlSyntaxNode right)
         {
-            Descendants = new[] { left, right };
+            Descendants = new[] {left, right};
         }
 
         public virtual RdlSyntaxNode Left => Descendants[0];
@@ -21,10 +21,11 @@ namespace RDL.Parser.Nodes
 
         public override Token Token => null;
 
-        public override TextSpan FullSpan => new TextSpan(Left.FullSpan.Start, Left.FullSpan.Length + Right.FullSpan.Length);
+        public override TextSpan FullSpan
+            => new TextSpan(Left.FullSpan.Start, Left.FullSpan.Length + Right.FullSpan.Length);
 
         public override Type ReturnType => Left.ReturnType;
 
-        protected string ToString(string op) => string.Format("{0} {1} {2}", Left, op, Right);
+        protected string ToString(string op) => $"{Left} {op} {Right}";
     }
 }

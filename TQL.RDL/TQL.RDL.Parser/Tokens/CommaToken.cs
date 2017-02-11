@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public CommaToken(TextSpan span)
             : base(TokenText, StatementType.Comma, span)
-        { }
+        {
+        }
     }
 }

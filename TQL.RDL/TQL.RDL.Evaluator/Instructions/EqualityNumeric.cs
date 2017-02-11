@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class EqualityNumeric : IRdlInstruction
     {
         /// <summary>
-        /// Performs comparsion between two numeric values.
+        ///     Performs comparsion between two numeric values.
         /// </summary>
         /// <param name="machine">virtual machine that on that code will be performed</param>
         public void Run(RdlVirtualMachine machine)

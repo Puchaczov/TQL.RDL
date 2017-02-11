@@ -7,11 +7,10 @@ namespace TQL.RDL.Evaluator.Instructions
     public abstract class InInstruction<T> : IRdlInstruction
         where T : struct
     {
-        
         private readonly PopFun _pop;
 
         /// <summary>
-        /// Initialize object.
+        ///     Initialize object.
         /// </summary>
         /// <param name="popFun">Pop function that pops from source stack.</param>
         protected InInstruction(PopFun popFun)
@@ -21,14 +20,14 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Performs "generic in" comparsion. Get how much arguments, pop reference value, and compare
-        /// each poped value from stack with such reference value. If one of them match, then push true, else false. 
-        /// This operation push it's result to numeric stack.
+        ///     Performs "generic in" comparsion. Get how much arguments, pop reference value, and compare
+        ///     each poped value from stack with such reference value. If one of them match, then push true, else false.
+        ///     This operation push it's result to numeric stack.
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
         {
-            var inArgsCount = machine.Registers[(short)Registers.B];
+            var inArgsCount = machine.Registers[(short) Registers.B];
 
             var toCompare = _pop(machine);
 
@@ -40,22 +39,20 @@ namespace TQL.RDL.Evaluator.Instructions
                 result |= tmpRes.Equals(toCompare);
             }
             for (; i < inArgsCount; ++i)
-            {
                 _pop(machine);
-            }
             machine.Values.Push(result ? 1 : 0);
-            
+
             machine.InstructionPointer += 1;
         }
 
         /// <summary>
-        /// Represents short information about instruction. 
+        ///     Represents short information about instruction.
         /// </summary>
         /// <returns>short description of instruction</returns>
         public override string ToString() => "IN-GENERIC";
 
         /// <summary>
-        /// Pop value from stack.
+        ///     Pop value from stack.
         /// </summary>
         /// <param name="machine">Virtual machine which registers will be used.</param>
         /// <returns>Poped value from stack.</returns>

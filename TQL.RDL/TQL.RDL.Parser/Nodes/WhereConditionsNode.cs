@@ -5,9 +5,10 @@ namespace RDL.Parser.Nodes
 {
     public class WhereConditionsNode : UnaryNode
     {
-        public WhereConditionsNode(RdlSyntaxNode node) 
+        public WhereConditionsNode(RdlSyntaxNode node)
             : base(node)
-        { }
+        {
+        }
 
         public override Type ReturnType => typeof(bool);
 

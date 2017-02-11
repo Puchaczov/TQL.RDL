@@ -6,7 +6,7 @@ namespace TQL.RDL.Evaluator.Instructions
     public class BreakInstruction : IRdlInstruction
     {
         /// <summary>
-        /// Breaks virtual code execution
+        ///     Breaks virtual code execution
         /// </summary>
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
@@ -16,7 +16,7 @@ namespace TQL.RDL.Evaluator.Instructions
         }
 
         /// <summary>
-        /// Gets instruction short description
+        ///     Gets instruction short description
         /// </summary>
         /// <returns>Stringified object.</returns>
         public override string ToString() => "BREAK";

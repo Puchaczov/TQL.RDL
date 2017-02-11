@@ -5,9 +5,10 @@ namespace RDL.Parser.Nodes
 {
     public class NumericNode : LeafNode
     {
-        public NumericNode(Token token) 
+        public NumericNode(Token token)
             : base(token)
-        { }
+        {
+        }
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 

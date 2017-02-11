@@ -8,6 +8,7 @@ namespace RDL.Parser.Tokens
 
         public NumericToken(string value, TextSpan span)
             : base(value, StatementType.Numeric, span)
-        { }
+        {
+        }
     }
 }
