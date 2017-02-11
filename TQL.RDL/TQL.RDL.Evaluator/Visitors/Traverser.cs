@@ -7,18 +7,19 @@ namespace TQL.RDL.Evaluator.Visitors
 {
     public class Traverser : INodeVisitor
     {
-        protected readonly INodeVisitor CodeGenerationVisitor;
+        private readonly INodeVisitor _visitor;
+
         protected readonly Dictionary<string, List<RawFunctionNode>> OccurenceTable;
 
         /// <summary>
         ///     Initialize object.
         /// </summary>
-        /// <param name="codeGenerationVisitor">Visitor that will generate code for VM</param>
-        public Traverser(INodeVisitor codeGenerationVisitor)
+        /// <param name="visitor">Visitor that will generate code for VM</param>
+        public Traverser(INodeVisitor visitor)
         {
-            if (codeGenerationVisitor == null) throw new ArgumentNullException(nameof(codeGenerationVisitor));
+            if (visitor == null) throw new ArgumentNullException(nameof(visitor));
 
-            CodeGenerationVisitor = codeGenerationVisitor;
+            _visitor = visitor;
             OccurenceTable = new Dictionary<string, List<RawFunctionNode>>();
         }
 
@@ -30,7 +31,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">StopAt node that will be visited.</param>
         public void Visit(StopAtNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">RepeatEvery node that will be visited.</param>
         public void Visit(RepeatEveryNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">DateTime node that will be visited.</param>
         public void Visit(DateTimeNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants.Reverse())
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The CachedFunction node.</param>
         public void Visit(CachedFunctionNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -121,7 +122,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants.Reverse())
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Numeric node that will be visited.</param>
         public void Visit(NumericNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -163,7 +164,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public void Visit(ThenNode node)
         {
             node.Descendant.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -205,7 +206,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public void Visit(NotNode notNode)
         {
             notNode.Descendant.Accept(this);
-            notNode.Accept(CodeGenerationVisitor);
+            notNode.Accept(_visitor);
         }
 
         /// <summary>
@@ -214,7 +215,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Case node that will be visited.</param>
         public void Visit(CaseNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
             foreach (var item in node.Descendants)
                 item.Accept(this);
         }
@@ -225,7 +226,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">FSlashNode node that will be visited.</param>
         public void Visit(WhenThenNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
             foreach (var item in node.Descendants)
                 item.Accept(this);
         }
@@ -237,7 +238,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public void Visit(ElseNode node)
         {
             node.Descendant.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -247,7 +248,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public void Visit(WhenNode node)
         {
             node.Descendant.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -258,7 +259,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -269,7 +270,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -280,7 +281,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -291,7 +292,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -302,7 +303,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -313,7 +314,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -324,7 +325,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -335,7 +336,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -346,7 +347,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Right.Accept(this);
             node.Left.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -357,7 +358,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             node.Left.Accept(this);
             node.Right.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -368,7 +369,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
 
             OccurenceTable.Clear();
         }
@@ -379,7 +380,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">StartAt node that will be visited.</param>
         public void Visit(StartAtNode node)
         {
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -390,7 +391,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
 
         /// <summary>
@@ -401,7 +402,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
-            node.Accept(CodeGenerationVisitor);
+            node.Accept(_visitor);
         }
     }
 }

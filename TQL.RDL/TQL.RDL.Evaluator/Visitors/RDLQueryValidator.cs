@@ -16,13 +16,13 @@ namespace TQL.RDL.Evaluator.Visitors
 
         private readonly RdlMetadata _metadatas;
 
-        private readonly List<Exception> CriticalErrors;
+        private readonly List<Exception> _criticalErrors;
 
         private bool _startAtOccured;
 
         public RdlQueryValidator(RdlMetadata metadatas)
         {
-            CriticalErrors = new List<Exception>();
+            _criticalErrors = new List<Exception>();
             _errors = new List<VisitationMessage>();
             _metadatas = metadatas;
         }
@@ -30,9 +30,9 @@ namespace TQL.RDL.Evaluator.Visitors
         public IEnumerable<VisitationMessage> Errors => E;
 
         private IReadOnlyList<VisitationMessage> E
-            => _errors.Concat(CriticalErrors.Select(f => new FatalVisitError(f))).ToArray();
+            => _errors.Concat(_criticalErrors.Select(f => new FatalVisitError(f))).ToArray();
 
-        public bool IsValid => CriticalErrors.Count == 0 && _errors.Count == 0;
+        public bool IsValid => _criticalErrors.Count == 0 && _errors.Count == 0;
 
         public override void Visit(WhereConditionsNode node)
         {
@@ -47,7 +47,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception e)
             {
-                CriticalErrors.Add(e);
+                _criticalErrors.Add(e);
             }
         }
 
@@ -64,7 +64,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception e)
             {
-                CriticalErrors.Add(e);
+                _criticalErrors.Add(e);
             }
         }
 
@@ -191,7 +191,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception e)
             {
-                CriticalErrors.Add(e);
+                _criticalErrors.Add(e);
             }
         }
 
@@ -208,7 +208,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception exc)
             {
-                CriticalErrors.Add(exc);
+                _criticalErrors.Add(exc);
             }
         }
 
@@ -220,7 +220,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception exc)
             {
-                CriticalErrors.Add(exc);
+                _criticalErrors.Add(exc);
             }
         }
 
@@ -237,7 +237,7 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             catch (Exception e)
             {
-                CriticalErrors.Add(e);
+                _criticalErrors.Add(e);
             }
         }
 

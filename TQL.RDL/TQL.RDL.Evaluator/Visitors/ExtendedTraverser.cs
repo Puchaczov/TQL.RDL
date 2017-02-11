@@ -8,6 +8,11 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         private readonly IDictionary<int, int> _methodOccurences;
 
+        /// <summary>
+        /// Initialize instance.
+        /// </summary>
+        /// <param name="codeGenerationVisitor">The destination visitor.</param>
+        /// <param name="methodOccurences">Method occurences dictionary.</param>
         public ExtendedTraverser(INodeVisitor codeGenerationVisitor, IDictionary<int, int> methodOccurences)
             : base(codeGenerationVisitor)
         {
@@ -21,6 +26,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public override void Visit(RawFunctionNode node)
         {
             if (WillFunctionCallOccurencesAtLeastTwoTimes(node))
+            {
                 if (!CanBeRetrievedFromCache(node))
                 {
                     AddFunctionOccurence(node);
@@ -30,6 +36,7 @@ namespace TQL.RDL.Evaluator.Visitors
                 {
                     Visit(new CachedFunctionNode(node));
                 }
+            }
             else
                 base.Visit(node);
         }

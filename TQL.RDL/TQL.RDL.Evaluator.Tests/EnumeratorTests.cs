@@ -90,17 +90,17 @@ namespace TQL.RDL.Evaluator.Tests
             var enumerator = new ArythmeticEnumerator(rootComponent);
 
             enumerator.MoveNext();
-            Assert.IsTrue(enumerator.Current is NumericNode && (enumerator.Current as NumericNode).Value == 7);
+            Assert.IsTrue(enumerator.Current is NumericNode && ((NumericNode) enumerator.Current).Value == 7);
             enumerator.MoveNext();
-            Assert.IsTrue(enumerator.Current is NumericNode && (enumerator.Current as NumericNode).Value == 8);
+            Assert.IsTrue(enumerator.Current is NumericNode && ((NumericNode) enumerator.Current).Value == 8);
             enumerator.MoveNext();
-            Assert.IsTrue(enumerator.Current is NumericNode && (enumerator.Current as NumericNode).Value == 1);
+            Assert.IsTrue(enumerator.Current is NumericNode && ((NumericNode) enumerator.Current).Value == 1);
             enumerator.MoveNext();
             Assert.IsTrue(enumerator.Current is AddNode);
             enumerator.MoveNext();
             Assert.IsTrue(enumerator.Current is StarNode);
             enumerator.MoveNext();
-            Assert.IsTrue(enumerator.Current is NumericNode && (enumerator.Current as NumericNode).Value == 4);
+            Assert.IsTrue(enumerator.Current is NumericNode && ((NumericNode) enumerator.Current).Value == 4);
             enumerator.MoveNext();
             Assert.IsTrue(enumerator.Current is HyphenNode);
             enumerator.MoveNext();
