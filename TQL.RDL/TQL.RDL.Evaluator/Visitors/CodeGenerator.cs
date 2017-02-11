@@ -144,7 +144,7 @@ namespace TQL.RDL.Evaluator.Visitors
                     Instructions.Add(new LoadNumericVariableInstruction(v => v.Year));
                     break;
                 case "current":
-                    Instructions.Add(new LoadDateTimeVariableInstruction(v => v.Current));
+                    Instructions.Add(new LoadDateTimeVariableInstruction(v => v.ReferenceTime));
                     break;
                 case "weekday":
                     Instructions.Add(new LoadNumericVariableInstruction(v => (int) v.DayOfWeek));

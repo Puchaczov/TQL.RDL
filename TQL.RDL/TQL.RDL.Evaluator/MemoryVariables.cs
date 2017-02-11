@@ -8,41 +8,41 @@ namespace TQL.RDL.Evaluator
         /// <summary>
         /// Current variable. (DateTimeOffset)
         /// </summary>
-        public DateTimeOffset Current => (DateTimeOffset) base["current"];
+        public DateTimeOffset ReferenceTime { get; set; }
 
         /// <summary>
         /// Second variable. (int)
         /// </summary>
-        public int Second => Current.Second;
+        public int Second => ReferenceTime.Second;
 
         /// <summary>
         /// Minute variable. (int)
         /// </summary>
-        public int Minute => Current.Minute;
+        public int Minute => ReferenceTime.Minute;
 
         /// <summary>
         /// Hour variable. (int)
         /// </summary>
-        public int Hour => Current.Hour;
+        public int Hour => ReferenceTime.Hour;
 
         /// <summary>
         /// Day variable. (int)
         /// </summary>
-        public int Day => Current.Day;
+        public int Day => ReferenceTime.Day;
 
         /// <summary>
         /// Month variable. (int)
         /// </summary>
-        public int Month => Current.Month;
+        public int Month => ReferenceTime.Month;
 
         /// <summary>
         /// Year variable. (int)
         /// </summary>
-        public int Year => Current.Year;
+        public int Year => ReferenceTime.Year;
 
         /// <summary>
         /// DayOfWeek variable. (DayOfWeek)
         /// </summary>
-        public DayOfWeek DayOfWeek => Current.DayOfWeek;
+        public DayOfWeek DayOfWeek => ReferenceTime.DayOfWeek;
     }
 }

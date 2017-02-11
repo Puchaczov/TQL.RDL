@@ -20,14 +20,13 @@ namespace TQL.RDL.Evaluator
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
             Strings = new Stack<string>();
-            Variables = new MemoryVariables {["current"] = DateTimeOffset.Now};
+            Variables = new MemoryVariables();
             Instructions = instructions;
             StopAt = stopAt;
             StartAt = startAt;
             ReferenceTime = startAt;
             RelativeLabels = relativeLabels;
             Registers = new long[2];
-            LastlyFound = null;
         }
 
         /// <summary>
@@ -45,17 +44,8 @@ namespace TQL.RDL.Evaluator
         /// </summary>
         public DateTimeOffset ReferenceTime
         {
-            get { return (DateTimeOffset) Variables["current"]; }
-            set { Variables["current"] = value; }
-        }
-
-        /// <summary>
-        /// Gets of sets Lastly found
-        /// </summary>
-        public DateTimeOffset? LastlyFound
-        {
-            get { return (DateTimeOffset?) Variables["lastlyFound"]; }
-            set { Variables["lastlyFound"] = value; }
+            get { return Variables.ReferenceTime; }
+            set { Variables.ReferenceTime = value; }
         }
 
         /// <summary>
@@ -79,9 +69,39 @@ namespace TQL.RDL.Evaluator
         public long[] Registers { get; }
 
         /// <summary>
+        /// Gets values stack.
+        /// </summary>
+        public Stack<long> Values { get; }
+
+        /// <summary>
+        /// Gets dates stack.
+        /// </summary>
+        public Stack<DateTimeOffset> Datetimes { get; }
+
+        /// <summary>
+        /// Gets StartAt that determine where evaluation starts from.
+        /// </summary>
+        public DateTimeOffset StartAt { get; }
+
+        /// <summary>
+        /// Gets StopAt that determine where evaluation will be stopped.
+        /// </summary>
+        public DateTimeOffset? StopAt { get; }
+
+        /// <summary>
+        /// The instructions set.
+        /// </summary>
+        public IRdlInstruction[] Instructions { get; }
+
+        /// <summary>
+        /// Gets string stack.
+        /// </summary>
+        public Stack<string> Strings { get; }
+
+        /// <summary>
         /// Perform evaluation of query based on passed instructions set.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Next occurence or null if out of range.</returns>
         public DateTimeOffset? NextFire()
         {
             if (ReferenceTime < StartAt)
@@ -117,7 +137,7 @@ namespace TQL.RDL.Evaluator
                 }
 
                 var cond = false;
-
+                
                 if (Values.Count > 0)
                     cond = Convert.ToBoolean(Values.Pop());
                 else
@@ -130,35 +150,5 @@ namespace TQL.RDL.Evaluator
                     return old;
             }
         }
-
-        /// <summary>
-        /// Gets values stack.
-        /// </summary>
-        public Stack<long> Values { get; }
-
-        /// <summary>
-        /// Gets dates stack.
-        /// </summary>
-        public Stack<DateTimeOffset> Datetimes { get; }
-
-        /// <summary>
-        /// Gets StartAt that determine where evaluation starts from.
-        /// </summary>
-        public DateTimeOffset StartAt { get; }
-
-        /// <summary>
-        /// Gets StopAt that determine where evaluation will be stopped.
-        /// </summary>
-        public DateTimeOffset? StopAt { get; }
-
-        /// <summary>
-        /// The instructions set.
-        /// </summary>
-        public IRdlInstruction[] Instructions { get; }
-
-        /// <summary>
-        /// Gets string stack.
-        /// </summary>
-        public Stack<string> Strings { get; }
     }
 }
