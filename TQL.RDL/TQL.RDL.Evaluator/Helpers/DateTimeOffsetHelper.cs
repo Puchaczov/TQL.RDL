@@ -31,7 +31,8 @@ namespace TQL.RDL.Evaluator.Helpers
         ///     It take care of considered DayOfWeek that starts week and
         ///     take care of some months doesn't start from considered DayOfWeek
         /// </summary>
-        /// <param name="datetime"></param>
+        /// <param name="datetime">The DateTimeOffset.</param>
+        /// <param name="startDayOfWeek">The DayOfWeek.</param>
         /// <returns>Week of month</returns>
         public static int WeekOfMonth(this DateTimeOffset datetime, DayOfWeek startDayOfWeek)
         {

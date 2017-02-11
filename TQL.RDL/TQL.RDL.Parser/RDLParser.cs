@@ -12,17 +12,15 @@ using TQL.Core.Syntax;
 
 namespace RDL.Parser
 {
-    public class RdlParser : ParserBase<Token, StatementType>
+    public class RdlParser
     {
         private readonly CultureInfo _ci;
-        private readonly LexerComplexTokensDecorator _cLexer;
+        private readonly Lexer _cLexer;
         private readonly string[] _formats;
         private readonly IMethodDeclarationResolver _resolver;
         private readonly TimeSpan _zone;
 
-        private Token _current;
-
-        public RdlParser(LexerComplexTokensDecorator lexer, TimeSpan zone, string[] formats, CultureInfo ci,
+        public RdlParser(Lexer lexer, TimeSpan zone, string[] formats, CultureInfo ci,
             IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
         {
             _cLexer = lexer;
@@ -42,11 +40,7 @@ namespace RDL.Parser
 
         private Token Last => _cLexer.LastToken();
 
-        public override Token CurrentToken { get; protected set; }
-
-        public override Token LastToken { get; protected set; }
-
-        protected override ILexer<Token> Lexer => _cLexer;
+        private ILexer<Token> Lexer => _cLexer;
 
         public RootScriptNode ComposeRootComponents()
         {
@@ -408,7 +402,7 @@ namespace RDL.Parser
         private static bool IsQueryOperator(Token currentToken)
             => currentToken.TokenType == StatementType.And || currentToken.TokenType == StatementType.Or;
 
-        private new void Consume(StatementType tokenType)
+        private void Consume(StatementType tokenType)
         {
             if (Current.TokenType.Equals(tokenType))
             {

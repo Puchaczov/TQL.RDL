@@ -13,7 +13,7 @@ namespace TQL.RDL.Parser.Tests
         public void CheckProducedTokens_ShouldPass()
         {
             var query = "repeat every seconds where day in (mon-fri) and month <> january start at @now";
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
@@ -41,7 +41,7 @@ namespace TQL.RDL.Parser.Tests
         public void CheckProducedTokents_CaseWhenQuery_ShouldPass()
         {
             var query = "repeat every day where @a > (case when (1 <> 2) then (5) else (4) esac)";
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
@@ -76,7 +76,7 @@ namespace TQL.RDL.Parser.Tests
         public void CheckProducedTokens_WithMultiWordKeyword_ShouldPass()
         {
             var query = "repeat every day start at @var stop at 123213";
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
@@ -94,7 +94,7 @@ namespace TQL.RDL.Parser.Tests
         public void CheckProducedTokens_WithFunctionCall_ShouldPass()
         {
             var query = "repeat every day where myfun(1,2)";
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,
@@ -115,7 +115,7 @@ namespace TQL.RDL.Parser.Tests
         public void CheckProducedTokens_WithInOperator_ShouldPass()
         {
             var query = "RePeat eVery dAy whEre @year IN (@year, 2013, 'WORD')";
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var tokens = Tokenize(lexer);
 
             CheckTokenized_ShouldReturnOrderedToken(query, tokens,

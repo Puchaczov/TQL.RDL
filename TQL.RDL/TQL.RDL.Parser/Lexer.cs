@@ -7,20 +7,59 @@ namespace RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {
-        public Lexer(string input) :
+        private readonly bool _skipWhiteSpaces;
+
+        /// <summary>
+        /// Initialize instance.
+        /// </summary>
+        /// <param name="input">The query.</param>
+        /// <param name="skipWhiteSpaces">Should skip whitespaces?</param>
+        public Lexer(string input, bool skipWhiteSpaces) :
             base(input, new NoneToken(), DefinitionSets.General)
         {
+            _skipWhiteSpaces = skipWhiteSpaces;
         }
 
+        /// <summary>
+        /// Gets passed query.
+        /// </summary>
         public string Query => input;
 
+        /// <summary>
+        /// Changes position where lexer starts matching rules.
+        /// </summary>
+        /// <param name="newPosition"></param>
         public void ChangePosition(int newPosition)
         {
             Position = newPosition;
         }
 
+        #region Overrides of LexerBase<Token>
+
+        /// <summary>
+        /// Gets the next token from tokens stream.
+        /// </summary>
+        /// <returns>The token.</returns>
+        public override Token NextToken()
+        {
+            var token = base.NextToken();
+            while (_skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
+                token = base.NextToken();
+            return token;
+        }
+
+        /// <summary>
+        /// Gets EndOfFile token.
+        /// </summary>
+        /// <returns>End of file token.</returns>
         protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(input.Length, 0));
 
+        /// <summary>
+        /// Gets the token.
+        /// </summary>
+        /// <param name="matchedDefinition">The definition of token type that fits requirements.</param>
+        /// <param name="match">The match.</param>
+        /// <returns>The token.</returns>
         protected override Token GetToken(TokenDefinition matchedDefinition, Match match)
         {
             var tokenText = match.Value;
@@ -105,6 +144,14 @@ namespace RDL.Parser
             return new WordToken(tokenText, new TextSpan(Position, tokenText.Length));
         }
 
+        #endregion
+
+        /// <summary>
+        /// Resolve the statement type.
+        /// </summary>
+        /// <param name="tokenText">Text that match some definition</param>
+        /// <param name="matchedDefinition">Definition that text matched.</param>
+        /// <returns>Statement type.</returns>
         private StatementType GetTokenCandidate(string tokenText, TokenDefinition matchedDefinition)
         {
             switch (tokenText.ToLowerInvariant())
@@ -189,6 +236,9 @@ namespace RDL.Parser
             return StatementType.Word;
         }
 
+        /// <summary>
+        /// The token regexes set.
+        /// </summary>
         private static class TokenRegexDefinition
         {
             private const string Keyword = @"(?<=[\s]{{1,}}|^){0}(?=[\s]{{1,}}|$)";
@@ -233,8 +283,14 @@ namespace RDL.Parser
             public static readonly string KBetween = string.Format(Keyword, "between");
         }
 
+        /// <summary>
+        /// The token definitions set.
+        /// </summary>
         private static class DefinitionSets
         {
+            /// <summary>
+            /// All supported by language keyword.
+            /// </summary>
             public static TokenDefinition[] General => new[]
             {
                 new TokenDefinition(TokenRegexDefinition.KAnd),

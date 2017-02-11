@@ -60,7 +60,7 @@ namespace TQL.RDL.Converter
         {
             var preprocessor = new Preprocessor.Preprocessor();
             var query = preprocessor.Execute(request.Query);
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             RdlParser parser = null;
 
             if (request.Formats == null || request.Formats.Length == 0)

@@ -291,7 +291,7 @@ namespace TQL.RDL.Parser.Tests
 
         private static RootScriptNode Parse(string query)
         {
-            var lexer = new LexerComplexTokensDecorator(query);
+            var lexer = new Lexer(query, true);
             var parser = new RdlParser(lexer, TimeZoneInfo.Local.BaseUtcOffset, new string[1]
             {
                 "dd.M.yyyy"
