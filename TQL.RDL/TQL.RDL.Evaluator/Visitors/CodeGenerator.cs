@@ -31,6 +31,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The WhereConditions node.</param>
         public virtual void Visit(WhereConditionsNode node)
         {
+            _hasWhereConditions = true;
         }
 
         /// <summary>
@@ -274,7 +275,7 @@ namespace TQL.RDL.Evaluator.Visitors
 
             Instructions.Add(new BreakInstruction());
 
-            VirtualMachine = new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt);
+            VirtualMachine = new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt, _hasWhereConditions);
         }
 
         /// <summary>
@@ -530,6 +531,7 @@ namespace TQL.RDL.Evaluator.Visitors
         private readonly Dictionary<string, int> _labels;
         private readonly RdlMetadata _metadatas;
         private readonly object _callMethodContext;
+        private bool _hasWhereConditions;
 
         #endregion
 

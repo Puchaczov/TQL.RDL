@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TQL.Interfaces;
+using TQL.RDL.Evaluator;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.ErrorHandling;
 
@@ -336,6 +338,25 @@ namespace TQL.RDL.Converter.Tests
                 x => true);
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_IsSatisfiedBy_ShouldPass()
+        {
+            var evaluator =
+                (RdlVirtualMachine)
+                EvaluateQuery(
+                    "repeat every days where GetDay() between 9 and 12 or GetDay() between 15 and 16 start at '01.01.2017'",
+                    string.Empty,
+                    string.Empty);
+
+            Assert.IsFalse(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("14.01.2017")));
+            Assert.IsTrue(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("15.01.2017")));
+            Assert.IsFalse(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("16.01.2017")));
+
+            Assert.IsFalse(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("7.01.2017")));
+            Assert.IsTrue(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("10.01.2017")));
+            Assert.IsFalse(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("13.01.2017")));
+        }
+
         [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
@@ -356,7 +377,7 @@ namespace TQL.RDL.Converter.Tests
         [BindableMethod]
         public static DateTimeOffset GetDate([InjectReferenceTime] DateTimeOffset datetime) => datetime;
 
-        private void EvaluateQuery(string query, string startAt, string stopAt,
+        private IFireTimeEvaluator EvaluateQuery(string query, string startAt, string stopAt,
             params Func<DateTimeOffset?, bool>[] funcs)
         {
             var response = TestHelper.Convert(string.Format(query, startAt, stopAt));
@@ -376,6 +397,7 @@ namespace TQL.RDL.Converter.Tests
             }
 
             Assert.IsTrue(index == funcs.Length);
+            return evaluator;
         }
     }
 }

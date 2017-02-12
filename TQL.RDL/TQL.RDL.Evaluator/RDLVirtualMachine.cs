@@ -7,6 +7,8 @@ namespace TQL.RDL.Evaluator
 {
     public class RdlVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
+        private readonly bool _hasWhereConditions;
+
         /// <summary>
         /// Initialize instance.
         /// </summary>
@@ -15,7 +17,7 @@ namespace TQL.RDL.Evaluator
         /// <param name="stopAt">Stop time.</param>
         /// <param name="startAt">Start time.</param>
         public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions,
-            DateTimeOffset? stopAt, DateTimeOffset startAt)
+            DateTimeOffset? stopAt, DateTimeOffset startAt, bool hasWhereConditions)
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
@@ -27,6 +29,7 @@ namespace TQL.RDL.Evaluator
             ReferenceTime = startAt;
             RelativeLabels = relativeLabels;
             Registers = new long[2];
+            _hasWhereConditions = hasWhereConditions;
         }
 
         /// <summary>
@@ -99,6 +102,20 @@ namespace TQL.RDL.Evaluator
         public Stack<string> Strings { get; }
 
         /// <summary>
+        /// Determine if passed datetime fits the conditions.
+        /// </summary>
+        /// <param name="date">The date.</param>
+        /// <returns>True if datetime fits the conditions, else false.</returns>
+        public bool IsSatisfiedBy(DateTimeOffset date)
+        {
+            var oldReferenceTime = ReferenceTime;
+            ReferenceTime = date;
+            var processedDate = NextFire();
+            ReferenceTime = oldReferenceTime;
+            return processedDate.HasValue && processedDate.Value == date;
+        }
+
+        /// <summary>
         /// Perform evaluation of query based on passed instructions set.
         /// </summary>
         /// <returns>Next occurence or null if out of range.</returns>
@@ -136,17 +153,14 @@ namespace TQL.RDL.Evaluator
                     return null;
                 }
 
-                var cond = false;
-                
-                if (Values.Count > 0)
-                    cond = Convert.ToBoolean(Values.Pop());
-                else
-                    cond = true;
+                var isCurrentDateFitsCondition = true;
+                if (_hasWhereConditions)
+                    isCurrentDateFitsCondition = Convert.ToBoolean(Values.Pop());
 
                 Values.Clear();
                 Datetimes.Clear();
 
-                if (cond)
+                if (isCurrentDateFitsCondition)
                     return old;
             }
         }
