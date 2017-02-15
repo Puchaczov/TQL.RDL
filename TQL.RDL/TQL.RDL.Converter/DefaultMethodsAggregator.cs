@@ -17,6 +17,17 @@ namespace TQL.RDL.Converter
             DayOfWeek.Friday
         };
 
+        private readonly Random _random = new Random();
+        private int _instanceRandomNumber;
+
+        /// <summary>
+        /// Initialize instance.
+        /// </summary>
+        public DefaultMethodsAggregator()
+        {
+            _instanceRandomNumber = _random.Next();
+        }
+
         /// <summary>
         ///     Determine if injected date is last day of month.
         /// </summary>
@@ -159,5 +170,39 @@ namespace TQL.RDL.Converter
         [BindableMethod]
         public bool IsWorkingDay([InjectReferenceTime] DateTimeOffset datetime)
             => WorkingDays.Contains(datetime.DayOfWeek);
+
+        /// <summary>
+        ///     Gets the random number.
+        /// </summary>
+        /// <returns>Random number.</returns>
+        [BindableMethod]
+        [DoNotCache]
+        public long GetRandomValue() => _random.Next();
+
+        /// <summary>
+        ///     Gets the random number.
+        /// </summary>
+        /// <param name="min">Min value of number can be outputed.</param>
+        /// <param name="max">Max value of number can be outputed.</param>
+        /// <returns>Random number.</returns>
+        [BindableMethod]
+        [DoNotCache]
+        public long GetRandomValue(int min, int max) => _random.Next(min, max);
+
+        /// <summary>
+        /// Gets the random number that can be other for each instance.
+        /// </summary>
+        /// <returns>Random number.</returns>
+        [BindableMethod]
+        public long GetInstanceRandomValue() => _instanceRandomNumber;
+
+        /// <summary>
+        /// Gets the random number that can be other for each instance.
+        /// </summary>
+        /// <param name="min">Min value of number can be outputed.</param>
+        /// <param name="max">Max value of number can be outputed.</param>
+        /// <returns>Random number.</returns>
+        [BindableMethod]
+        public long GetInstanceRandomValue(int min, int max) => min + (_instanceRandomNumber % (max - min));
     }
 }

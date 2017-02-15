@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using RDL.Parser;
+using TQL.RDL.Evaluator.Attributes;
 
 namespace TQL.RDL.Evaluator
 {
@@ -17,6 +18,8 @@ namespace TQL.RDL.Evaluator
             _metadata = metadata;
         }
 
+        #region Implementation of IMethodDeclarationResolver
+
         /// <summary>
         ///     Determine which method should be called for passed arguments.
         /// </summary>
@@ -26,5 +29,13 @@ namespace TQL.RDL.Evaluator
         /// <returns>true if method is usable for that call, else false.</returns>
         public bool TryResolveMethod(string name, Type[] callArgs, out MethodInfo result)
             => _metadata.TryGetMethod(name, callArgs, out result);
+
+        /// <summary>
+        /// Determine if passed method can be cached.
+        /// </summary>
+        /// <returns>True if method call can be cached, otherwise false.</returns>
+        public bool CanBeCached(MethodInfo method) => method.GetCustomAttribute<DoNotCacheAttribute>() == null;
+
+        #endregion
     }
 }

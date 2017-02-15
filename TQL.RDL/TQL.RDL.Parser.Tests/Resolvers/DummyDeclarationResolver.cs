@@ -25,5 +25,7 @@ namespace TQL.RDL.Parser.Tests.Resolvers
         public int GetMonth() => 1;
 
         public int GetYear() => 1;
+
+        public bool CanBeCached(MethodInfo method) => true;
     }
 }

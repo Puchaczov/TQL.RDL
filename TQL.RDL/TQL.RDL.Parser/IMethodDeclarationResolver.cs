@@ -13,5 +13,11 @@ namespace RDL.Parser
         /// <param name="result">Matched method.</param>
         /// <returns>True if method were matched, else false.</returns>
         bool TryResolveMethod(string name, Type[] callArgs, out MethodInfo result);
+
+        /// <summary>
+        /// Determine if passed method can be cached.
+        /// </summary>
+        /// <returns>True if method call can be cached, otherwise false.</returns>
+        bool CanBeCached(MethodInfo method);
     }
 }

@@ -5,7 +5,7 @@ namespace RDL.Parser.Nodes
     public class StoreValueFunctionNode : RawFunctionNode
     {
         public StoreValueFunctionNode(RawFunctionNode node)
-            : base(node.Token as FunctionToken, node.Args, node.ReturnType)
+            : base(node.Token as FunctionToken, node.Args, node.ReturnType, node.DoNotCache)
         {
         }
 

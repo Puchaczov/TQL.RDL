@@ -9,11 +9,12 @@ namespace RDL.Parser.Nodes
     {
         private readonly FunctionToken _functionName;
 
-        public RawFunctionNode(FunctionToken functionName, ArgListNode args, Type returnType)
+        public RawFunctionNode(FunctionToken functionName, ArgListNode args, Type returnType, bool doNotCache)
         {
             _functionName = functionName;
             Args = args;
             ReturnType = returnType;
+            DoNotCache = doNotCache;
         }
 
         public override RdlSyntaxNode[] Descendants => Args.Descendants;
@@ -38,6 +39,8 @@ namespace RDL.Parser.Nodes
         public override Type ReturnType { get; }
 
         public ArgListNode Args { get; }
+
+        public bool DoNotCache { get; }
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
 
@@ -25,7 +26,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Function node that will be visited.</param>
         public override void Visit(RawFunctionNode node)
         {
-            if (WillFunctionCallOccurencesAtLeastTwoTimes(node))
+            if (WillFunctionCallOccurencesAtLeastTwoTimes(node) && IsCacheable(node))
             {
                 if (!CanBeRetrievedFromCache(node))
                 {
@@ -39,6 +40,16 @@ namespace TQL.RDL.Evaluator.Visitors
             }
             else
                 base.Visit(node);
+        }
+
+        /// <summary>
+        /// Determine if function is cacheable.
+        /// </summary>
+        /// <param name="node">The raw function.</param>
+        /// <returns>True if node is cacheable, else false.</returns>
+        private bool IsCacheable(RawFunctionNode node)
+        {
+            return !node.DoNotCache;
         }
 
         /// <summary>

@@ -278,7 +278,7 @@ namespace RDL.Parser
                     MethodInfo registeredMethod;
                     if (_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
                     {
-                        var function = new RawFunctionNode(func, args, registeredMethod.ReturnType);
+                        var function = new RawFunctionNode(func, args, registeredMethod.ReturnType, _resolver.CanBeCached(registeredMethod));
                         var hashCodedFunction = function.Stringify().GetHashCode();
 
                         if (!FunctionCallOccurence.ContainsKey(hashCodedFunction))
