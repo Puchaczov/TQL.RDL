@@ -35,10 +35,6 @@ repeat every minutes where
 
 Download and install the latest version (nuget): **Install-Package TQL.RDL**
 
-## Tests and examples
-
-Describe and show how to run the tests with code examples.
-
 ## Contributors
 
 - Fork the repo
