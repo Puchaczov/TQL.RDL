@@ -342,7 +342,6 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_IsSatisfiedBy_ShouldPass()
         {
             var evaluator =
-                (RdlVirtualMachine)
                 EvaluateQuery(
                     "repeat every days where GetDay() between 9 and 12 or GetDay() between 15 and 16 start at '01.01.2017'",
                     string.Empty,

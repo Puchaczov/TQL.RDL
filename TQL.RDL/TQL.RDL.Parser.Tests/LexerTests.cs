@@ -140,7 +140,7 @@ namespace TQL.RDL.Parser.Tests
             var lst = new List<Token>();
 
             Token current = null;
-            while ((current = lexer.NextToken()).TokenType != StatementType.EndOfFile)
+            while ((current = lexer.Next()).TokenType != StatementType.EndOfFile)
                 lst.Add(current);
             lst.Add(current);
             return lst.ToArray();

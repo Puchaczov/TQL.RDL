@@ -23,7 +23,7 @@ namespace RDL.Parser
         /// <summary>
         /// Gets passed query.
         /// </summary>
-        public string Query => input;
+        public string Query => Input;
 
         /// <summary>
         /// Changes position where lexer starts matching rules.
@@ -40,11 +40,11 @@ namespace RDL.Parser
         /// Gets the next token from tokens stream.
         /// </summary>
         /// <returns>The token.</returns>
-        public override Token NextToken()
+        public override Token Next()
         {
-            var token = base.NextToken();
+            var token = base.Next();
             while (_skipWhiteSpaces && token.TokenType == StatementType.WhiteSpace)
-                token = base.NextToken();
+                token = base.Next();
             return token;
         }
 
@@ -52,7 +52,7 @@ namespace RDL.Parser
         /// Gets EndOfFile token.
         /// </summary>
         /// <returns>End of file token.</returns>
-        protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(input.Length, 0));
+        protected override Token GetEndOfFileToken() => new EndOfFileToken(new TextSpan(Input.Length, 0));
 
         /// <summary>
         /// Gets the token.
@@ -275,11 +275,9 @@ namespace RDL.Parser
             public static readonly string KWord = @"[\w*?_]{1,}";
             public static readonly string KWordBracketed = @"'(.*?[^\\])'";
             public static readonly string KEqual = string.Format(Keyword, EqualityToken.TokenText);
-            public static readonly string KCaseWhenEsac = @"case.*esac";
             public static readonly string KCase = string.Format(Keyword, CaseToken.TokenText);
             public static readonly string KCaseEnd = string.Format(Keyword, CaseEndToken.TokenText);
             public static readonly string KWhen = string.Format(Keyword, WhenToken.TokenText);
-            public static readonly string KBetweenAnd = @"(?<=between\s).+?(?=and)and\s+.*?(?=\s+and|\s+or|$)";
             public static readonly string KBetween = string.Format(Keyword, "between");
         }
 

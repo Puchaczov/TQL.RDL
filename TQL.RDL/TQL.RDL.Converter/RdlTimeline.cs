@@ -69,7 +69,7 @@ namespace TQL.RDL.Converter
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
             return request.Source == request.Target
                 ? new ConvertionResponse<IFireTimeEvaluator>(evaluator)
-                : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Target, evaluator));
+                : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Source, request.Target, evaluator));
         }
 
         /// <summary>

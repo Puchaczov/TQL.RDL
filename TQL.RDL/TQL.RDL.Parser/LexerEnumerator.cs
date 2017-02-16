@@ -17,7 +17,7 @@ namespace RDL.Parser
         {
             _lexer = lexer;
             _abortOnToken = abortOnToken;
-            _current = lexer.CurrentToken();
+            _current = lexer.Current();
         }
 
         public object Current => _current;
@@ -35,7 +35,7 @@ namespace RDL.Parser
             }
 
             _firstValueEnumerated = true;
-            _current = _lexer.NextToken();
+            _current = _lexer.Next();
 
             if (_abortOnToken.Contains(_current.TokenType))
                 return false;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
 

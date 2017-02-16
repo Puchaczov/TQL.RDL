@@ -36,9 +36,9 @@ namespace RDL.Parser
 
         public IDictionary<int, int> FunctionCallOccurence { get; }
 
-        private Token Current => _cLexer.CurrentToken();
+        private Token Current => _cLexer.Current();
 
-        private Token Last => _cLexer.LastToken();
+        private Token Last => _cLexer.Last();
 
         private ILexer<Token> Lexer => _cLexer;
 
@@ -406,7 +406,7 @@ namespace RDL.Parser
         {
             if (Current.TokenType.Equals(tokenType))
             {
-                Lexer.NextToken();
+                Lexer.Next();
                 return;
             }
             throw new UnexpectedTokenException<StatementType>(Lexer.Position, Current);

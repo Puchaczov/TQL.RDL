@@ -1,5 +1,5 @@
 ﻿using TQL.Common.Filters;
-using TQL.Common.Pipeline;
+using TQL.Common.Filters.Pipeline;
 
 namespace TQL.RDL.Preprocessor
 {
