@@ -16,9 +16,13 @@ namespace TQL.RDL.Converter.Tests
 
         public static ConvertionResponse<IFireTimeEvaluator> Convert<TMethodsAggregator>(string query)
             where TMethodsAggregator : new()
+            => Convert<TMethodsAggregator>(query, TimeZoneInfo.Local);
+
+        public static ConvertionResponse<IFireTimeEvaluator> Convert<TMethodsAggregator>(string query, TimeZoneInfo timezone)
+            where TMethodsAggregator : new()
         {
             var request
-                = new ConvertionRequest<TMethodsAggregator>(query, TimeZoneInfo.Local, TimeZoneInfo.Local, false, new[]
+                = new ConvertionRequest<TMethodsAggregator>(query, timezone, timezone, false, new[]
                 {
                     "dd/M/yyyy H:m:s",
                     "dd/M/yyyy h:m:s tt",

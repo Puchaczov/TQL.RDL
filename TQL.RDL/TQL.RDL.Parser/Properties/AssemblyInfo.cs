@@ -14,5 +14,5 @@ using System.Resources;
 [assembly: AssemblyTrademark("TQL")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: AssemblyVersion("0.10.0.0")]
-[assembly: AssemblyFileVersion("0.10.0.0")]
+[assembly: AssemblyVersion("0.10.0.1")]
+[assembly: AssemblyFileVersion("0.10.0.1")]

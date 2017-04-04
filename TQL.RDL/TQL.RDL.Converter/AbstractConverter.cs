@@ -64,10 +64,10 @@ namespace TQL.RDL.Converter
             RdlParser parser = null;
 
             if (request.Formats == null || request.Formats.Length == 0)
-                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, _defaultFormats, request.CultureInfo,
+                parser = new RdlParser(lexer, _defaultFormats, request.CultureInfo,
                     new MethodDeclarationResolver(Metdatas), MethodOccurences);
             else
-                parser = new RdlParser(lexer, request.Source.BaseUtcOffset, request.Formats, request.CultureInfo,
+                parser = new RdlParser(lexer, request.Formats, request.CultureInfo,
                     new MethodDeclarationResolver(Metdatas), MethodOccurences);
 
             return parser.ComposeRootComponents();

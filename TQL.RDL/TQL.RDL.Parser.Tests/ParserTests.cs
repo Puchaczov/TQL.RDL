@@ -184,7 +184,7 @@ namespace TQL.RDL.Parser.Tests
 
             Assert.IsTrue(node.Descendants[1].Descendants[0].GetType() == typeof(DateTimeNode));
             Assert.IsTrue((node.Descendants[1].Descendants[0] as DateTimeNode).DateTime ==
-                          DateTimeOffset.Parse("2016.05.21"));
+                          DateTimeOffset.Parse("2016.05.21 +00:00"));
         }
 
         [TestMethod]
@@ -233,10 +233,10 @@ namespace TQL.RDL.Parser.Tests
             Assert.IsTrue(typeof(NumericNode) == node.Descendants[1].Descendants[0].Descendants[1].GetType());
 
             var startAt = node.Descendants[2] as StartAtNode;
-            Assert.IsTrue(DateTimeOffset.Parse("2012.01.11") == startAt.When);
+            Assert.IsTrue(DateTimeOffset.Parse("2012.01.11 +00:00") == startAt.When);
 
             var stopAt = node.Descendants[3] as StopAtNode;
-            Assert.IsTrue(DateTimeOffset.Parse("2013.01.12") == stopAt.When);
+            Assert.IsTrue(DateTimeOffset.Parse("2013.01.12 +00:00") == stopAt.When);
         }
 
         [TestMethod]
@@ -292,7 +292,7 @@ namespace TQL.RDL.Parser.Tests
         private static RootScriptNode Parse(string query)
         {
             var lexer = new Lexer(query, true);
-            var parser = new RdlParser(lexer, TimeZoneInfo.Local.BaseUtcOffset, new string[1]
+            var parser = new RdlParser(lexer, new string[1]
             {
                 "dd.M.yyyy"
             }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver(), new Dictionary<int, int>());

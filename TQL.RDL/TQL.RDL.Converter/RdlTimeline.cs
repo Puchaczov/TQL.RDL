@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using RDL.Parser.Helpers;
 using RDL.Parser.Nodes;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
+using TQL.Common.Timezone;
 using TQL.Interfaces;
 using TQL.RDL.Converter.Exceptions;
 using TQL.RDL.Evaluator;
@@ -63,10 +65,14 @@ namespace TQL.RDL.Converter
             var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences);
 
             ast.Accept(codeGenerationTraverseVisitor);
-            var evaluator = codeGenerator.VirtualMachine;
+            IFireTimeEvaluator evaluator = codeGenerator.VirtualMachine;
 
             if (evaluator == null)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
+
+            evaluator = new TimeZoneAdjuster(request.Source, evaluator);
+            evaluator = new DaylightSavingTimeTracker(request.Source, evaluator);
+
             return request.Source == request.Target
                 ? new ConvertionResponse<IFireTimeEvaluator>(evaluator)
                 : new ConvertionResponse<IFireTimeEvaluator>(new TimeZoneChangerDecorator(request.Source, request.Target, evaluator));

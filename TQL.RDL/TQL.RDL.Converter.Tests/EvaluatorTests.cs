@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TQL.Interfaces;
-using TQL.RDL.Evaluator;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.ErrorHandling;
 
@@ -31,6 +30,98 @@ namespace TQL.RDL.Converter.Tests
             } while (refTime != null);
 
             Assert.AreEqual(1, count);
+        }
+        
+        [Ignore]
+        [TestMethod]
+        public void CodeGenerationVisitor_Compose()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every seconds where GetSecond() % 20 = 0 start at '08.03.2017 00:00:00' stop at '08.03.2018 00:00:00'");
+
+            var machine = response.Output;
+
+            var response2 =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every seconds start at '08.03.2017 00:00:00'");
+
+            var machine2 = response.Output;
+
+            while (machine.NextFire().HasValue && machine2.NextFire().HasValue)
+            { }
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DaylightSavingTime_SpringTime_HoursResolution()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every 1 hours start at '26.03.2017 00:00:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            var machine = response.Output;
+            
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 00:00:00 +01:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 01:00:00 +01:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 03:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 04:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 05:00:00 +02:00"), machine.NextFire());
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DaylightSavingTime_SpringTime_MinutesResolution()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every 3 minutes start at '26.03.2017 01:58:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            var machine = response.Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 01:58:00 +01:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 03:01:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 03:04:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 03:07:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("26.03.2017 03:10:00 +02:00"), machine.NextFire());
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DaylightSavingTime_WinterTime_HoursResolution()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every 1 hours start at '29.10.2017 00:00:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            var machine = response.Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 00:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 01:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:00:00 +01:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 03:00:00 +01:00"), machine.NextFire());
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DaylightSavingTime_WinterTime_MinutesResolution()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every 65 minutes start at '29.10.2017 01:55:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            var machine = response.Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 01:55:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:00:00 +01:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 03:05:00 +01:00"), machine.NextFire());
+
+            response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every 65 minutes start at '29.10.2017 01:35:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            machine = response.Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 01:35:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:40:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:45:00 +01:00"), machine.NextFire());
         }
 
         [TestMethod]

@@ -19,7 +19,7 @@ namespace RDL.Parser.Nodes
 
         public DateTimeOffset When => (_when as DateTimeNode).DateTime;
 
-        public override string ToString() => string.Format("start at {0}", _when);
+        public override string ToString() => $"start at {_when}";
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }

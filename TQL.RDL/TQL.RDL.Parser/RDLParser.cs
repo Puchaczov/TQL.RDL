@@ -18,14 +18,12 @@ namespace RDL.Parser
         private readonly Lexer _cLexer;
         private readonly string[] _formats;
         private readonly IMethodDeclarationResolver _resolver;
-        private readonly TimeSpan _zone;
 
-        public RdlParser(Lexer lexer, TimeSpan zone, string[] formats, CultureInfo ci,
+        public RdlParser(Lexer lexer, string[] formats, CultureInfo ci,
             IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
         {
             _cLexer = lexer;
-
-            _zone = zone;
+            
             _formats = formats;
             _ci = ci;
             _resolver = resolver;
@@ -87,7 +85,7 @@ namespace RDL.Parser
                 case StatementType.Var:
                     return new StartAtNode(startAtToken, new VarNode(token as VarToken));
                 case StatementType.Word:
-                    return new StartAtNode(startAtToken, new DateTimeNode(token, _zone, _formats, _ci));
+                    return new StartAtNode(startAtToken, new DateTimeNode(token, _formats, _ci));
             }
             throw new NotSupportedException();
         }
@@ -102,7 +100,7 @@ namespace RDL.Parser
                 case StatementType.Var:
                     throw new NotSupportedException("Not supported yet, sorry.");
                 case StatementType.Word:
-                    return new StopAtNode(stopAtToken, new DateTimeNode(token, _zone, _formats, _ci));
+                    return new StopAtNode(stopAtToken, new DateTimeNode(token, _formats, _ci));
             }
             throw new NotSupportedException();
         }

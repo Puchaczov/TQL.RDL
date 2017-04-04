@@ -16,6 +16,7 @@ namespace TQL.RDL.Evaluator
         /// <param name="instructions">Instruction set to execute.</param>
         /// <param name="stopAt">Stop time.</param>
         /// <param name="startAt">Start time.</param>
+        /// <param name="hasWhereConditions">Determine if query has where condition.</param>
         public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions,
             DateTimeOffset? stopAt, DateTimeOffset startAt, bool hasWhereConditions)
         {

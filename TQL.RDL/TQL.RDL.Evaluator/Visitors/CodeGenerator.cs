@@ -275,6 +275,7 @@ namespace TQL.RDL.Evaluator.Visitors
 
             Instructions.Add(new BreakInstruction());
 
+            _startAt = new DateTimeOffset(_startAt.Year, _startAt.Month, _startAt.Day, _startAt.Hour, _startAt.Minute, _startAt.Second, TimeZoneInfo.Utc.BaseUtcOffset);
             VirtualMachine = new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt, _hasWhereConditions);
         }
 
@@ -560,7 +561,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="startAt">Starting from parameter.</param>
-        /// <param name="callMethodContext">object that contains methods to invoke.</param>
+        /// <param name="callMethodContext">Object that contains methods to invoke.</param>
         private CodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext)
         {
             _variables = new MemoryVariables();

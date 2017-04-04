@@ -8,19 +8,24 @@ namespace RDL.Parser.Nodes
     {
         private readonly CultureInfo _ci;
         private readonly string[] _formats;
-        private TimeSpan _zone;
 
-        public DateTimeNode(Token token, TimeSpan zone, string[] formats, CultureInfo ci)
+        public DateTimeNode(Token token, string[] formats, CultureInfo ci)
             : base(token)
         {
-            _zone = zone;
             _formats = formats;
             _ci = ci;
         }
 
         public override RdlSyntaxNode[] Descendants => new RdlSyntaxNode[0];
 
-        public DateTimeOffset DateTime => DateTimeOffset.ParseExact(Token.Value, _formats, _ci, DateTimeStyles.None);
+        public DateTimeOffset DateTime
+        {
+            get
+            {
+                var dt = DateTimeOffset.ParseExact(Token.Value, _formats, _ci, DateTimeStyles.None);
+                return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, TimeSpan.Zero);
+            }
+        }
 
         public override Type ReturnType => typeof(DateTimeOffset);
 

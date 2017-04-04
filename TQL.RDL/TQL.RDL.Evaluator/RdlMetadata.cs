@@ -62,6 +62,13 @@ namespace TQL.RDL.Evaluator
             return _methods[name][index];
         }
 
+        /// <summary>
+        /// Gets the registered method if exists.
+        /// </summary>
+        /// <param name="name">The method name.</param>
+        /// <param name="methodArgs">The types of arguments methods contains.</param>
+        /// <param name="result">Method metadas of founded method.</param>
+        /// <returns>True if method exists, otherwise false.</returns>
         public bool TryGetMethod(string name, Type[] methodArgs, out MethodInfo result)
         {
             var index = -1;
