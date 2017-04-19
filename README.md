@@ -12,6 +12,17 @@ RDL is parser and evaluator for small language to querying time. Syntax is simil
 
 ## Examples
 
+- In a monday of first or third week of month, get dates from 8:30AM to 11:29AM, for second and fourth, return 12:00 but only when day of week is tuesday or sunday.
+```
+repeat every minutes where 1 = 
+(case 
+    when GetWeekOfMonth() in (1,3) and GetDayOfWeek() = monday
+    then GetTime() between Time(8, 30, 0) and Time(11, 30, 0)
+    when GetWeekOfMonth() in (2,4) and GetDayOfWeek() in (tuesday, sunday)
+    then GetTime() = Time(12, 0, 0)
+    else 0 esac) start at '01.04.2017' stop at '30.04.2017'
+```
+
 - Get dates of tuesday and wednesday that are in first week of month and dates of thursday and friday in the third week of month starting from 01.12.2016
 
 ```  
