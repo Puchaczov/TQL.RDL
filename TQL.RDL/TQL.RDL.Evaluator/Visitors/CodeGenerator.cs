@@ -248,6 +248,8 @@ namespace TQL.RDL.Evaluator.Visitors
             switch (node.Left.ReturnType.GetTypeName())
             {
                 case nameof(Int64):
+                case nameof(Int32):
+                case nameof(Int16):
                     ExpressionGenerateIn<InInstructionNumeric>(node);
                     break;
                 case nameof(DateTimeOffset):
@@ -388,7 +390,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "FSlash" node.</param>
         public virtual void Visit(FSlashNode node)
         {
-            if (node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
+            if (RdlMetadata.IsTypePossibleToConvert(node.Left.ReturnType, node.Right.ReturnType))
                 Instructions.Add(new DivideNumeric());
         }
 
@@ -398,7 +400,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Hyphen" node.</param>
         public virtual void Visit(HyphenNode node)
         {
-            if (node.Left.ReturnType == typeof(long) && node.Right.ReturnType == typeof(long))
+            if(RdlMetadata.IsTypePossibleToConvert(node.Left.ReturnType, node.Right.ReturnType))
                 Instructions.Add(new SubtractNumeric());
         }
 

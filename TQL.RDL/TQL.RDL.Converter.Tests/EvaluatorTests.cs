@@ -447,6 +447,67 @@ namespace TQL.RDL.Converter.Tests
             Assert.IsFalse(evaluator.IsSatisfiedBy(DateTimeOffset.Parse("13.01.2017")));
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateGetTimeBetween_ShouldPass()
+        {
+            var evaluator =
+                EvaluateQuery(
+                    @"repeat every minutes where GetTime() between Time(8, 30, 0) and Time(11, 30, 0) start at '16.04.2017' stop at '17.04.2017'",
+                    string.Empty, string.Empty);
+
+            DateTimeOffset lastlyCalculated = DateTimeOffset.MinValue;
+            DateTimeOffset? latest = null;
+
+            Assert.AreEqual(DateTimeOffset.Parse("16.04.2017 08:30:00"), evaluator.NextFire());
+            while ((latest = evaluator.NextFire()) != null)
+            {
+                lastlyCalculated = latest.Value;
+            }
+            Assert.AreEqual(DateTimeOffset.Parse("16.04.2017 11:29:00"), lastlyCalculated);
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateComplexExpression_ShouldPass()
+        {
+            var evaluator = EvaluateQuery(@"
+                repeat every minutes where 1 = 
+                    (case 
+                        when GetWeekOfMonth() in (1,3) and GetDayOfWeek() = monday
+                        then GetTime() between Time(8, 30, 0) and Time(11, 30, 0)
+                        when GetWeekOfMonth() in (2,4) and GetDayOfWeek() in (tuesday, sunday)
+                        then GetTime() = Time(12, 0, 0)
+                        else 0
+                    esac) start at '01.04.2017' stop at '30.04.2017'
+            ", string.Empty, string.Empty);
+
+            DateTimeOffset previous = DateTimeOffset.MinValue;
+            DateTimeOffset? latest = null;
+
+            previous = evaluator.NextFire().Value;
+            Assert.AreEqual(DateTimeOffset.Parse("03.04.2017 08:30:00"), previous);
+            while ((latest = evaluator.NextFire()).Value.Day == previous.Day)
+            {
+                previous = latest.Value;
+            }
+
+            Assert.AreEqual(DateTimeOffset.Parse("09.04.2017 12:00:00"), latest);
+            Assert.AreEqual(DateTimeOffset.Parse("11.04.2017 12:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.04.2017 08:30:00"), evaluator.NextFire());
+
+            previous = evaluator.NextFire().Value;
+            Assert.AreEqual(DateTimeOffset.Parse("17.04.2017 08:31:00"), previous);
+            while ((latest = evaluator.NextFire()).Value.Day == previous.Day)
+            {
+                previous = latest.Value;
+            }
+
+            Assert.AreEqual(DateTimeOffset.Parse("17.04.2017 11:29:00"), previous);
+
+            Assert.AreEqual(DateTimeOffset.Parse("23.04.2017 12:00:00"), latest);
+            Assert.AreEqual(DateTimeOffset.Parse("25.04.2017 12:00:00"), evaluator.NextFire());
+            Assert.IsNull(evaluator.NextFire());
+        }
+
         [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {

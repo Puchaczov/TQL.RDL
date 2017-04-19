@@ -180,11 +180,13 @@ namespace TQL.RDL.Evaluator.Visitors
 
                 var hasMixedTypes = false;
                 foreach (var desc in node.Right.Descendants)
-                    if (dstType != desc.ReturnType && !CanBeGeneralized(node.Left, desc))
-                    {
-                        hasMixedTypes = true;
-                        break;
-                    }
+                {
+                    if ((dstType == desc.ReturnType || CanBeGeneralized(node.Left, desc)) ||
+                        RdlMetadata.IsTypePossibleToConvert(dstType, desc.ReturnType)) continue;
+
+                    hasMixedTypes = true;
+                    break;
+                }
 
                 if (hasMixedTypes)
                     ReportHasMixedTypes(node);

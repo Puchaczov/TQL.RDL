@@ -21,19 +21,19 @@ namespace TQL.RDL.Evaluator.Tests
                     {
                         new WhenThenNode(
                             new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()),
-                                new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))),
+                                new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()), typeof(short))),
                             new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()),
-                                new NumericNode(new Token("2", StatementType.Numeric, new TextSpan())))
+                                new NumericNode(new Token("2", StatementType.Numeric, new TextSpan()), typeof(short)))
                         ),
                         new WhenThenNode(
                             new WhenNode(new Token("when", StatementType.Numeric, new TextSpan()),
-                                new NumericNode(new Token("3", StatementType.Numeric, new TextSpan()))),
+                                new NumericNode(new Token("3", StatementType.Numeric, new TextSpan()), typeof(short))),
                             new ThenNode(new Token("then", StatementType.Numeric, new TextSpan()),
-                                new NumericNode(new Token("4", StatementType.Numeric, new TextSpan())))
+                                new NumericNode(new Token("4", StatementType.Numeric, new TextSpan()), typeof(short)))
                         )
                     },
                     new ElseNode(new Token("else", StatementType.Else, new TextSpan()),
-                        new NumericNode(new Token("0", StatementType.Numeric, new TextSpan()))))
+                        new NumericNode(new Token("0", StatementType.Numeric, new TextSpan()), typeof(short))))
             });
 
             var enumerator = new KeywordEnumerator(rootComponent);
@@ -79,12 +79,12 @@ namespace TQL.RDL.Evaluator.Tests
                     new HyphenNode(
                         new StarNode(
                             new NumericNode(
-                                new Token("7", StatementType.Numeric, new TextSpan())),
+                                new Token("7", StatementType.Numeric, new TextSpan()), typeof(short)),
                             new AddNode(
-                                new NumericNode(new Token("8", StatementType.Numeric, new TextSpan())),
-                                new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()))
+                                new NumericNode(new Token("8", StatementType.Numeric, new TextSpan()), typeof(short)),
+                                new NumericNode(new Token("1", StatementType.Numeric, new TextSpan()), typeof(short))
                             )),
-                        new NumericNode(new Token("4", StatementType.Numeric, new TextSpan())))
+                        new NumericNode(new Token("4", StatementType.Numeric, new TextSpan()), typeof(short)))
                 });
 
             var enumerator = new ArythmeticEnumerator(rootComponent);

@@ -18,7 +18,7 @@ namespace TQL.RDL.Converter
         };
 
         private readonly Random _random = new Random();
-        private int _instanceRandomNumber;
+        private readonly int _instanceRandomNumber;
 
         /// <summary>
         /// Initialize instance.
@@ -42,7 +42,7 @@ namespace TQL.RDL.Converter
         /// </summary>
         /// <param name="datetime">The date.</param>
         /// <param name="dayOfWeek">The day of week.</param>
-        /// <returns></returns>
+        /// <returns>True when reference DayOfWeek is equals to passed dayOfWeek.</returns>
         [BindableMethod]
         public static bool IsDayOfWeek([InjectReferenceTime] DateTimeOffset datetime, long dayOfWeek)
             => datetime.DayOfWeek == (DayOfWeek) dayOfWeek;
@@ -124,6 +124,24 @@ namespace TQL.RDL.Converter
         /// <returns>Hour.</returns>
         [BindableMethod]
         public long GetHour([InjectReferenceTime] DateTimeOffset datetime) => datetime.Hour;
+
+        /// <summary>
+        ///     Gets the time
+        /// </summary>
+        /// <param name="datetime">The reference time.</param>
+        /// <returns></returns>
+        [BindableMethod]
+        public long GetTime([InjectReferenceTime] DateTimeOffset datetime) => datetime.TimeOfDay.Ticks;
+
+        /// <summary>
+        ///     Creates the time.
+        /// </summary>
+        /// <param name="hour">The hour.</param>
+        /// <param name="minute">The minute.</param>
+        /// <param name="second">The second.</param>
+        /// <returns>Time based on passed arguments.</returns>
+        [BindableMethod]
+        public long Time(int hour, int minute, int second) => new TimeSpan(hour, minute, second).Ticks;
 
         /// <summary>
         ///     Gets week of month.

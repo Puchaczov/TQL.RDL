@@ -254,7 +254,8 @@ namespace RDL.Parser
             switch (Current.TokenType)
             {
                 case StatementType.Numeric:
-                    return new NumericNode(ConsumeAndGetToken(StatementType.Numeric));
+                    var token = ConsumeAndGetToken(StatementType.Numeric);
+                    return new NumericNode(token, InferMinimalNumericType(token));
                 case StatementType.Word:
                     return new WordNode(ConsumeAndGetToken(StatementType.Word));
                 case StatementType.Var:
@@ -447,6 +448,20 @@ namespace RDL.Parser
             Level1,
             Level2,
             Level3
+        }
+
+        private Type InferMinimalNumericType(Token token)
+        {
+            bool bResult;
+            short sResult;
+
+            if (bool.TryParse(token.Value, out bResult))
+                return typeof(bool);
+
+            if (short.TryParse(token.Value, out sResult))
+                return typeof(short);
+
+            return typeof(long);
         }
     }
 }

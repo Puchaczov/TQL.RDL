@@ -64,8 +64,16 @@ namespace TQL.RDL.Evaluator.Instructions
                         args.Add(machine.Strings.Pop());
                         break;
                     case nameof(Int64):
-                    case nameof(Boolean):
                         args.Add(machine.Values.Pop());
+                        break;
+                    case nameof(Int32):
+                        args.Add(Convert.ToInt32(machine.Values.Pop()));
+                        break;
+                    case nameof(Int16):
+                        args.Add(Convert.ToInt16(machine.Values.Pop()));
+                        break;
+                    case nameof(Boolean):
+                        args.Add(Convert.ToBoolean(machine.Values.Pop()));
                         break;
                     default:
                         throw new Exception();
