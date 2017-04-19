@@ -49,6 +49,7 @@
     <Compile Include="Attributes\BindableClassAttribute.cs" />
     <Compile Include="Attributes\BindableMethodAttribute.cs" />
     <Compile Include="Attributes\DoNotCacheAttribute.cs" />
+    <Compile Include="Attributes\InjectLastFireAttribute.cs" />
     <Compile Include="Attributes\InjectReferenceTimeAttribute.cs" />
     <Compile Include="Attributes\InjectTypeAttribute.cs" />
     <Compile Include="Enumerators\ArythmeticEnumerator.cs" />

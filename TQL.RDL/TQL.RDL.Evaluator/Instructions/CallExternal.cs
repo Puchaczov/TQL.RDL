@@ -46,6 +46,9 @@ namespace TQL.RDL.Evaluator.Instructions
                     case nameof(InjectReferenceTimeAttribute):
                         args.Add(machine.ReferenceTime);
                         break;
+                    case nameof(InjectLastFireAttribute):
+                        args.Add(machine.LastFireTime);
+                        break;
                 }
             }
 

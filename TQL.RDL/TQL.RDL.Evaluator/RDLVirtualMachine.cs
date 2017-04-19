@@ -31,6 +31,7 @@ namespace TQL.RDL.Evaluator
             RelativeLabels = relativeLabels;
             Registers = new long[2];
             _hasWhereConditions = hasWhereConditions;
+            LastFireTime = null;
         }
 
         /// <summary>
@@ -103,6 +104,11 @@ namespace TQL.RDL.Evaluator
         public Stack<string> Strings { get; }
 
         /// <summary>
+        /// Gets the latest fire time.
+        /// </summary>
+        public DateTimeOffset? LastFireTime { get; private set; }
+
+        /// <summary>
         /// Determine if passed datetime fits the conditions.
         /// </summary>
         /// <param name="date">The date.</param>
@@ -110,9 +116,12 @@ namespace TQL.RDL.Evaluator
         public bool IsSatisfiedBy(DateTimeOffset date)
         {
             var oldReferenceTime = ReferenceTime;
+            var oldLastFireTime = LastFireTime;
             ReferenceTime = date;
+            LastFireTime = null;
             var processedDate = NextFire();
             ReferenceTime = oldReferenceTime;
+            LastFireTime = oldLastFireTime;
             return processedDate.HasValue && processedDate.Value == date;
         }
 
@@ -131,7 +140,10 @@ namespace TQL.RDL.Evaluator
             while (true)
             {
                 if (Exit)
+                {
+                    LastFireTime = null;
                     return null;
+                }
 
                 Break = false;
 
@@ -151,6 +163,7 @@ namespace TQL.RDL.Evaluator
                     Datetimes.Clear();
 
                     Exit = true;
+                    LastFireTime = null;
                     return null;
                 }
 
@@ -162,7 +175,10 @@ namespace TQL.RDL.Evaluator
                 Datetimes.Clear();
 
                 if (isCurrentDateFitsCondition)
+                {
+                    LastFireTime = old;
                     return old;
+                }
             }
         }
     }

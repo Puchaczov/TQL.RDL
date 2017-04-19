@@ -508,6 +508,18 @@ namespace TQL.RDL.Converter.Tests
             Assert.IsNull(evaluator.NextFire());
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateEveryNthDay_ShouldPass()
+        {
+            var evaluator = EvaluateQuery(
+                @"repeat every days where 1 = EveryNth(21, 'day') start at '01.04.2017' stop at '01.06.2017'", string.Empty, string.Empty);
+
+            Assert.AreEqual(DateTimeOffset.Parse("01.04.2017 00:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("22.04.2017 00:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("13.05.2017 00:00:00"), evaluator.NextFire());
+            Assert.IsNull(evaluator.NextFire());
+        }
+
         [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {

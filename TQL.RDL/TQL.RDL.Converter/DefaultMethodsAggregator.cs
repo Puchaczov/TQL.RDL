@@ -29,6 +29,32 @@ namespace TQL.RDL.Converter
         }
 
         /// <summary>
+        ///     Determine if last fire occured at least N [part of datetime] ago.
+        /// </summary>
+        /// <returns>True if last fire occured N [part of datetime] ago or it hasn't last fire set yet, otherwise false.</returns>
+        [BindableMethod]
+        public static bool EveryNth([InjectReferenceTime] DateTimeOffset referenceTime, [InjectLastFire] DateTimeOffset? lastFire, int value, string partOfDate)
+        {
+            if (!lastFire.HasValue)
+                return true;
+
+            var diff = referenceTime - lastFire.Value;
+            switch (partOfDate)
+            {
+                case "second":
+                    return diff.TotalSeconds >= value;
+                case "minute":
+                    return diff.TotalMinutes >= value;
+                case "hour":
+                    return diff.TotalHours >= value;
+                case "day":
+                    return diff.TotalDays >= value;
+            }
+
+            throw new NotSupportedException(partOfDate);
+        }
+
+        /// <summary>
         ///     Determine if injected date is last day of month.
         /// </summary>
         /// <param name="datetime">The date.</param>
