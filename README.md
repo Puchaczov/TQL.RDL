@@ -54,7 +54,7 @@ Download and install the latest version (nuget): **Install-Package TQL.RDL**
 - Change source code and commit & push your changes
 - Create pull request
 
-If you found a bug, open an issue and type query you couldn't evaluate. Feel free to request new functionality i you need something.
+If you found a bug, open an issue and type query you couldn't evaluate. Feel free to request new functionality if you need something.
 
 ## License
 
