@@ -1,6 +1,6 @@
-## RDL is small language usefull to querying time.
+## RDL is domain specific language to querying time.
 
-RDL is parser and evaluator for small language to querying time. Syntax is similar to english language. It's goal is to allow typing every pattern you could imagine and express it in form closest to english sentence. It can be used for generating next occurences of some event and as datetime feeder for scheduler. It should be perfect as complementary for CRON expressions.
+RDL is domain specific language usable to querying time. Syntax is similar to english language. It's goal is to allow typing every pattern you could imagine and express it in form closest to english sentence. It can be used for generating next occurences of events and as schedule time feeder for scheduler. It should be perfect as complementary for CRON expressions.
 
 ## Features
 
@@ -8,7 +8,8 @@ RDL is parser and evaluator for small language to querying time. Syntax is simil
 - Nuget availibility
 - Usable with CRON expressions (shares same abstractions)
 - Easy to use
-- Various timeline resolution (seconds, minutes, hours, days, months, years) 
+- Various timeline resolution (seconds, minutes, hours, days, months, years)
+- Extensible by providing own functions
 
 ## Examples
 
