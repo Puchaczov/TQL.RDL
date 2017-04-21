@@ -31,26 +31,6 @@ namespace TQL.RDL.Converter.Tests
 
             Assert.AreEqual(1, count);
         }
-        
-        [Ignore]
-        [TestMethod]
-        public void CodeGenerationVisitor_Compose()
-        {
-            var response =
-                TestHelper.Convert<DefaultMethodsAggregator>(
-                    "repeat every seconds where GetSecond() % 20 = 0 start at '08.03.2017 00:00:00' stop at '08.03.2018 00:00:00'");
-
-            var machine = response.Output;
-
-            var response2 =
-                TestHelper.Convert<DefaultMethodsAggregator>(
-                    "repeat every seconds start at '08.03.2017 00:00:00'");
-
-            var machine2 = response.Output;
-
-            while (machine.NextFire().HasValue && machine2.NextFire().HasValue)
-            { }
-        }
 
         [TestMethod]
         public void CodeGenerationVisitor_DaylightSavingTime_SpringTime_HoursResolution()
