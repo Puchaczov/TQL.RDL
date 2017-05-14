@@ -274,7 +274,6 @@ namespace TQL.RDL.Evaluator.Visitors
         public virtual void Visit(RootScriptNode node)
         {
             Instructions.Add(new Modify(_generateNext));
-
             Instructions.Add(new BreakInstruction());
 
             _startAt = new DateTimeOffset(_startAt.Year, _startAt.Month, _startAt.Day, _startAt.Hour, _startAt.Minute, _startAt.Second, TimeZoneInfo.Utc.BaseUtcOffset);
