@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RDL.Parser;
-using RDL.Parser.Helpers;
-using RDL.Parser.Nodes;
 using TQL.Core.Tokens;
 using TQL.RDL.Evaluator.ErrorHandling;
 using TQL.RDL.Evaluator.Helpers;
+using TQL.RDL.Parser;
+using TQL.RDL.Parser.Helpers;
+using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {

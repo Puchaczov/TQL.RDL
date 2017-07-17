@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
+using TQL.RDL.Parser.Tokens;
 
-namespace RDL.Parser.Nodes
+namespace TQL.RDL.Parser.Nodes
 {
     [DebuggerDisplay("{GetType().Name,nq}: {ToString(),nq}")]
     public abstract class RdlSyntaxNode : SyntaxNodeBase<INodeVisitor, StatementType>

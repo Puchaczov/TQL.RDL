@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using RDL.Parser.Nodes;
+using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
 {
@@ -40,7 +39,7 @@ namespace TQL.RDL.Evaluator.Enumerators
                     return true;
                 }
                 //nie jest lisciem i wszystkie dzieci zostaly odwiedzone
-                if (!n.Node.IsLeaf && n.ToVisitDescendantIndex == n.Node.Descendants.Count())
+                if (!n.Node.IsLeaf && n.ToVisitDescendantIndex == n.Node.Descendants.Length)
                 {
                     Current = n.Node;
                     return true;
@@ -51,12 +50,12 @@ namespace TQL.RDL.Evaluator.Enumerators
                     Stack.Push(n);
                 }
                 //jezeli zostalo jeszcze jakikolwiek dziecko do odwiedzenia
-                else if (n.ToVisitDescendantIndex < n.Node.Descendants.Count())
+                else if (n.ToVisitDescendantIndex < n.Node.Descendants.Length)
                 {
                     Stack.Push(n);
                 }
 
-                for (int i = n.ToVisitDescendantIndex, j = n.Node.Descendants.Count(); i < j; ++i)
+                for (int i = n.ToVisitDescendantIndex, j = n.Node.Descendants.Length; i < j; ++i)
                 {
                     n.ToVisitDescendantIndex = i + 1;
                     Stack.Push(new VisitationState(n.Node.Descendants[i]));

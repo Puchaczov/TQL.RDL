@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using RDL.Parser.Exceptions;
-using RDL.Parser.Helpers;
-using RDL.Parser.Nodes;
-using RDL.Parser.Tokens;
 using TQL.Core.Exceptions;
 using TQL.Core.Syntax;
+using TQL.RDL.Parser.Exceptions;
+using TQL.RDL.Parser.Helpers;
+using TQL.RDL.Parser.Nodes;
+using TQL.RDL.Parser.Tokens;
 
-namespace RDL.Parser
+namespace TQL.RDL.Parser
 {
     public class RdlParser
     {

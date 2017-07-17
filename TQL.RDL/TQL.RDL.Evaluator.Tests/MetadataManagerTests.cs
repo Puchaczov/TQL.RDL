@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RDL.Parser.Exceptions;
+using TQL.RDL.Parser.Exceptions;
 
 namespace TQL.RDL.Evaluator.Tests
 {

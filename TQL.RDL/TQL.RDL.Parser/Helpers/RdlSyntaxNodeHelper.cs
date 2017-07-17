@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using RDL.Parser.Nodes;
+using TQL.RDL.Parser.Nodes;
 
-namespace RDL.Parser.Helpers
+namespace TQL.RDL.Parser.Helpers
 {
     public static class RdlSyntaxNodeHelper
     {

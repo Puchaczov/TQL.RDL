@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using RDL.Parser.Helpers;
-using RDL.Parser.Nodes;
 using TQL.Common.Converters;
 using TQL.Common.Evaluators;
 using TQL.Common.Timezone;
 using TQL.Interfaces;
-using TQL.RDL.Converter.Exceptions;
 using TQL.RDL.Evaluator;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Visitors;
+using TQL.RDL.Exceptions;
+using TQL.RDL.Parser.Helpers;
+using TQL.RDL.Parser.Nodes;
 
-namespace TQL.RDL.Converter
+namespace TQL.RDL
 {
     public class RdlTimeline<TMethodsAggregator> : AbstractConverter<IFireTimeEvaluator, TMethodsAggregator>,
         IConvertible<ConvertionRequest<TMethodsAggregator>, ConvertionResponse<IFireTimeEvaluator>>

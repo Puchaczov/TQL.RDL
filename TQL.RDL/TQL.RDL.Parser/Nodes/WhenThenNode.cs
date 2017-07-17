@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace RDL.Parser.Nodes
+namespace TQL.RDL.Parser.Nodes
 {
     public class WhenThenNode : BinaryNode
     {

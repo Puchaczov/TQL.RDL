@@ -2,7 +2,7 @@
 using TQL.Core.Converters;
 using TQL.RDL.Evaluator.ErrorHandling;
 
-namespace TQL.RDL.Converter
+namespace TQL.RDL
 {
     public class ConvertionResponse<T> : ConvertionResponseBase<T>
     {

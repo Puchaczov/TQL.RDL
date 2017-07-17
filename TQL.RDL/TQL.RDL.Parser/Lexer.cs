@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
-using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
 using TQL.Core.Tokens;
+using TQL.RDL.Parser.Tokens;
 
-namespace RDL.Parser
+namespace TQL.RDL.Parser
 {
     public class Lexer : LexerBase<Token>
     {

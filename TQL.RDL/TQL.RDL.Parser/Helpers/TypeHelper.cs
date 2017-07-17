@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace RDL.Parser.Helpers
+namespace TQL.RDL.Parser.Helpers
 {
     public static class TypeHelper
     {

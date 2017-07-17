@@ -3,7 +3,7 @@ using System.Linq;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Helpers;
 
-namespace TQL.RDL.Converter
+namespace TQL.RDL
 {
     [BindableClass]
     public class DefaultMethodsAggregator

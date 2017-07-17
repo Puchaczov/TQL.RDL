@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TQL.RDL.Converter.Exceptions
+namespace TQL.RDL.Exceptions
 {
     internal class InjectParameterCannotBeOptionalException : Exception
     {

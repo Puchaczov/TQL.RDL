@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RDL.Parser;
-using RDL.Parser.Tokens;
 using TQL.Core.Syntax;
+using TQL.RDL.Parser.Tokens;
 
 namespace TQL.RDL.Parser.Tests
 {

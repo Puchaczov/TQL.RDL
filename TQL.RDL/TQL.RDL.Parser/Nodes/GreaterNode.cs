@@ -1,6 +1,6 @@
 using System;
 
-namespace RDL.Parser.Nodes
+namespace TQL.RDL.Parser.Nodes
 {
     public class GreaterNode : BinaryNode
     {

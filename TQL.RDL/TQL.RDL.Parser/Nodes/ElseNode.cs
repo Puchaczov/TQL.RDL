@@ -1,7 +1,7 @@
 using System;
-using RDL.Parser.Tokens;
+using TQL.RDL.Parser.Tokens;
 
-namespace RDL.Parser.Nodes
+namespace TQL.RDL.Parser.Nodes
 {
     public class ElseNode : UnaryNode
     {
@@ -27,6 +27,6 @@ namespace RDL.Parser.Nodes
             visitor.Visit(this);
         }
 
-        public override string ToString() => string.Format("else {0}", Descendants[0]);
+        public override string ToString() => $"else {Descendants[0]}";
     }
 }

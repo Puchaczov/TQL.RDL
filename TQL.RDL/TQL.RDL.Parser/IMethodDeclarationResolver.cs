@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace RDL.Parser
+namespace TQL.RDL.Parser
 {
     public interface IMethodDeclarationResolver
     {

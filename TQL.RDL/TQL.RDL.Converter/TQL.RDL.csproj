@@ -1,89 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TQL.RDL.Converter</RootNamespace>
-    <AssemblyName>TQL.RDL</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <Authors>Jakub Puchała</Authors>
+    <Description>Small language used to querying time</Description>
+    <Copyright>Jakub Puchała @ 2016</Copyright>
+    <AssemblyVersion>0.11.2.0</AssemblyVersion>
+    <FileVersion>0.11.2.0</FileVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.11.2</Version>
+    <PackageProjectUrl>https://github.com/Puchaczov/TQL.RDL/tree/master/TQL.RDL</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL/tree/master/TQL.RDL</RepositoryUrl>
+    <PackageTags>TQL.RDL</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AbstractConverter.cs" />
-    <Compile Include="ConvertionRequest.cs" />
-    <Compile Include="ConvertionResponse.cs" />
-    <Compile Include="DefaultMethodsAggregator.cs" />
-    <Compile Include="Exceptions\InjectParameterCannotBeOptionalException.cs" />
-    <Compile Include="Exceptions\InjectParameterHasDefaultValueException.cs" />
-    <Compile Include="ParseResult.cs" />
-    <Compile Include="RdlTimeline.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj" />
+    <ProjectReference Include="..\TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="TQL.Common, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Common.1.3.2\lib\portable45-net45+win8+wp8+wpa81\TQL.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TQL.Core, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Core.5.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TQL.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Interfaces.2.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj">
-      <Project>{44933415-5e61-4069-8e05-75145d365a90}</Project>
-      <Name>TQL.RDL.Evaluator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQL.RDL.Parser\TQL.RDL.Parser.csproj">
-      <Project>{12d9b4d8-333b-4630-a02e-2005a5814740}</Project>
-      <Name>TQL.RDL.Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj">
-      <Project>{7c4be64e-1148-4ff5-9357-0837e0b67791}</Project>
-      <Name>TQL.RDL.Preprocessor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

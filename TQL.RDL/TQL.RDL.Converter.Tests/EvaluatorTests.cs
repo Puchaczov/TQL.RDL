@@ -15,6 +15,16 @@ namespace TQL.RDL.Converter.Tests
         private static bool _staticMethod2Called;
 
         [TestMethod]
+        public void CodeGenerationVisitor_WithCustomDestinationTimezone_ShouldEvaluate()
+        {
+            var evaluator =
+                TestHelper.Convert<DefaultMethodsAggregator>("repeat every days where GetHour() = 10 start at '08/07/2017 10:00:00'",
+                    TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"), TimeZoneInfo.Local).Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("08/07/2017 20:00:00 +02:00"), evaluator.NextFire());
+        }
+
+        [TestMethod]
         public void CodeGenerationVisitor_WithAlwaysFalseNode_ShouldReturnNull()
         {
             var evaluator =

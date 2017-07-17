@@ -1,164 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{12D9B4D8-333B-4630-A02E-2005A5814740}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RDL.Parser</RootNamespace>
-    <AssemblyName>TQL.RDL.Parser</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <Description>Language parser.</Description>
+    <Copyright>Jakub Puchała @ 2016</Copyright>
+    <Authors>Jakub Puchała</Authors>
+    <AssemblyVersion>0.11.0.0</AssemblyVersion>
+    <FileVersion>0.11.0.0</FileVersion>
+    <Version>0.11.0</Version>
+    <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\MethodDeclarationNotFoundedException.cs" />
-    <Compile Include="Exceptions\MethodNotFoundedException.cs" />
-    <Compile Include="Exceptions\FunctionHasEmptyOrNullNameException.cs" />
-    <Compile Include="Helpers\RdlSyntaxNodeHelper.cs" />
-    <Compile Include="IMethodDeclarationResolver.cs" />
-    <Compile Include="MethodDeclaration.cs" />
-    <Compile Include="Nodes\AddNode.cs" />
-    <Compile Include="Nodes\ArgListNode.cs" />
-    <Compile Include="Nodes\BetweenNode.cs" />
-    <Compile Include="Nodes\CachedFunctionNode.cs" />
-    <Compile Include="Nodes\CaseNode.cs" />
-    <Compile Include="Nodes\CommaNode.cs" />
-    <Compile Include="Nodes\DiffNode.cs" />
-    <Compile Include="Nodes\ElseNode.cs" />
-    <Compile Include="Nodes\EqualityNode.cs" />
-    <Compile Include="Nodes\FSlashNode.cs" />
-    <Compile Include="Nodes\GreaterEqualNode.cs" />
-    <Compile Include="Nodes\GreaterNode.cs" />
-    <Compile Include="Nodes\HyphenNode.cs" />
-    <Compile Include="Nodes\InNode.cs" />
-    <Compile Include="Nodes\LessEqualNode.cs" />
-    <Compile Include="Nodes\LessNode.cs" />
-    <Compile Include="Nodes\ModuloNode.cs" />
-    <Compile Include="Nodes\NotInNode.cs" />
-    <Compile Include="Nodes\NotNode.cs" />
-    <Compile Include="Nodes\NumericConsequentRepeatEveryNode.cs" />
-    <Compile Include="Nodes\OrNode.cs" />
-    <Compile Include="Nodes\StarNode.cs" />
-    <Compile Include="Nodes\StoreValueFunctionNode.cs" />
-    <Compile Include="Nodes\ThenNode.cs" />
-    <Compile Include="Nodes\VarNode.cs" />
-    <Compile Include="Nodes\WhenNode.cs" />
-    <Compile Include="Nodes\WhenThenNode.cs" />
-    <Compile Include="PartOfDate.cs" />
-    <Compile Include="Tokens\BetweenAndToken.cs" />
-    <Compile Include="Tokens\BetweenToken.cs" />
-    <Compile Include="Tokens\CaseEndToken.cs" />
-    <Compile Include="Tokens\CaseToken.cs" />
-    <Compile Include="Tokens\CaseWhenEsacToken.cs" />
-    <Compile Include="Helpers\TypeHelper.cs" />
-    <Compile Include="Lexer.cs" />
-    <Compile Include="LexerEnumerator.cs" />
-    <Compile Include="Nodes\BinaryNode.cs" />
-    <Compile Include="Nodes\ConstantNode.cs" />
-    <Compile Include="Nodes\DateTimeNode.cs" />
-    <Compile Include="Nodes\RawFunctionNode.cs" />
-    <Compile Include="Nodes\INodeVisitor.cs" />
-    <Compile Include="Nodes\LeafNode.cs" />
-    <Compile Include="Nodes\NumericNode.cs" />
-    <Compile Include="Nodes\AndNode.cs" />
-    <Compile Include="Nodes\RdlSyntaxNode.cs" />
-    <Compile Include="Nodes\RepeatEveryNode.cs" />
-    <Compile Include="Nodes\RootScriptNode.cs" />
-    <Compile Include="Nodes\StartAtNode.cs" />
-    <Compile Include="Nodes\StopAtNode.cs" />
-    <Compile Include="Nodes\UnaryNode.cs" />
-    <Compile Include="Nodes\WhereConditionsNode.cs" />
-    <Compile Include="Nodes\WordNode.cs" />
-    <Compile Include="RDLParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tokens\CommaToken.cs" />
-    <Compile Include="Tokens\DiffToken.cs" />
-    <Compile Include="Tokens\ElseToken.cs" />
-    <Compile Include="Tokens\EndOfFileToken.cs" />
-    <Compile Include="Tokens\EqualityToken.cs" />
-    <Compile Include="Tokens\EveryToken.cs" />
-    <Compile Include="Tokens\FSlashToken.cs" />
-    <Compile Include="Tokens\FunctionToken.cs" />
-    <Compile Include="Tokens\GreaterEqualToken.cs" />
-    <Compile Include="Tokens\GreaterToken.cs" />
-    <Compile Include="Tokens\HyphenToken.cs" />
-    <Compile Include="Tokens\InToken.cs" />
-    <Compile Include="Tokens\IsToken.cs" />
-    <Compile Include="Tokens\LeftParenthesisToken.cs" />
-    <Compile Include="Tokens\LessEqualToken.cs" />
-    <Compile Include="Tokens\LessToken.cs" />
-    <Compile Include="Tokens\ModuloToken.cs" />
-    <Compile Include="Tokens\NoneToken.cs" />
-    <Compile Include="Tokens\NotInToken.cs" />
-    <Compile Include="Tokens\NotToken.cs" />
-    <Compile Include="Tokens\NumericToken.cs" />
-    <Compile Include="Tokens\AndToken.cs" />
-    <Compile Include="Tokens\OrToken.cs" />
-    <Compile Include="Tokens\PlusToken.cs" />
-    <Compile Include="Tokens\RepeatToken.cs" />
-    <Compile Include="Tokens\RightParenthesisToken.cs" />
-    <Compile Include="Tokens\StartAtToken.cs" />
-    <Compile Include="Tokens\StarToken.cs" />
-    <Compile Include="Tokens\StopAtToken.cs" />
-    <Compile Include="Tokens\ThenToken.cs" />
-    <Compile Include="Tokens\Token.cs" />
-    <Compile Include="Tokens\StatementType.cs" />
-    <Compile Include="Tokens\VarArgToken.cs" />
-    <Compile Include="Tokens\VarToken.cs" />
-    <Compile Include="Tokens\WhenToken.cs" />
-    <Compile Include="Tokens\WhereToken.cs" />
-    <Compile Include="Tokens\WhiteSpaceToken.cs" />
-    <Compile Include="Tokens\WordToken.cs" />
+    <PackageReference Include="TQL.Core" Version="5.0.1" />
+    <PackageReference Include="TQL.Interfaces" Version="2.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Description.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="TQL.Common, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Common.1.3.2\lib\portable45-net45+win8+wp8+wpa81\TQL.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TQL.Core, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Core.5.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TQL.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TQL.Interfaces.2.0.0\lib\portable45-net45+win8+wp8+wpa81\TQL.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

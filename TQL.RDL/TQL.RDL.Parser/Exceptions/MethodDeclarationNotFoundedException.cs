@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RDL.Parser.Exceptions
+namespace TQL.RDL.Parser.Exceptions
 {
     class MethodDeclarationNotFoundedException : Exception
     {

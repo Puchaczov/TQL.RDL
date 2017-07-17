@@ -1,4 +1,4 @@
-namespace RDL.Parser
+namespace TQL.RDL.Parser
 {
     public enum PartOfDate
     {

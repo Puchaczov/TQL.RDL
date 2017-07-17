@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using TQL.Core.Tokens;
 
-namespace RDL.Parser.Tokens
+namespace TQL.RDL.Parser.Tokens
 {
     [DebuggerDisplay("{Value} of type {TokenType},nq")]
     public class Token : GenericToken<StatementType>, IEquatable<Token>

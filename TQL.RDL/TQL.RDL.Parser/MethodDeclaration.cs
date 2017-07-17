@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace RDL.Parser
+namespace TQL.RDL.Parser
 {
     public class MethodDeclaration
     {

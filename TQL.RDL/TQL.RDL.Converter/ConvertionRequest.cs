@@ -2,7 +2,7 @@
 using System.Globalization;
 using TQL.Core.Converters;
 
-namespace TQL.RDL.Converter
+namespace TQL.RDL
 {
     public class ConvertionRequest<TMethodsAggregator> : ConvertionRequestBase where TMethodsAggregator : new()
     {

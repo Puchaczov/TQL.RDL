@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using RDL.Parser;
 
 namespace TQL.RDL.Parser.Tests.Resolvers
 {

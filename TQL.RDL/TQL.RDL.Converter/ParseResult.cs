@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using RDL.Parser.Nodes;
+using TQL.RDL.Parser.Nodes;
 
-namespace TQL.RDL.Converter
+namespace TQL.RDL
 {
     internal struct ParseResult
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using RDL.Parser.Helpers;
-using RDL.Parser.Nodes;
+using TQL.RDL.Parser.Helpers;
+using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {

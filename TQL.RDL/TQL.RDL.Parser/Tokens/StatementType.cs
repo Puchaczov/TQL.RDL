@@ -1,4 +1,4 @@
-﻿namespace RDL.Parser.Tokens
+﻿namespace TQL.RDL.Parser.Tokens
 {
     public enum StatementType : short
     {
