@@ -12,6 +12,8 @@
     <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL/tree/master/TQL.RDL</RepositoryUrl>
     <PackageTags>TQL.RDL</PackageTags>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj" />
