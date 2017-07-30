@@ -10,6 +10,7 @@
     <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageProjectUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="TQL.Core" Version="5.0.1" />
