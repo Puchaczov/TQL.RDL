@@ -79,6 +79,7 @@ namespace TQL.RDL.Evaluator.Visitors
                     _generateNext = datetime => datetime.AddYears(node.Value);
                     break;
             }
+            _partOfDate = node.DatePart;
         }
 
         /// <summary>
@@ -502,7 +503,7 @@ namespace TQL.RDL.Evaluator.Visitors
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
             var registeredMethod = _metadatas.GetMethod(node.Name, argTypes);
             foundedMethod = registeredMethod;
-            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length));
+            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length, _partOfDate));
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)
@@ -534,6 +535,7 @@ namespace TQL.RDL.Evaluator.Visitors
         private readonly RdlMetadata _metadatas;
         private readonly object _callMethodContext;
         private bool _hasWhereConditions;
+        private PartOfDate _partOfDate;
 
         #endregion
 

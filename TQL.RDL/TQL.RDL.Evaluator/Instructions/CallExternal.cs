@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using TQL.RDL.Evaluator.Attributes;
+using TQL.RDL.Parser;
 using TQL.RDL.Parser.Helpers;
 
 namespace TQL.RDL.Evaluator.Instructions
@@ -13,6 +14,7 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly int _callParamsCount;
         private readonly MethodInfo _info;
         private readonly object _obj;
+        private readonly PartOfDate _partOfDate;
 
         /// <summary>
         ///     Initialize object.
@@ -20,11 +22,12 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="obj">object on that method will be executed</param>
         /// <param name="info">method to execute</param>
         /// <param name="callParamsCount">Count of parameters passed from AST</param>
-        public CallExternal(object obj, MethodInfo info, int callParamsCount)
+        public CallExternal(object obj, MethodInfo info, int callParamsCount, PartOfDate partOfDate)
         {
             _obj = obj;
             _info = info;
             _callParamsCount = callParamsCount;
+            _partOfDate = partOfDate;
         }
 
         /// <summary>
@@ -48,6 +51,9 @@ namespace TQL.RDL.Evaluator.Instructions
                         break;
                     case nameof(InjectLastFireAttribute):
                         args.Add(machine.LastFireTime);
+                        break;
+                    case nameof(InjectPartOfDateTypeAttribute):
+                        args.Add(_partOfDate);
                         break;
                 }
             }
