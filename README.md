@@ -43,6 +43,12 @@ repeat every minutes where
     start at '04.01.2017'
 ```
 
+- Occurs randomly twice a month
+
+```
+repeat every days where GetDay() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '01.08.2017'
+```
+
 ## Installation
 
 Download and install the latest version (nuget): **Install-Package TQL.RDL**
