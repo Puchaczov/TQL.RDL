@@ -2,9 +2,9 @@
 
 namespace TQL.RDL.Parser.Nodes
 {
-    public class StoreValueFunctionNode : RawFunctionNode
+    public class CallFunctionAndStoreValueNode : RawFunctionNode
     {
-        public StoreValueFunctionNode(RawFunctionNode node)
+        public CallFunctionAndStoreValueNode(RawFunctionNode node)
             : base(node.Token as FunctionToken, node.Args, node.ReturnType, node.DoNotCache)
         {
         }

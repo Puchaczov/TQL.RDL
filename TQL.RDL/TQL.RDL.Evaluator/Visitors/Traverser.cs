@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         private readonly INodeVisitor _visitor;
 
-        protected readonly Dictionary<string, List<RawFunctionNode>> OccurenceTable;
+        protected readonly Dictionary<string, FunctionOccurenceMetadata> OccurenceTable;
 
         /// <summary>
         ///     Initialize object.
@@ -20,14 +20,14 @@ namespace TQL.RDL.Evaluator.Visitors
             if (visitor == null) throw new ArgumentNullException(nameof(visitor));
 
             _visitor = visitor;
-            OccurenceTable = new Dictionary<string, List<RawFunctionNode>>();
+            OccurenceTable = new Dictionary<string, FunctionOccurenceMetadata>();
         }
 
         /// <summary>
         ///     Visits where node in DFS manner.
         /// </summary>
         /// <param name="node">Where node that will be visited.</param>
-        public void Visit(WhereConditionsNode node)
+        public virtual void Visit(WhereConditionsNode node)
         {
             foreach (var item in node.Descendants)
                 item.Accept(this);
@@ -118,7 +118,7 @@ namespace TQL.RDL.Evaluator.Visitors
         ///     Visit StoreValueFunction node.
         /// </summary>
         /// <param name="node">StoreValueFunction node of AST.</param>
-        public void Visit(StoreValueFunctionNode node)
+        public void Visit(CallFunctionAndStoreValueNode node)
         {
             foreach (var item in node.Descendants.Reverse())
                 item.Accept(this);
@@ -190,16 +190,6 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        ///     Visit Then node in DFS manner.
-        /// </summary>
-        /// <param name="node">Then node that will be visited.</param>
-        public void Visit(ThenNode node)
-        {
-            node.Descendant.Accept(this);
-            node.Accept(_visitor);
-        }
-
-        /// <summary>
         ///     Visit Not node in DFS manner.
         /// </summary>
         /// <param name="notNode">Not node that will be visited.</param>
@@ -235,7 +225,7 @@ namespace TQL.RDL.Evaluator.Visitors
         ///     Visit Else node in BFS manner.
         /// </summary>
         /// <param name="node">Else node that will be visited.</param>
-        public void Visit(ElseNode node)
+        public virtual void Visit(ElseNode node)
         {
             node.Descendant.Accept(this);
             node.Accept(_visitor);
@@ -245,7 +235,17 @@ namespace TQL.RDL.Evaluator.Visitors
         ///     Visit When node in DFS manner.
         /// </summary>
         /// <param name="node">When node that will be visited.</param>
-        public void Visit(WhenNode node)
+        public virtual void Visit(WhenNode node)
+        {
+            node.Descendant.Accept(this);
+            node.Accept(_visitor);
+        }
+
+        /// <summary>
+        ///     Visit Then node in DFS manner.
+        /// </summary>
+        /// <param name="node">Then node that will be visited.</param>
+        public virtual void Visit(ThenNode node)
         {
             node.Descendant.Accept(this);
             node.Accept(_visitor);

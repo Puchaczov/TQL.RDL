@@ -218,6 +218,6 @@ namespace TQL.RDL.Evaluator.Visitors
         ///     Visit StoreValueFunction node.
         /// </summary>
         /// <param name="node">StoreValueFunction node of AST.</param>
-        public abstract void Visit(StoreValueFunctionNode node);
+        public abstract void Visit(CallFunctionAndStoreValueNode node);
     }
 }

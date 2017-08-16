@@ -457,6 +457,26 @@ namespace TQL.RDL.Converter.Tests
         }
 
         [TestMethod]
+        public void CodeGenerationVisitor_EvaluateWithComplexScope_ShouldPass()
+        {
+            var evaluator = EvaluateQuery(@"
+                repeat every hours where (
+                    GetHour() in (10, 11)) or 1 = 
+                    (case
+                        when GetHour() between 14 and 16
+                        then 1
+                        else 0
+                    esac) start at '01.04.2017' stop at '02.04.2017'
+            ", string.Empty, string.Empty);
+
+            Assert.AreEqual(DateTimeOffset.Parse("01.04.2017 10:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("01.04.2017 11:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("01.04.2017 14:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("01.04.2017 15:00:00"), evaluator.NextFire());
+            Assert.AreEqual(null, evaluator.NextFire());
+        }
+
+        [TestMethod]
         public void CodeGenerationVisitor_EvaluateComplexExpression_ShouldPass()
         {
             var evaluator = EvaluateQuery(@"
@@ -514,7 +534,7 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_EvaluteTwiceADayOnDifferentTime()
         {
             var evaluator = EvaluateQuery(
-                @"repeat every hours where GetHour() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '13.08.2017'", string.Empty, string.Empty);
+                @"repeat every hours where GetHour() in (NRandomTime(), NRandomTime()) start at '13.08.2017'", string.Empty, string.Empty);
 
             Assert.AreEqual(13, evaluator.NextFire().Value.Day);
             Assert.AreEqual(13, evaluator.NextFire().Value.Day);
@@ -525,7 +545,7 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_EvaluteTwiceAMinuteOnDifferentTime()
         {
             var evaluator = EvaluateQuery(
-                @"repeat every seconds where GetSecond() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '13.08.2017'", string.Empty, string.Empty);
+                @"repeat every seconds where GetSecond() in (NRandomTime(), NRandomTime()) start at '13.08.2017'", string.Empty, string.Empty);
 
             Assert.AreEqual(0, evaluator.NextFire().Value.Minute);
             Assert.AreEqual(0, evaluator.NextFire().Value.Minute);
@@ -536,7 +556,7 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_EvaluteTwiceAnHourOnDifferentTime()
         {
             var evaluator = EvaluateQuery(
-                @"repeat every minutes where GetMinute() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '13.08.2017'", string.Empty, string.Empty);
+                @"repeat every minutes where GetMinute() in (NRandomTime(), NRandomTime()) start at '13.08.2017'", string.Empty, string.Empty);
 
             Assert.AreEqual(0, evaluator.NextFire().Value.Hour);
             Assert.AreEqual(0, evaluator.NextFire().Value.Hour);
@@ -547,7 +567,7 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_EvaluteTwiceAMonthOnDifferentTime()
         {
             var evaluator = EvaluateQuery(
-                @"repeat every days where GetDay() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '01.08.2017'", string.Empty, string.Empty);
+                @"repeat every days where GetDay() in (NRandomTime(), NRandomTime()) start at '01.08.2017'", string.Empty, string.Empty);
 
             Assert.AreEqual(8, evaluator.NextFire().Value.Month);
             Assert.AreEqual(8, evaluator.NextFire().Value.Month);
@@ -558,7 +578,7 @@ namespace TQL.RDL.Converter.Tests
         public void CodeGenerationVisitor_EvaluteTwiceAYearOnDifferentTime()
         {
             var evaluator = EvaluateQuery(
-                @"repeat every months where GetMonth() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '01.01.2017'", string.Empty, string.Empty);
+                @"repeat every months where GetMonth() in (NRandomTime(), NRandomTime()) start at '01.01.2017'", string.Empty, string.Empty);
 
             Assert.AreEqual(2017, evaluator.NextFire().Value.Year);
             Assert.AreEqual(2017, evaluator.NextFire().Value.Year);

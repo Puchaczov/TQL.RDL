@@ -37,6 +37,6 @@
         void Visit(WhenThenNode node);
         void Visit(BetweenNode node);
         void Visit(CachedFunctionNode node);
-        void Visit(StoreValueFunctionNode node);
+        void Visit(CallFunctionAndStoreValueNode node);
     }
 }

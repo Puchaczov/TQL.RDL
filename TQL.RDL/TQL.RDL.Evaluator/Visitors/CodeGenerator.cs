@@ -186,7 +186,7 @@ namespace TQL.RDL.Evaluator.Visitors
         ///     Call function and store it's value.
         /// </summary>
         /// <param name="node"></param>
-        public void Visit(StoreValueFunctionNode node)
+        public void Visit(CallFunctionAndStoreValueNode node)
         {
             MethodInfo methodInfo;
             Visit(node, out methodInfo);
@@ -503,7 +503,9 @@ namespace TQL.RDL.Evaluator.Visitors
             var argTypes = node.Descendants.Select(f => f.ReturnType).ToArray();
             var registeredMethod = _metadatas.GetMethod(node.Name, argTypes);
             foundedMethod = registeredMethod;
-            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length, _partOfDate));
+            var occurenceAmount = _functionOccurences[node.GeneralFunctionIdentifier()];
+            var occurenceOrder = _functionOccurences[node.SpecificFunctionIdentifier()] - 1;
+            Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length, _partOfDate, occurenceAmount, occurenceOrder));
         }
 
         private void ExpressionGenerateIn<TOperator>(InNode node)
@@ -536,6 +538,7 @@ namespace TQL.RDL.Evaluator.Visitors
         private readonly object _callMethodContext;
         private bool _hasWhereConditions;
         private PartOfDate _partOfDate;
+        private readonly IReadOnlyDictionary<string, int> _functionOccurences;
 
         #endregion
 
@@ -554,8 +557,8 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="callMethodContext">object that contains methods to invoke.</param>
-        public CodeGenerator(RdlMetadata metadatas, object callMethodContext)
-            : this(metadatas, DateTimeOffset.UtcNow, callMethodContext)
+        public CodeGenerator(RdlMetadata metadatas, object callMethodContext, IReadOnlyDictionary<string, int> functionOccurences)
+            : this(metadatas, DateTimeOffset.UtcNow, callMethodContext, functionOccurences)
         {
         }
 
@@ -565,7 +568,8 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="startAt">Starting from parameter.</param>
         /// <param name="callMethodContext">Object that contains methods to invoke.</param>
-        private CodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext)
+        /// <param name="functionOccurences"></param>
+        private CodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext, IReadOnlyDictionary<string, int> functionOccurences)
         {
             _variables = new MemoryVariables();
             _functions = new Stack<List<IRdlInstruction>>();
@@ -575,6 +579,7 @@ namespace TQL.RDL.Evaluator.Visitors
             _metadatas = metadatas;
             _startAt = startAt;
             _callMethodContext = callMethodContext;
+            _functionOccurences = functionOccurences;
         }
 
         #endregion

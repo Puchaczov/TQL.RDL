@@ -294,7 +294,7 @@ namespace TQL.RDL.Parser.Tests
             var parser = new RdlParser(lexer, new string[1]
             {
                 "dd.M.yyyy"
-            }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver(), new Dictionary<int, int>());
+            }, new System.Globalization.CultureInfo("en-US"), new DummyDeclarationResolver(), new Dictionary<string, int>());
             return parser.ComposeRootComponents();
         }
     }

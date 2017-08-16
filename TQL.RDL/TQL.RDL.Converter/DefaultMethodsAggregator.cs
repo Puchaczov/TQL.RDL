@@ -264,7 +264,7 @@ namespace TQL.RDL
         /// <returns>Drawed value.</returns>
         [BindableMethod]
         [DoNotCache]
-        public long NRandomTime([InjectReferenceTime] DateTimeOffset referenceTime, [InjectPartOfDateType] PartOfDate type, int index, int count)
+        public long NRandomTime([InjectReferenceTime] DateTimeOffset referenceTime, [InjectPartOfDateType] PartOfDate type, [InjectOccurenceOrder] int index, [InjectOccurencesAmount] int count)
         {
             var minValue = 0;
             var divisor = 0;

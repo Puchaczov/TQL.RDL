@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser.Nodes;
 
@@ -6,8 +7,8 @@ namespace TQL.RDL.Evaluator.Visitors
 {
     public sealed class DebuggerSymbolGenerator : CodeGenerator
     {
-        public DebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext)
-            : base(gm, callMethodContext)
+        public DebuggerSymbolGenerator(RdlMetadata gm, object callMethodContext, IReadOnlyDictionary<string, int> functionOccurences)
+            : base(gm, callMethodContext, functionOccurences)
         {
         }
 

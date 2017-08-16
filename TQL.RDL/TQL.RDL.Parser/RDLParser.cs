@@ -20,7 +20,7 @@ namespace TQL.RDL.Parser
         private readonly IMethodDeclarationResolver _resolver;
 
         public RdlParser(Lexer lexer, string[] formats, CultureInfo ci,
-            IMethodDeclarationResolver resolver, IDictionary<int, int> functionCallOccurence)
+            IMethodDeclarationResolver resolver, IDictionary<string, int> functionCallOccurence)
         {
             _cLexer = lexer;
             
@@ -32,7 +32,7 @@ namespace TQL.RDL.Parser
             FunctionCallOccurence.Clear();
         }
 
-        public IDictionary<int, int> FunctionCallOccurence { get; }
+        public IDictionary<string, int> FunctionCallOccurence { get; }
 
         private Token Current => _cLexer.Current();
 
@@ -277,13 +277,25 @@ namespace TQL.RDL.Parser
                     MethodInfo registeredMethod;
                     if (_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
                     {
-                        var function = new RawFunctionNode(func, args, registeredMethod.ReturnType, _resolver.CanBeCached(registeredMethod));
-                        var hashCodedFunction = function.Stringify().GetHashCode();
+                        var function = new RawFunctionNode(func, args, registeredMethod.ReturnType, !_resolver.CanBeCached(registeredMethod));
+                        var detailedIdentifierHash = function.DetailedFunctionIdentifier();
+                        var generalIdentifierHash = function.GeneralFunctionIdentifier();
+                        var specificIdentifierHash = function.SpecificFunctionIdentifier();
 
-                        if (!FunctionCallOccurence.ContainsKey(hashCodedFunction))
-                            FunctionCallOccurence.Add(hashCodedFunction, 1);
+                        if (!FunctionCallOccurence.ContainsKey(detailedIdentifierHash))
+                            FunctionCallOccurence.Add(detailedIdentifierHash, 1);
                         else
-                            FunctionCallOccurence[hashCodedFunction] += 1;
+                            FunctionCallOccurence[detailedIdentifierHash] += 1;
+
+                        if (!FunctionCallOccurence.ContainsKey(generalIdentifierHash))
+                            FunctionCallOccurence.Add(generalIdentifierHash, 1);
+                        else
+                            FunctionCallOccurence[generalIdentifierHash] += 1;
+
+                        if (!FunctionCallOccurence.ContainsKey(specificIdentifierHash))
+                            FunctionCallOccurence.Add(specificIdentifierHash, FunctionCallOccurence[generalIdentifierHash]);
+                        else
+                            FunctionCallOccurence[specificIdentifierHash] = FunctionCallOccurence[generalIdentifierHash];
 
                         return function;
                     }

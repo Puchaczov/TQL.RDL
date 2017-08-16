@@ -15,6 +15,8 @@ namespace TQL.RDL.Evaluator.Instructions
         private readonly MethodInfo _info;
         private readonly object _obj;
         private readonly PartOfDate _partOfDate;
+        private readonly int _functionOccurenceAmount;
+        private readonly int _functionOrder;
 
         /// <summary>
         ///     Initialize object.
@@ -22,12 +24,15 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="obj">object on that method will be executed</param>
         /// <param name="info">method to execute</param>
         /// <param name="callParamsCount">Count of parameters passed from AST</param>
-        public CallExternal(object obj, MethodInfo info, int callParamsCount, PartOfDate partOfDate)
+        /// <param name="partOfDate"></param>
+        public CallExternal(object obj, MethodInfo info, int callParamsCount, PartOfDate partOfDate, int functionOccurenceAmount, int functionOrder)
         {
             _obj = obj;
             _info = info;
             _callParamsCount = callParamsCount;
             _partOfDate = partOfDate;
+            _functionOccurenceAmount = functionOccurenceAmount;
+            _functionOrder = functionOrder;
         }
 
         /// <summary>
@@ -54,6 +59,12 @@ namespace TQL.RDL.Evaluator.Instructions
                         break;
                     case nameof(InjectPartOfDateTypeAttribute):
                         args.Add(_partOfDate);
+                        break;
+                    case nameof(InjectOccurenceOrderAttribute):
+                        args.Add(_functionOrder);
+                        break;
+                    case nameof(InjectOccurencesAmountAttribute):
+                        args.Add(_functionOccurenceAmount);
                         break;
                 }
             }

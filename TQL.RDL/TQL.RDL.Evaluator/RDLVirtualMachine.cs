@@ -161,6 +161,7 @@ namespace TQL.RDL.Evaluator
                 {
                     Values.Clear();
                     Datetimes.Clear();
+                    Variables.Clear();
 
                     Exit = true;
                     LastFireTime = null;
@@ -173,6 +174,7 @@ namespace TQL.RDL.Evaluator
 
                 Values.Clear();
                 Datetimes.Clear();
+                Variables.Clear();
 
                 if (isCurrentDateFitsCondition)
                 {

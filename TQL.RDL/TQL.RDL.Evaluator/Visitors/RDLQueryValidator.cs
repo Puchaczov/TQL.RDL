@@ -373,7 +373,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
         }
 
-        public override void Visit(StoreValueFunctionNode node)
+        public override void Visit(CallFunctionAndStoreValueNode node)
         {
         }
     }

@@ -58,8 +58,8 @@ namespace TQL.RDL
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
             var codeGenerator = request.Debuggable
-                ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator)
-                : new CodeGenerator(Metdatas, request.MethodsAggregator);
+                ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator, MethodOccurences)
+                : new CodeGenerator(Metdatas, request.MethodsAggregator, MethodOccurences);
 
             var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences);
 

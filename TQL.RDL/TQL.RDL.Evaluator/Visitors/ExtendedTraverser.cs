@@ -6,17 +6,128 @@ namespace TQL.RDL.Evaluator.Visitors
 {
     public class ExtendedTraverser : Traverser
     {
-        private readonly IDictionary<int, int> _methodOccurences;
+        /// <summary>
+        /// This is very simple function scope implementation.
+        /// It allows to track if variable occur in outer scope.
+        /// </summary>
+        private class Scope
+        {
+            private readonly List<string> _functions;
+
+            public Scope OuterScope { get; }
+
+            public Scope(Scope outerScope)
+            {
+                OuterScope = outerScope;
+                _functions = new List<string>();
+            }
+
+            /// <summary>
+            /// Adds the function to current scope.
+            /// </summary>
+            /// <param name="node">The function to add.</param>
+            public void AddFunction(RawFunctionNode node)
+            {
+                _functions.Add(node.DetailedFunctionIdentifier());
+            }
+
+            /// <summary>
+            /// Determine if specific function occured in any of the outer scope.
+            /// </summary>
+            /// <param name="function">The function to check.</param>
+            /// <returns>True if outer scope contains function, otherwise false.</returns>
+            public bool HasVisibleInvocation(RawFunctionNode function)
+            {
+                var identifier = function.DetailedFunctionIdentifier();
+                var stack = new Stack<Scope>();
+
+                if(OuterScope != null)
+                    stack.Push(OuterScope);
+
+                while (stack.Count > 0)
+                {
+                    var scope = stack.Pop();
+
+                    if (scope.HasFunctionIdentifier(identifier))
+                        return true;
+
+                    if (scope.OuterScope != null)
+                        stack.Push(scope.OuterScope);
+                }
+
+                return false;
+            }
+
+            /// <summary>
+            /// Determine if current scope contains function identifier.
+            /// </summary>
+            /// <param name="identifier"></param>
+            /// <returns>true if current scope has identifier, otherwise false.</returns>
+            private bool HasFunctionIdentifier(string identifier)
+            {
+                return _functions.Contains(identifier);
+            }
+        }
+        
+        private Scope _scope;
 
         /// <summary>
         /// Initialize instance.
         /// </summary>
         /// <param name="codeGenerationVisitor">The destination visitor.</param>
         /// <param name="methodOccurences">Method occurences dictionary.</param>
-        public ExtendedTraverser(INodeVisitor codeGenerationVisitor, IDictionary<int, int> methodOccurences)
+        public ExtendedTraverser(INodeVisitor codeGenerationVisitor, IDictionary<string, int> methodOccurences)
             : base(codeGenerationVisitor)
         {
-            _methodOccurences = methodOccurences;
+            _scope = new Scope(null);
+        }
+        
+        /// <summary>
+        ///     Visits where node in DFS manner.
+        /// </summary>
+        /// <param name="node">Where node that will be visited.</param>
+        public override void Visit(WhereConditionsNode node)
+        {
+            var oldScope = _scope;
+            _scope = new Scope(_scope);
+            base.Visit(node);
+            _scope = oldScope;
+        }
+
+        /// <summary>
+        ///     Visit When node in DFS manner.
+        /// </summary>
+        /// <param name="node">When node that will be visited.</param>
+        public override void Visit(WhenNode node)
+        {
+            var oldScope = _scope;
+            _scope = new Scope(_scope);
+            base.Visit(node);
+            _scope = oldScope;
+        }
+
+        /// <summary>
+        ///     Visit Then node in DFS manner.
+        /// </summary>
+        /// <param name="node">Then node that will be visited.</param>
+        public override void Visit(ThenNode node)
+        {
+            var oldScope = _scope;
+            _scope = new Scope(_scope);
+            base.Visit(node);
+            _scope = oldScope;
+        }
+
+        /// <summary>
+        ///     Visit Else node in BFS manner.
+        /// </summary>
+        /// <param name="node">Else node that will be visited.</param>
+        public override void Visit(ElseNode node)
+        {
+            var oldScope = _scope;
+            _scope = new Scope(_scope);
+            base.Visit(node);
+            _scope = oldScope;
         }
 
         /// <summary>
@@ -25,20 +136,13 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Function node that will be visited.</param>
         public override void Visit(RawFunctionNode node)
         {
-            if (WillFunctionCallOccurencesAtLeastTwoTimes(node) && IsCacheable(node))
+            _scope.AddFunction(node);
+            if (!CanBeRetrievedFromCache(node) || !IsCacheable(node))
             {
-                if (!CanBeRetrievedFromCache(node))
-                {
-                    AddFunctionOccurence(node);
-                    Visit(new StoreValueFunctionNode(node));
-                }
-                else
-                {
-                    Visit(new CachedFunctionNode(node));
-                }
+                Visit(new CallFunctionAndStoreValueNode(node));
             }
             else
-                base.Visit(node);
+                Visit(new CachedFunctionNode(node));
         }
 
         /// <summary>
@@ -52,75 +156,13 @@ namespace TQL.RDL.Evaluator.Visitors
         }
 
         /// <summary>
-        ///     Determine if function call occured at least twice.
-        /// </summary>
-        /// <param name="node">The function node.</param>
-        /// <returns>True if function call occurs at least twice, otherwise false.</returns>
-        private bool WillFunctionCallOccurencesAtLeastTwoTimes(RawFunctionNode node)
-        {
-            var fnKey = node.Stringify().GetHashCode();
-
-            if (!_methodOccurences.ContainsKey(fnKey))
-                return false;
-
-            return _methodOccurences[fnKey] > 1;
-        }
-
-        /// <summary>
-        ///     Add processed function as processed earlier.
-        /// </summary>
-        /// <param name="node"></param>
-        private void AddFunctionOccurence(RawFunctionNode node)
-        {
-            if (!OccurenceTable.ContainsKey(node.Name))
-                OccurenceTable.Add(node.Name, new List<RawFunctionNode>());
-
-            OccurenceTable[node.Name].Add(node);
-        }
-
-        /// <summary>
         ///     Determine if function node were processed earlier and if can be restored from cache.
         /// </summary>
         /// <param name="node">The Function node.</param>
         /// <returns>True if function can be restored from cache, else false.</returns>
         private bool CanBeRetrievedFromCache(RawFunctionNode node)
         {
-            if (!OccurenceTable.ContainsKey(node.Name))
-                return false;
-
-            var visitedNodes = OccurenceTable[node.Name];
-
-            for (int i = 0, j = visitedNodes.Count; i < j; ++i)
-                if (AreNodesEqaul(node, visitedNodes[i]))
-                    return true;
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Determine if two function invokations can be measured as equal.
-        /// </summary>
-        /// <param name="node">The first node.</param>
-        /// <param name="functionNode">The second node.</param>
-        /// <returns>True if invokations are considered as equal, else false.</returns>
-        private bool AreNodesEqaul(RawFunctionNode node, RawFunctionNode functionNode)
-        {
-            var areNodesEqual = node.Name == functionNode.Name && node.ReturnType == functionNode.ReturnType;
-
-            if (node.Descendants.Length != functionNode.Descendants.Length)
-                return false;
-
-            var j = node.Descendants.Length;
-            for (var i = 0; i < j && areNodesEqual; ++i)
-            {
-                if (node.Descendants[i].ReturnType != functionNode.Descendants[i].ReturnType)
-                    return false;
-
-                if (node.Descendants[i].ToString() != functionNode.Descendants[i].ToString())
-                    return false;
-            }
-
-            return areNodesEqual;
+            return _scope.HasVisibleInvocation(node);
         }
     }
 }

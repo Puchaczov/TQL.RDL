@@ -38,7 +38,7 @@ namespace TQL.RDL
             : base(throwOnError)
         {
             _throwOnError = throwOnError;
-            MethodOccurences = new Dictionary<int, int>();
+            MethodOccurences = new Dictionary<string, int>();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace TQL.RDL
         /// <summary>
         ///     Gets how many time function occured.
         /// </summary>
-        protected IDictionary<int, int> MethodOccurences { get; }
+        protected Dictionary<string, int> MethodOccurences { get; }
 
         /// <summary>
         ///     Parse requested query into Abstract Syntax Tree
