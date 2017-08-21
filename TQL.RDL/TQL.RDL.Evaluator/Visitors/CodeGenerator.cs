@@ -390,8 +390,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "FSlash" node.</param>
         public virtual void Visit(FSlashNode node)
         {
-            if (RdlMetadata.IsTypePossibleToConvert(node.Left.ReturnType, node.Right.ReturnType))
-                Instructions.Add(new DivideNumeric());
+            Instructions.Add(new DivideNumeric());
         }
 
         /// <summary>
@@ -400,8 +399,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Hyphen" node.</param>
         public virtual void Visit(HyphenNode node)
         {
-            if(RdlMetadata.IsTypePossibleToConvert(node.Left.ReturnType, node.Right.ReturnType))
-                Instructions.Add(new SubtractNumeric());
+            Instructions.Add(new SubtractNumeric());
         }
 
         /// <summary>

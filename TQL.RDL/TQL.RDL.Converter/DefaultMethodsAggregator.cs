@@ -22,7 +22,7 @@ namespace TQL.RDL
         private readonly Random _random = new Random();
         private readonly int _instanceRandomNumber;
 
-        private readonly List<long> _randomizedValues = new List<long>();
+        private readonly List<int> _randomizedValues = new List<int>();
         private int _lastPartOfDayValue = -1;
 
         /// <summary>
@@ -79,6 +79,18 @@ namespace TQL.RDL
             => datetime.DayOfWeek == (DayOfWeek) dayOfWeek;
 
         /// <summary>
+        /// Gets the day of week for timeline year and month.
+        /// </summary>
+        /// <param name="datetime">Reference time.</param>
+        /// <param name="day">Day of month.</param>
+        /// <returns>Calculated DayOfWeek.</returns>
+        [BindableMethod]
+        public static int GetDayOfWeek([InjectReferenceTime] DateTimeOffset datetime, int day)
+        {
+            return (int)new DateTimeOffset(datetime.Year, datetime.Month, day, datetime.Hour, datetime.Minute, datetime.Second, datetime.Offset).DayOfWeek;
+        }
+
+        /// <summary>
         ///     Determine if passed number is even.
         /// </summary>
         /// <param name="number">The number.</param>
@@ -114,7 +126,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Day of month.</returns>
         [BindableMethod]
-        public long GetDay([InjectReferenceTime] DateTimeOffset datetime) => datetime.Day;
+        public int GetDay([InjectReferenceTime] DateTimeOffset datetime) => datetime.Day;
 
         /// <summary>
         ///     Gets month of year.
@@ -122,7 +134,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Month of year.</returns>
         [BindableMethod]
-        public long GetMonth([InjectReferenceTime] DateTimeOffset datetime) => datetime.Month;
+        public int GetMonth([InjectReferenceTime] DateTimeOffset datetime) => datetime.Month;
 
         /// <summary>
         ///     Gets year.
@@ -130,7 +142,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Year</returns>
         [BindableMethod]
-        public long GetYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.Year;
+        public int GetYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.Year;
 
         /// <summary>
         ///     Gets second.
@@ -138,7 +150,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Second</returns>
         [BindableMethod]
-        public long GetSecond([InjectReferenceTime] DateTimeOffset datetime) => datetime.Second;
+        public int GetSecond([InjectReferenceTime] DateTimeOffset datetime) => datetime.Second;
 
         /// <summary>
         ///     Gets minute.
@@ -146,7 +158,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns></returns>
         [BindableMethod]
-        public long GetMinute([InjectReferenceTime] DateTimeOffset datetime) => datetime.Minute;
+        public int GetMinute([InjectReferenceTime] DateTimeOffset datetime) => datetime.Minute;
 
         /// <summary>
         ///     Gets hour.
@@ -154,7 +166,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Hour.</returns>
         [BindableMethod]
-        public long GetHour([InjectReferenceTime] DateTimeOffset datetime) => datetime.Hour;
+        public int GetHour([InjectReferenceTime] DateTimeOffset datetime) => datetime.Hour;
 
         /// <summary>
         ///     Gets the time
@@ -181,7 +193,7 @@ namespace TQL.RDL
         /// <param name="type">Type of calcuation to get value.</param>
         /// <returns>Week of month.</returns>
         [BindableMethod]
-        public long GetWeekOfMonth([InjectReferenceTime] DateTimeOffset datetime, string type = "")
+        public int GetWeekOfMonth([InjectReferenceTime] DateTimeOffset datetime, string type = "")
         {
             switch (type)
             {
@@ -201,7 +213,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Day of year.</returns>
         [BindableMethod]
-        public long GetDayOfYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.DayOfYear;
+        public int GetDayOfYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.DayOfYear;
 
         /// <summary>
         ///     Gets day of week.
@@ -209,7 +221,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Day of week.</returns>
         [BindableMethod]
-        public long GetDayOfWeek([InjectReferenceTime] DateTimeOffset datetime) => (long) datetime.DayOfWeek;
+        public int GetDayOfWeek([InjectReferenceTime] DateTimeOffset datetime) => (int) datetime.DayOfWeek;
 
         /// <summary>
         ///     Determine if the date is working day.
@@ -236,14 +248,14 @@ namespace TQL.RDL
         /// <returns>Random number.</returns>
         [BindableMethod]
         [DoNotCache]
-        public long GetRandomValue(int min, int max) => _random.Next(min, max);
+        public int GetRandomValue(int min, int max) => _random.Next(min, max);
 
         /// <summary>
         /// Gets the random number that can be other for each instance.
         /// </summary>
         /// <returns>Random number.</returns>
         [BindableMethod]
-        public long GetInstanceRandomValue() => _instanceRandomNumber;
+        public int GetInstanceRandomValue() => _instanceRandomNumber;
 
         /// <summary>
         /// Gets the random number that can be other for each instance.
@@ -264,7 +276,7 @@ namespace TQL.RDL
         /// <returns>Drawed value.</returns>
         [BindableMethod]
         [DoNotCache]
-        public long NRandomTime([InjectReferenceTime] DateTimeOffset referenceTime, [InjectPartOfDateType] PartOfDate type, [InjectOccurenceOrder] int index, [InjectOccurencesAmount] int count)
+        public int NRandomTime([InjectReferenceTime] DateTimeOffset referenceTime, [InjectPartOfDateType] PartOfDate type, [InjectOccurenceOrder] int index, [InjectOccurencesAmount] int count)
         {
             var minValue = 0;
             var divisor = 0;

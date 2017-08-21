@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TQL.Common.Timezone;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.ErrorHandling;
@@ -112,6 +113,19 @@ namespace TQL.RDL.Converter.Tests
             Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 01:35:00 +02:00"), machine.NextFire());
             Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:40:00 +02:00"), machine.NextFire());
             Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 02:45:00 +01:00"), machine.NextFire());
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DaylightSavingTime_WinterTime_DaysResolution()
+        {
+            var response =
+                TestHelper.Convert<DefaultMethodsAggregator>(
+                    "repeat every days start at '29.10.2017 00:00:00'", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+            var machine = response.Output;
+
+            Assert.AreEqual(DateTimeOffset.Parse("29.10.2017 00:00:00 +02:00"), machine.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("30.10.2017 00:00:00 +01:00"), machine.NextFire());
         }
 
         [TestMethod]
@@ -583,6 +597,32 @@ namespace TQL.RDL.Converter.Tests
             Assert.AreEqual(2017, evaluator.NextFire().Value.Year);
             Assert.AreEqual(2017, evaluator.NextFire().Value.Year);
             Assert.AreEqual(2018, evaluator.NextFire().Value.Year);
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_Evaluate17thNotWhenIsWeekend()
+        {
+            var evaluator = EvaluateQuery(
+                @"repeat every days where 1 = (
+                    case 
+                        when IsWorkingDay() and GetDay() = 17
+                        then 1
+                        when GetDayOfWeek(17) = saturday
+                        then GetDay() = 16
+                        when GetDayOfWeek(17) = sunday
+                        then GetDay() = 15
+                        else 0
+                    esac) start at '01.01.2017'", string.Empty, string.Empty);
+
+            Assert.AreEqual(DateTimeOffset.Parse("17.01.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.02.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.03.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.04.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.05.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("16.06.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.07.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("17.08.2017"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("15.09.2017"), evaluator.NextFire());
         }
 
         [BindableMethod]

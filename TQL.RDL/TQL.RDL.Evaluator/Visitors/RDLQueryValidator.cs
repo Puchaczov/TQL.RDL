@@ -316,9 +316,15 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <returns>true if can be generalized, else false.</returns>
         private bool CanBeGeneralized(RdlSyntaxNode left, RdlSyntaxNode right)
         {
+            if (right.Token.Value == null)
+                return false;
+
             if (right.Token.Value.IsKeyword() &&
                 RdlMetadata.IsTypePossibleToConvert(left.ReturnType, typeof(int)))
                 return true;
+
+            if (left.Token.Value == null)
+                return false;
 
             if (left.Token.Value.IsKeyword() &&
                 RdlMetadata.IsTypePossibleToConvert(typeof(int), right.ReturnType))
