@@ -46,7 +46,7 @@ repeat every minutes where
 - Occurs randomly twice a month
 
 ```
-repeat every days where GetDay() in (NRandomTime(0, 2), NRandomTime(1, 2)) start at '01.08.2017'
+repeat every days where GetDay() in (NRandomTime(), NRandomTime()) start at '01.08.2017'
 ```
 
 ## Installation
