@@ -137,16 +137,22 @@ namespace TQL.RDL.Evaluator.Visitors
         public override void Visit(RawFunctionNode node)
         {
             _scope.AddFunction(node);
-            if (!CanBeRetrievedFromCache(node) || !IsCacheable(node))
+            if(!IsCacheable(node))
+            {
+                Visit(node);
+            }
+            else if(!CanBeRetrievedFromCache(node))
             {
                 Visit(new CallFunctionAndStoreValueNode(node));
             }
             else
+            {
                 Visit(new CachedFunctionNode(node));
+            }
         }
 
         /// <summary>
-        /// Determine if function is cacheable.
+        ///     Determine if function is cacheable.
         /// </summary>
         /// <param name="node">The raw function.</param>
         /// <returns>True if node is cacheable, else false.</returns>

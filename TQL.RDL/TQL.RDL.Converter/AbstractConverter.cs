@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TQL.Core.Converters;
 using TQL.RDL.Evaluator;
 using TQL.RDL.Parser;
@@ -58,17 +59,23 @@ namespace TQL.RDL
         /// <returns>Abstract syntax tree</returns>
         protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest<TMethodsAggregator> request)
         {
-            var preprocessor = new Preprocessor.Preprocessor();
+            string[] formats = null;
+
+            if (request.Formats == null || request.Formats.Length == 0)
+                formats = _defaultFormats;
+            else
+                formats = request.Formats;
+
+            var sourceTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, request.Source);
+            var destinationTime = TimeZoneInfo.ConvertTime(sourceTime, request.Target);
+
+            var preprocessor = new Preprocessor.Preprocessor(destinationTime, formats);
             var query = preprocessor.Execute(request.Query);
             var lexer = new Lexer(query, true);
             RdlParser parser = null;
 
-            if (request.Formats == null || request.Formats.Length == 0)
-                parser = new RdlParser(lexer, _defaultFormats, request.CultureInfo,
-                    new MethodDeclarationResolver(Metdatas), MethodOccurences);
-            else
-                parser = new RdlParser(lexer, request.Formats, request.CultureInfo,
-                    new MethodDeclarationResolver(Metdatas), MethodOccurences);
+            parser = new RdlParser(lexer, formats, request.CultureInfo,
+                new MethodDeclarationResolver(Metdatas), MethodOccurences);
 
             return parser.ComposeRootComponents();
         }

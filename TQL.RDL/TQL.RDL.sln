@@ -1,21 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Evaluator", "TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj", "{44933415-5E61-4069-8E05-75145D365A90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL.Evaluator", "TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj", "{44933415-5E61-4069-8E05-75145D365A90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Evaluator.Tests", "TQL.RDL.Evaluator.Tests\TQL.RDL.Evaluator.Tests.csproj", "{57C291C9-82B0-41FF-84E1-306E75900CBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Parser", "TQL.RDL.Parser\TQL.RDL.Parser.csproj", "{12D9B4D8-333B-4630-A02E-2005A5814740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL.Parser", "TQL.RDL.Parser\TQL.RDL.Parser.csproj", "{12D9B4D8-333B-4630-A02E-2005A5814740}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Parser.Tests", "TQL.RDL.Parser.Tests\TQL.RDL.Parser.Tests.csproj", "{91E3BA5F-F43E-4F77-83D7-762652367722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL", "TQL.RDL.Converter\TQL.RDL.csproj", "{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL", "TQL.RDL.Converter\TQL.RDL.csproj", "{D6A021B8-39CD-4153-97EC-EBFF3C2E4C65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Tests", "TQL.RDL.Converter.Tests\TQL.RDL.Tests.csproj", "{E28C1EF0-9CF3-4908-9A40-5A1B5961445A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Preprocessor", "TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj", "{7C4BE64E-1148-4FF5-9357-0837E0B67791}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL.Preprocessor", "TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj", "{7C4BE64E-1148-4FF5-9357-0837E0B67791}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Preprocessor.Tests", "TQL.RDL.Preprocessor.Tests\TQL.RDL.Preprocessor.Tests.csproj", "{E012C66E-74EA-4420-BA73-950C737AFC0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,8 +53,15 @@ Global
 		{7C4BE64E-1148-4FF5-9357-0837E0B67791}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C4BE64E-1148-4FF5-9357-0837E0B67791}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C4BE64E-1148-4FF5-9357-0837E0B67791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8D96779-225B-4C10-91D7-BE0FFA806B9A}
 	EndGlobalSection
 EndGlobal

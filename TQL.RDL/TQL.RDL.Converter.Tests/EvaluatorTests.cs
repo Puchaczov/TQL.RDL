@@ -625,6 +625,30 @@ namespace TQL.RDL.Converter.Tests
             Assert.AreEqual(DateTimeOffset.Parse("15.09.2017"), evaluator.NextFire());
         }
 
+        [TestMethod]
+        public void CodeGenerationVisitor_EvaluateEachWeekdayDifferentSchedule_ShouldPass()
+        {
+            var evaluator = EvaluateQuery(
+                @"repeat every hours where 1 = (
+                    case 
+                        when GetDayOfWeek() in (monday, tuesday)
+                        then GetHour() = 10
+                        when GetDayOfWeek() = wednesday
+                        then GetHour() = 0
+                        when GetDayOfWeek() = thursday
+                        then GetHour() = 4
+                        when GetDayOfWeek() = friday
+                        then GetHour() = 6
+                        else 0
+                    esac) start at '01.08.2017'", string.Empty, string.Empty);
+
+            Assert.AreEqual(DateTimeOffset.Parse("01.08.2017 10:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("02.08.2017 00:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("03.08.2017 04:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("04.08.2017 06:00:00"), evaluator.NextFire());
+            Assert.AreEqual(DateTimeOffset.Parse("07.08.2017 10:00:00"), evaluator.NextFire());
+        }
+
         [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
