@@ -13,6 +13,20 @@ RDL is domain specific language usable to querying time. Syntax is similar to en
 
 ## Examples
 
+- At 17th day of month but only when this day is one of working day (mon-fri)
+```
+repeat every days where 1 = 
+    (case 
+        when IsWorkingDay() and GetDay() = 17
+        then 1
+        when GetDayOfWeek(17) = saturday
+        then GetDay() = 16
+        when GetDayOfWeek(17) = sunday
+        then GetDay() = 15
+        else 0
+     esac) start at '01.01.2017'
+```
+
 - In a monday of first or third week of month, get dates from 8:30AM to 11:29AM, for second and fourth, return 12:00 but only when day of week is tuesday or sunday.
 ```
 repeat every minutes where 1 = 
