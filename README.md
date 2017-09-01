@@ -63,6 +63,23 @@ repeat every minutes where
 repeat every days where GetDay() in (NRandomTime(), NRandomTime()) start at '01.08.2017'
 ```
 
+- Occurs at 10 AM on monday and tuesday, at midnight on wednesday, at 4 AM on thursday, at 6 AM on friday.
+
+```
+repeat every hours where 1 = 
+    (case 
+        when GetDayOfWeek() in (monday, tuesday)
+        then GetHour() = 10
+        when GetDayOfWeek() = wednesday
+        then GetHour() = 0
+        when GetDayOfWeek() = thursday
+        then GetHour() = 4
+        when GetDayOfWeek() = friday
+        then GetHour() = 6
+        else 0
+    esac) start at '01.08.2017'
+```
+
 ## Installation
 
 Download and install the latest version (nuget): **Install-Package TQL.RDL**
