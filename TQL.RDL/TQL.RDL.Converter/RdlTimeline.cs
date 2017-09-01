@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TQL.Common.Converters;
@@ -57,11 +58,17 @@ namespace TQL.RDL
             if (!coretnessChecker.IsValid)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
+            Stack<bool> contextChangeTracker = new Stack<bool>();
+            var scopeGenerator = new ContextGenerator(contextChangeTracker);
+            var scopeTraverser = new ContextGeneratorTraverser(scopeGenerator, contextChangeTracker);
+
+            ast.Accept(scopeTraverser);
+
             var codeGenerator = request.Debuggable
                 ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator, MethodOccurences)
                 : new CodeGenerator(Metdatas, request.MethodsAggregator, MethodOccurences);
 
-            var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences);
+            var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences, scopeGenerator.Scope.GetRootOfAllScopes());
 
             ast.Accept(codeGenerationTraverseVisitor);
             IFireTimeEvaluator evaluator = codeGenerator.VirtualMachine;
