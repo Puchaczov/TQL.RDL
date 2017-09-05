@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-    <AssemblyVersion>0.11.3.1</AssemblyVersion>
-    <FileVersion>0.11.3.1</FileVersion>
+    <AssemblyVersion>0.11.4.1</AssemblyVersion>
+    <FileVersion>0.11.4.1</FileVersion>
     <PackageTags>TQL TQL.RDL</PackageTags>
     <Description>Language evaluator.</Description>
-    <Version>0.11.3.1</Version>
+    <Version>0.11.4.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>

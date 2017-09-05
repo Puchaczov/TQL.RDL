@@ -71,7 +71,7 @@ namespace TQL.RDL
             var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences, scopeGenerator.Scope.GetRootOfAllScopes());
 
             ast.Accept(codeGenerationTraverseVisitor);
-            IFireTimeEvaluator evaluator = codeGenerator.VirtualMachine;
+            IFireTimeEvaluator evaluator = codeGenerator.CreateVirtualMachine(request.CancellationToken);
 
             if (evaluator == null)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());

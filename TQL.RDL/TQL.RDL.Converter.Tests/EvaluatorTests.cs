@@ -5,6 +5,7 @@ using TQL.Common.Timezone;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.ErrorHandling;
+using System.Threading;
 
 namespace TQL.RDL.Converter.Tests
 {
@@ -649,6 +650,33 @@ namespace TQL.RDL.Converter.Tests
             Assert.AreEqual(DateTimeOffset.Parse("07.08.2017 10:00:00"), evaluator.NextFire());
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(OperationCanceledException))]
+        public void CodeGenerationVisitor_OperationCancelled_ShouldFail()
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var evaluator = EvaluateQuery("repeat every hours start at '01.09.2017 hh:00:00'", string.Empty, string.Empty, cancellationTokenSource.Token);
+            cancellationTokenSource.Cancel();
+            evaluator.NextFire();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Evaluator.Exceptions.DivideByZeroException))]
+        public void CodeGenerationVisitor_DivideByZero_ShouldFails()
+        {
+            var evaluator = EvaluateQuery("repeat every hours where 1 = (1 / 0) start at '01.09.2017 hh:00:00'", string.Empty, string.Empty);
+            evaluator.NextFire();
+        }
+
+        [TestMethod]
+        public void CodeGenerationVisitor_DynamicStartAtHour_ShouldPass()
+        {
+            var current = DateTime.Now;
+            var evaluator = EvaluateQuery("repeat every hours start at '01.09.2017 hh:00:00'", string.Empty, string.Empty);
+            var result = evaluator.NextFire().Value;
+            Assert.AreEqual(current.Hour, result.Hour);
+        }
+
         [BindableMethod]
         public static bool TestMethodWithDateTimeOffset(DateTimeOffset? date)
         {
@@ -671,8 +699,11 @@ namespace TQL.RDL.Converter.Tests
 
         private IFireTimeEvaluator EvaluateQuery(string query, string startAt, string stopAt,
             params Func<DateTimeOffset?, bool>[] funcs)
+            => EvaluateQuery(query, startAt, stopAt, default(CancellationToken), funcs);
+
+        private IFireTimeEvaluator EvaluateQuery(string query, string startAt, string stopAt, CancellationToken cancellationToken, params Func<DateTimeOffset?, bool>[] funcs)
         {
-            var response = TestHelper.Convert(string.Format(query, startAt, stopAt));
+            var response = TestHelper.Convert(string.Format(query, startAt, stopAt), cancellationToken);
 
             DateTimeOffset? datetime;
             var index = 0;

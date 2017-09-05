@@ -13,6 +13,10 @@ namespace TQL.RDL.Evaluator.Instructions
         {
             var b = machine.Values.Pop();
             var a = machine.Values.Pop();
+
+            if (b == 0)
+                throw new Exceptions.DivideByZeroException();
+
             machine.Values.Push(a / b);
             machine.InstructionPointer += 1;
         }

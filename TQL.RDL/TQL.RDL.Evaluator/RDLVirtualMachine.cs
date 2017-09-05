@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator.Instructions;
 
@@ -8,6 +9,8 @@ namespace TQL.RDL.Evaluator
     public class RdlVirtualMachine : IFireTimeEvaluator, IVmTracker
     {
         private readonly bool _hasWhereConditions;
+        private readonly CancellationToken _cancellationToken;
+        private bool _isInBrokenState;
 
         /// <summary>
         /// Initialize instance.
@@ -18,7 +21,7 @@ namespace TQL.RDL.Evaluator
         /// <param name="startAt">Start time.</param>
         /// <param name="hasWhereConditions">Determine if query has where condition.</param>
         public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions,
-            DateTimeOffset? stopAt, DateTimeOffset startAt, bool hasWhereConditions)
+            DateTimeOffset? stopAt, DateTimeOffset startAt, bool hasWhereConditions, CancellationToken token)
         {
             Values = new Stack<long>();
             Datetimes = new Stack<DateTimeOffset>();
@@ -32,6 +35,8 @@ namespace TQL.RDL.Evaluator
             Registers = new long[2];
             _hasWhereConditions = hasWhereConditions;
             LastFireTime = null;
+            _cancellationToken = token;
+            _isInBrokenState = false;
         }
 
         /// <summary>
@@ -131,56 +136,72 @@ namespace TQL.RDL.Evaluator
         /// <returns>Next occurence or null if out of range.</returns>
         public DateTimeOffset? NextFire()
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
+            if (_isInBrokenState)
+                return null;
+
             if (ReferenceTime < StartAt)
                 ReferenceTime = StartAt;
 
             if (ReferenceTime > StopAt)
                 Exit = true;
 
-            while (true)
+            try
             {
-                if (Exit)
+
+                while (true)
                 {
-                    LastFireTime = null;
-                    return null;
-                }
+                    _cancellationToken.ThrowIfCancellationRequested();
 
-                Break = false;
+                    if (Exit)
+                    {
+                        LastFireTime = null;
+                        return null;
+                    }
 
-                InstructionPointer = 0;
+                    Break = false;
 
-                var old = ReferenceTime;
+                    InstructionPointer = 0;
 
-                while (!Break && !Exit)
-                {
-                    var instruction = Instructions[InstructionPointer];
-                    instruction.Run(this);
-                }
+                    var old = ReferenceTime;
 
-                if (StopAt.HasValue && old > StopAt.Value)
-                {
+                    while (!Break && !Exit)
+                    {
+                        var instruction = Instructions[InstructionPointer];
+                        instruction.Run(this);
+                    }
+
+                    if (StopAt.HasValue && old > StopAt.Value)
+                    {
+                        Values.Clear();
+                        Datetimes.Clear();
+                        Variables.Clear();
+
+                        Exit = true;
+                        LastFireTime = null;
+                        return null;
+                    }
+
+                    var isCurrentDateFitsCondition = true;
+                    if (_hasWhereConditions)
+                        isCurrentDateFitsCondition = Convert.ToBoolean(Values.Pop());
+
                     Values.Clear();
                     Datetimes.Clear();
                     Variables.Clear();
 
-                    Exit = true;
-                    LastFireTime = null;
-                    return null;
+                    if (isCurrentDateFitsCondition)
+                    {
+                        LastFireTime = old;
+                        return old;
+                    }
                 }
-
-                var isCurrentDateFitsCondition = true;
-                if (_hasWhereConditions)
-                    isCurrentDateFitsCondition = Convert.ToBoolean(Values.Pop());
-
-                Values.Clear();
-                Datetimes.Clear();
-                Variables.Clear();
-
-                if (isCurrentDateFitsCondition)
-                {
-                    LastFireTime = old;
-                    return old;
-                }
+            }
+            catch(Exceptions.DivideByZeroException)
+            {
+                _isInBrokenState = true;
+                throw;
             }
         }
     }

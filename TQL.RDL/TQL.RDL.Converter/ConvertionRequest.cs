@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using TQL.Core.Converters;
 
 namespace TQL.RDL
@@ -10,12 +11,13 @@ namespace TQL.RDL
         ///     Allow user to instantiate properly configured request.
         /// </summary>
         /// <param name="query">User defined query.</param>
-        /// <param name="source">Source timezone in which query will be evaluated</param>
+        /// <param name="source">Source timezone in which query will be evaluated.</param>
         /// <param name="target">Target timezone in which evaluated date will be returned to user.</param>
         /// <param name="debuggable">Should query be debuggable?</param>
-        /// <param name="formats">Default formats of date in typed query</param>
+        /// <param name="formats">Default formats of date in typed query.</param>
+        /// <param name="cancellationToken">Cancelation token.</param>
         public ConvertionRequest(string query, TimeZoneInfo source, TimeZoneInfo target, bool debuggable = false,
-            string[] formats = null)
+            string[] formats = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             Query = query;
             MethodsAggregator = new TMethodsAggregator();
@@ -24,6 +26,7 @@ namespace TQL.RDL
             Target = target;
             Formats = formats;
             CultureInfo = new CultureInfo("en-US");
+            CancellationToken = cancellationToken;
         }
 
         /// <summary>
@@ -60,5 +63,10 @@ namespace TQL.RDL
         ///     Determine culture type of typed date (currently, always en-US)
         /// </summary>
         public CultureInfo CultureInfo { get; }
+
+        /// <summary>
+        ///     Cancellation token.
+        /// </summary>
+        public CancellationToken CancellationToken { get; }
     }
 }

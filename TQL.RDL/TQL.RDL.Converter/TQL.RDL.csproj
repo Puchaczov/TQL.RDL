@@ -4,10 +4,10 @@
     <Authors>Jakub Puchała</Authors>
     <Description>Small language used to querying time</Description>
     <Copyright>Jakub Puchała @ 2016</Copyright>
-    <AssemblyVersion>0.11.3.1</AssemblyVersion>
-    <FileVersion>0.11.3.1</FileVersion>
+    <AssemblyVersion>0.11.4.1</AssemblyVersion>
+    <FileVersion>0.11.4.1</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.11.3.1</Version>
+    <Version>0.11.4.1</Version>
     <PackageProjectUrl>https://github.com/Puchaczov/TQL.RDL/tree/master/TQL.RDL</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL/tree/master/TQL.RDL</RepositoryUrl>

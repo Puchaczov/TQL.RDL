@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using TQL.RDL.Evaluator.Instructions;
 using TQL.RDL.Parser;
 using TQL.RDL.Parser.Helpers;
@@ -21,9 +22,14 @@ namespace TQL.RDL.Evaluator.Visitors
         #endregion
 
         /// <summary>
-        ///     Gets or sets the virtual machine.
+        ///     Creates virtual machine instance.
         /// </summary>
-        public RdlVirtualMachine VirtualMachine { get; private set; }
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>Virtual machine object.</returns>
+        public RdlVirtualMachine CreateVirtualMachine(CancellationToken token)
+        {
+            return new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt, _hasWhereConditions, token);
+        }
 
         /// <summary>
         ///     Performs "WHERE" specific operations.
@@ -178,8 +184,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Function" node.</param>
         public virtual void Visit(RawFunctionNode node)
         {
-            MethodInfo methodInfo;
-            Visit(node, out methodInfo);
+            Visit(node, out MethodInfo methodInfo);
         }
 
         /// <summary>
@@ -188,8 +193,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node"></param>
         public void Visit(CallFunctionAndStoreValueNode node)
         {
-            MethodInfo methodInfo;
-            Visit(node, out methodInfo);
+            Visit(node, out MethodInfo methodInfo);
 
             switch (node.ReturnType.Name)
             {
@@ -278,7 +282,6 @@ namespace TQL.RDL.Evaluator.Visitors
             Instructions.Add(new BreakInstruction());
 
             _startAt = new DateTimeOffset(_startAt.Year, _startAt.Month, _startAt.Day, _startAt.Hour, _startAt.Minute, _startAt.Second, TimeZoneInfo.Utc.BaseUtcOffset);
-            VirtualMachine = new RdlVirtualMachine(_labels, Instructions.ToArray(), _stopAt, _startAt, _hasWhereConditions);
         }
 
         /// <summary>
