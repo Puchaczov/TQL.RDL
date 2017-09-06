@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TQL.RDL.Parser.Nodes;
+﻿using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {

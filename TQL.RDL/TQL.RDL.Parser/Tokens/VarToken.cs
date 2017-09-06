@@ -11,6 +11,6 @@ namespace TQL.RDL.Parser.Tokens
         {
         }
 
-        public override string ToString() => string.Format("@{0}", Value);
+        public override string ToString() => $"@{Value}";
     }
 }

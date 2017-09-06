@@ -11,7 +11,7 @@ namespace TQL.RDL.Parser.Nodes
             Token = token;
         }
 
-        public RdlSyntaxNode Expression => Descendant;
+        private RdlSyntaxNode Expression => Descendant;
 
         public override Type ReturnType => Descendant.ReturnType;
 
@@ -29,6 +29,6 @@ namespace TQL.RDL.Parser.Nodes
             Parent = node;
         }
 
-        public override string ToString() => string.Format("when {0}", Expression);
+        public override string ToString() => $"when {Expression}";
     }
 }

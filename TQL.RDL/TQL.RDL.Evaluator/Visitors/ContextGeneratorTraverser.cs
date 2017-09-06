@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
@@ -20,7 +18,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Where node that will be visited.</param>
         public override void Visit(WhereConditionsNode node)
         {
-            node.Accept(_visitor);
+            node.Accept(Visitor);
             foreach (var item in node.Descendants)
                 item.Accept(this);
             _contextChangeTracker.Push(true);
@@ -32,7 +30,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">When node that will be visited.</param>
         public override void Visit(WhenNode node)
         {
-            node.Accept(_visitor);
+            node.Accept(Visitor);
             node.Descendant.Accept(this);
             _contextChangeTracker.Push(true);
         }
@@ -43,7 +41,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Then node that will be visited.</param>
         public override void Visit(ThenNode node)
         {
-            node.Accept(_visitor);
+            node.Accept(Visitor);
             node.Descendant.Accept(this);
             _contextChangeTracker.Push(true);
         }
@@ -54,7 +52,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">Else node that will be visited.</param>
         public override void Visit(ElseNode node)
         {
-            node.Accept(_visitor);
+            node.Accept(Visitor);
             node.Descendant.Accept(this);
             _contextChangeTracker.Push(true);
         }

@@ -13,8 +13,8 @@ namespace TQL.RDL.Parser.Nodes
             Then.SetParent(this);
         }
 
-        public WhenNode When => Descendants[0] as WhenNode;
-        public ThenNode Then => Descendants[1] as ThenNode;
+        private WhenNode When => Descendants[0] as WhenNode;
+        private ThenNode Then => Descendants[1] as ThenNode;
 
         public override RdlSyntaxNode[] Descendants { get; }
 
@@ -45,6 +45,6 @@ namespace TQL.RDL.Parser.Nodes
             visitor.Visit(this);
         }
 
-        public override string ToString() => string.Format("{0} {1}", When, Then);
+        public override string ToString() => $"{When} {Then}";
     }
 }

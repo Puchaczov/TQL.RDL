@@ -235,7 +235,7 @@ namespace TQL.RDL.Evaluator
         /// </summary>
         /// <param name="name">Name of method.</param>
         /// <param name="methodInfo">Method to register.</param>
-        public void RegisterMethod(string name, MethodInfo methodInfo)
+        private void RegisterMethod(string name, MethodInfo methodInfo)
         {
             if (_methods.ContainsKey(name))
                 _methods[name].Add(methodInfo);
@@ -263,7 +263,7 @@ namespace TQL.RDL.Evaluator
         /// </summary>
         /// <param name="methodName">The method name.</param>
         /// <returns>Array of method declarations.</returns>
-        public MethodDeclaration[] GetListOfUsedMethods(string methodName)
+        private MethodDeclaration[] GetListOfUsedMethods(string methodName)
         {
             if (_methods.ContainsKey(methodName))
                 return _methods[methodName].Select(f => new MethodDeclaration(f)).ToArray();

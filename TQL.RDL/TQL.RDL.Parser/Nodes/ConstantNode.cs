@@ -5,7 +5,7 @@ namespace TQL.RDL.Parser.Nodes
 {
     public abstract class ConstantNode : RdlSyntaxNode
     {
-        public ConstantNode(LeafNode node)
+        protected ConstantNode(LeafNode node)
         {
             Value = node;
         }
@@ -18,7 +18,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Token Token => null;
 
-        public LeafNode Value { get; }
+        private LeafNode Value { get; }
 
         public override void Accept(INodeVisitor visitor)
         {

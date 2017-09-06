@@ -19,7 +19,7 @@ namespace TQL.RDL.Converter.Tests
             where TMethodsAggregator : new()
             => Convert<TMethodsAggregator>(query, TimeZoneInfo.Local);
 
-        public static ConvertionResponse<IFireTimeEvaluator> Convert<TMethodsAggregator>(string query, CancellationToken cancellationToken)
+        private static ConvertionResponse<IFireTimeEvaluator> Convert<TMethodsAggregator>(string query, CancellationToken cancellationToken)
             where TMethodsAggregator : new()
             => Convert<TMethodsAggregator>(query, TimeZoneInfo.Local, TimeZoneInfo.Local, cancellationToken);
 

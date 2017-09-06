@@ -32,7 +32,7 @@ namespace TQL.RDL.Parser
             FunctionCallOccurence.Clear();
         }
 
-        public IDictionary<string, int> FunctionCallOccurence { get; }
+        private IDictionary<string, int> FunctionCallOccurence { get; }
 
         private Token Current => _cLexer.Current();
 

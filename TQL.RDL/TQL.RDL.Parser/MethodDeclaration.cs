@@ -13,7 +13,7 @@ namespace TQL.RDL.Parser
 
         public string Name => Method.Name;
 
-        public MethodInfo Method { get; }
+        private MethodInfo Method { get; }
 
         public Type[] Arguments => Method.GetParameters().Select(f => f.ParameterType).ToArray();
         public Type Return => Method.ReturnParameter.ParameterType;

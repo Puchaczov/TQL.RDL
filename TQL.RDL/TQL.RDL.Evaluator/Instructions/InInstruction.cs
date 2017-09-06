@@ -15,8 +15,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="popFun">Pop function that pops from source stack.</param>
         protected InInstruction(PopFun popFun)
         {
-            if (popFun == null) throw new ArgumentNullException(nameof(popFun));
-            _pop = popFun;
+            _pop = popFun ?? throw new ArgumentNullException(nameof(popFun));
         }
 
         /// <summary>

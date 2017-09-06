@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using TQL.RDL.Evaluator.Scope;
-using TQL.RDL.Parser.Helpers;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
     public class ExtendedTraverser : Traverser
     {   
-        private ScopeContext _scope;
+        private readonly ScopeContext _scope;
 
         /// <summary>
         /// Initialize instance.
         /// </summary>
         /// <param name="codeGenerationVisitor">The destination visitor.</param>
         /// <param name="methodOccurences">Method occurences dictionary.</param>
+        /// <param name="scope">The scope.</param>
         public ExtendedTraverser(INodeVisitor codeGenerationVisitor, IDictionary<string, int> methodOccurences, ScopeContext scope)
             : base(codeGenerationVisitor)
         {

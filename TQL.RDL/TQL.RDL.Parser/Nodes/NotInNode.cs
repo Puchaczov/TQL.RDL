@@ -13,6 +13,6 @@ namespace TQL.RDL.Parser.Nodes
 
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
 
-        public override string ToString() => string.Format("not in {0}", Right);
+        public override string ToString() => $"not in {Right}";
     }
 }

@@ -50,7 +50,7 @@ namespace TQL.RDL.Evaluator.Helpers
         /// <param name="keyword">The keyword.</param>
         /// <param name="result">Number mapped to passed keyword.</param>
         /// <returns>True is word is language keyword, else false.</returns>
-        public static bool TryGetKeyword(this string keyword, out int result)
+        private static bool TryGetKeyword(this string keyword, out int result)
         {
             if (string.IsNullOrEmpty(keyword))
             {

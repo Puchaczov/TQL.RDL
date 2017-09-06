@@ -10,7 +10,7 @@ namespace TQL.RDL.Evaluator.Enumerators
         ///     Initialize object.
         /// </summary>
         /// <param name="root">Root node where enumeration will start from.</param>
-        public EnumeratorBase(RdlSyntaxNode root)
+        protected EnumeratorBase(RdlSyntaxNode root)
         {
             Root = root;
         }

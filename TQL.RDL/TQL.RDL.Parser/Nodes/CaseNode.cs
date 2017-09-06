@@ -35,7 +35,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => Expressions[0].ReturnType;
 
-        public WhenThenNode[] Expressions { get; }
+        private WhenThenNode[] Expressions { get; }
 
         public ElseNode Else { get; }
 

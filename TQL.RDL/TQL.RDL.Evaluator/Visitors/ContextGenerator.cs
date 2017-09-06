@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using TQL.RDL.Evaluator.Scope;
 using TQL.RDL.Parser.Nodes;
 
@@ -9,9 +7,9 @@ namespace TQL.RDL.Evaluator.Visitors
     public class ContextGenerator : INodeVisitor
     {
         private readonly ScopeContext _rootScope;
-        private Dictionary<RawFunctionNode, ScopeContext> _functionScopeTable;
+        private readonly Dictionary<RawFunctionNode, ScopeContext> _functionScopeTable;
         private ScopeContext _scope;
-        private Stack<bool> _contextChangeTracker;
+        private readonly Stack<bool> _contextChangeTracker;
 
         public ScopeContext Scope => _scope;
 

@@ -20,6 +20,7 @@ namespace TQL.RDL.Evaluator
         /// <param name="stopAt">Stop time.</param>
         /// <param name="startAt">Start time.</param>
         /// <param name="hasWhereConditions">Determine if query has where condition.</param>
+        /// <param name="token">The token.</param>
         public RdlVirtualMachine(Dictionary<string, int> relativeLabels, IRdlInstruction[] instructions,
             DateTimeOffset? stopAt, DateTimeOffset startAt, bool hasWhereConditions, CancellationToken token)
         {
@@ -54,14 +55,14 @@ namespace TQL.RDL.Evaluator
         /// </summary>
         public DateTimeOffset ReferenceTime
         {
-            get { return Variables.ReferenceTime; }
-            set { Variables.ReferenceTime = value; }
+            get => Variables.ReferenceTime;
+            set => Variables.ReferenceTime = value;
         }
 
         /// <summary>
         /// Gets or sets value to force break evaluator.
         /// </summary>
-        public bool Break { get; set; }
+        public bool Break { private get; set; }
 
         /// <summary>
         /// Gets or sets value to force evaluator to exit.

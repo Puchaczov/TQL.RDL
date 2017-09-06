@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator
 {
     public class FunctionOccurenceMetadata
     {
-        public List<RawFunctionNode> Nodes { get; }
+        private List<RawFunctionNode> Nodes { get; }
 
         public FunctionOccurenceMetadata()
         {

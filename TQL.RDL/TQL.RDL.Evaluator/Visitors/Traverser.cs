@@ -9,7 +9,7 @@ namespace TQL.RDL.Evaluator.Visitors
     {
         private readonly INodeVisitor _visitor;
 
-        protected readonly Dictionary<string, FunctionOccurenceMetadata> OccurenceTable;
+        private readonly Dictionary<string, FunctionOccurenceMetadata> _occurenceTable;
 
         /// <summary>
         ///     Initialize object.
@@ -18,7 +18,7 @@ namespace TQL.RDL.Evaluator.Visitors
         public Traverser(INodeVisitor visitor)
         {
             _visitor = visitor ?? throw new ArgumentNullException(nameof(visitor));
-            OccurenceTable = new Dictionary<string, FunctionOccurenceMetadata>();
+            _occurenceTable = new Dictionary<string, FunctionOccurenceMetadata>();
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace TQL.RDL.Evaluator.Visitors
                 item.Accept(this);
             node.Accept(_visitor);
 
-            OccurenceTable.Clear();
+            _occurenceTable.Clear();
         }
 
         /// <summary>

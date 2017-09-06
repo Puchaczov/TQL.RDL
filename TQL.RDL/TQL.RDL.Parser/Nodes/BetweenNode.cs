@@ -16,9 +16,9 @@ namespace TQL.RDL.Parser.Nodes
 
         public RdlSyntaxNode Expression => Descendants[0];
 
-        public RdlSyntaxNode Min => Descendants[1];
+        private RdlSyntaxNode Min => Descendants[1];
 
-        public RdlSyntaxNode Max => Descendants[2];
+        private RdlSyntaxNode Max => Descendants[2];
 
         public override TextSpan FullSpan
             => new TextSpan(Expression.FullSpan.Start, Max.FullSpan.End - Expression.FullSpan.Start);

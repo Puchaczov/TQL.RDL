@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TQL.Common.Timezone;
 using TQL.Interfaces;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.ErrorHandling;
@@ -705,7 +704,6 @@ namespace TQL.RDL.Converter.Tests
         {
             var response = TestHelper.Convert(string.Format(query, startAt, stopAt), cancellationToken);
 
-            DateTimeOffset? datetime;
             var index = 0;
 
             Assert.IsFalse(response.Messages.Any(f => f.Level == MessageLevel.Error));
@@ -714,7 +712,7 @@ namespace TQL.RDL.Converter.Tests
 
             while (index < funcs.Length)
             {
-                datetime = evaluator.NextFire();
+                var datetime = evaluator.NextFire();
                 Assert.IsTrue(funcs[index](datetime));
                 index += 1;
             }

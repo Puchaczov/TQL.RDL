@@ -7,31 +7,31 @@ namespace TQL.RDL.Evaluator.Tests
     [TestClass]
     public class MetadataManagerTests
     {
-        private RdlMetadata manager;
+        private RdlMetadata _manager;
 
         [TestInitialize]
         public void Initialize()
         {
-            manager = new RdlMetadata();
-            manager.RegisterMethods<TestMethodClass>(nameof(TestMethodClass.MethodA));
+            _manager = new RdlMetadata();
+            _manager.RegisterMethods<TestMethodClass>(nameof(TestMethodClass.MethodA));
         }
 
         [TestMethod]
         public void HasMethod_CheckMethodExists_ShouldPass()
         {
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[0]));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(int)}));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[2] {typeof(int), typeof(int)}));
-            Assert.IsTrue(manager.HasMethod(nameof(TestMethodClass.MethodA),
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[0]));
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[] {typeof(int)}));
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[] {typeof(int), typeof(int)}));
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA),
                 new Type[4] {typeof(int), typeof(int), typeof(int), typeof(string)}));
-            Assert.IsFalse(manager.HasMethod(nameof(TestMethodClass.MethodA),
+            Assert.IsFalse(_manager.HasMethod(nameof(TestMethodClass.MethodA),
                 new Type[4] {typeof(int), typeof(int), typeof(int), typeof(object)}));
         }
 
         [TestMethod]
         public void GetMethod_ShouldPass()
         {
-            var method = manager.GetMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(int)});
+            var method = _manager.GetMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(int)});
             Assert.IsNotNull(method);
         }
 
@@ -39,7 +39,7 @@ namespace TQL.RDL.Evaluator.Tests
         [ExpectedException(typeof(MethodNotFoundedException))]
         public void GetMethod_MethodNotExist_ShouldThrow()
         {
-            var method = manager.GetMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(object)});
+            var method = _manager.GetMethod(nameof(TestMethodClass.MethodA), new Type[1] {typeof(object)});
         }
 
         private class TestMethodClass

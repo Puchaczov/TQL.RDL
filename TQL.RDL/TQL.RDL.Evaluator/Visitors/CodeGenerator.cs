@@ -558,6 +558,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="metadatas">Metadata manager with functions registered.</param>
         /// <param name="callMethodContext">object that contains methods to invoke.</param>
+        /// <param name="functionOccurences">Function occurence table.</param>
         public CodeGenerator(RdlMetadata metadatas, object callMethodContext, IReadOnlyDictionary<string, int> functionOccurences)
             : this(metadatas, DateTimeOffset.UtcNow, callMethodContext, functionOccurences)
         {

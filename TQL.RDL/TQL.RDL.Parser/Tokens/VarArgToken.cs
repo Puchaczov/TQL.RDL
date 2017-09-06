@@ -17,6 +17,6 @@ namespace TQL.RDL.Parser.Tokens
         {
         }
 
-        public int Arguments { get; }
+        private int Arguments { get; }
     }
 }

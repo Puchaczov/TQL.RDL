@@ -27,6 +27,6 @@ namespace TQL.RDL.Parser.Nodes
             visitor.Visit(this);
         }
 
-        public override string ToString() => string.Format("then {0}", Descendants[0]);
+        public override string ToString() => $"then {Descendants[0]}";
     }
 }

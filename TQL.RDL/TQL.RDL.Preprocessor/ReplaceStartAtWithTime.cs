@@ -7,7 +7,7 @@ namespace TQL.RDL.Preprocessor
     public class ReplaceStartAtWithTime : FilterBase<string>
     {
         private DateTimeOffset _time;
-        private string[] _formats;
+        private readonly string[] _formats;
         private readonly string _quotedDateRegex;
 
         public ReplaceStartAtWithTime(DateTimeOffset time, string[] formats, string quotedDateRegex)
@@ -19,7 +19,6 @@ namespace TQL.RDL.Preprocessor
 
         protected override string Process(string input)
         {
-            string foundedFormat = _formats[0];
             var match = Regex.Match(input, _quotedDateRegex);
             if(!match.Success)
             {

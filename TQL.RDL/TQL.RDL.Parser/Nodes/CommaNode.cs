@@ -7,7 +7,7 @@ namespace TQL.RDL.Parser.Nodes
         {
         }
 
-        public override string ToString() => string.Format("{0},{1}", Left, Right);
+        public override string ToString() => $"{Left},{Right}";
 
         public override void Accept(INodeVisitor visitor)
         {

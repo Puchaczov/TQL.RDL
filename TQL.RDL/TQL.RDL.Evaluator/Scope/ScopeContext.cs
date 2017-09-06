@@ -39,8 +39,7 @@ namespace TQL.RDL.Evaluator.Scope
             _functionScopeTable = functionScopeTable;
             _scopeName = name;
 
-            if (outerScope != null)
-                outerScope.AddInnerScope(this);
+            outerScope?.AddInnerScope(this);
         }
 
         /// <summary>

@@ -5,8 +5,8 @@ namespace TQL.RDL
 {
     internal struct ParseResult
     {
-        public RootScriptNode Root { get; }
-        public IDictionary<int, int> FunctionCallOccurences { get; }
+        private RootScriptNode Root { get; }
+        private IDictionary<int, int> FunctionCallOccurences { get; }
 
         public ParseResult(RootScriptNode root, IDictionary<int, int> functionCallOccurences)
         {
