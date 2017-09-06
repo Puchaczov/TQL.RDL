@@ -61,6 +61,27 @@ namespace TQL.RDL.Converter.Tests
                 }
                 return true;
             }
+
+            [BindableMethod]
+            public bool TestCallWithStartAtInjected([InjectStartAt] DateTimeOffset startAt, string startAtToParse)
+            {
+                Assert.AreEqual(DateTimeOffset.Parse(startAtToParse), startAt);
+                return true;
+            }
+
+            [BindableMethod]
+            public bool TestCallWithStopAtInjected([InjectStopAt] DateTimeOffset? stopAt, string stopAtToParse)
+            {
+                Assert.AreEqual(DateTimeOffset.Parse(stopAtToParse), stopAt);
+                return true;
+            }
+
+            [BindableMethod]
+            public bool TestCallWithStopAtNullInjected([InjectStopAt] DateTimeOffset? stopAt)
+            {
+                Assert.IsNull(stopAt);
+                return true;
+            }
         }
 
         [TestMethod]
@@ -98,6 +119,27 @@ namespace TQL.RDL.Converter.Tests
             var evaluator = ToEvaluator("repeat every seconds where TestCallMixedBoth() start at '21.04.2017'");
             Assert.AreEqual(DateTimeOffset.Parse("21.04.2017 00:00:00"), evaluator.NextFire());
             Assert.AreEqual(DateTimeOffset.Parse("21.04.2017 00:00:01"), evaluator.NextFire());
+        }
+
+        [TestMethod]
+        public void TestCustomFunctionWithInjectedStartAt()
+        {
+            var evaluator = ToEvaluator("repeat every seconds where TestCallWithStartAtInjected('21.04.2017 00:00:00 +00') start at '21.04.2017'");
+            evaluator.NextFire();
+        }
+
+        [TestMethod]
+        public void TestCustomFunctionWithInjectedStopAt()
+        {
+            var evaluator = ToEvaluator("repeat every seconds where TestCallWithStopAtInjected('22.04.2017 00:00:00 +00') start at '21.04.2017' stop at '22.04.2017'");
+            evaluator.NextFire();
+        }
+
+        [TestMethod]
+        public void TestCustomFunctionWithInjectedStopAtNull()
+        {
+            var evaluator = ToEvaluator("repeat every seconds where TestCallWithStopAtNullInjected() start at '21.04.2017'");
+            evaluator.NextFire();
         }
 
         private static IFireTimeEvaluator ToEvaluator(string query)

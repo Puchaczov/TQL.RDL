@@ -67,6 +67,12 @@ namespace TQL.RDL.Evaluator.Instructions
                     case nameof(InjectOccurencesAmountAttribute):
                         args.Add(_functionOccurenceAmount);
                         break;
+                    case nameof(InjectStartAtAttribute):
+                        args.Add(machine.StartAt);
+                        break;
+                    case nameof(InjectStopAtAttribute):
+                        args.Add(machine.StopAt);
+                        break;
                 }
             }
 
