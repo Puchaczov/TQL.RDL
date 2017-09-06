@@ -4,9 +4,9 @@
     <Description>Language parser.</Description>
     <Copyright>Jakub Puchała @ 2016</Copyright>
     <Authors>Jakub Puchała</Authors>
-    <AssemblyVersion>0.11.0.0</AssemblyVersion>
-    <FileVersion>0.11.0.0</FileVersion>
-    <Version>0.11.0</Version>
+    <AssemblyVersion>0.11.1.0</AssemblyVersion>
+    <FileVersion>0.11.1.0</FileVersion>
+    <Version>0.11.1</Version>
     <PackageLicenseUrl>https://github.com/Puchaczov/TQL.RDL</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Puchaczov/TQL.RDL</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Puchaczov/TQL.RDL/blob/master/LICENSE</PackageProjectUrl>
