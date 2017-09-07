@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL.Evaluator", "TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj", "{44933415-5E61-4069-8E05-75145D365A90}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQL.RDL.Preprocessor", "TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj", "{7C4BE64E-1148-4FF5-9357-0837E0B67791}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Preprocessor.Tests", "TQL.RDL.Preprocessor.Tests\TQL.RDL.Preprocessor.Tests.csproj", "{E012C66E-74EA-4420-BA73-950C737AFC0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQL.RDL.Performance", "TQL.RDL.Performance\TQL.RDL.Performance.csproj", "{0AED2F33-51F8-4AF9-8C6B-808B763E754D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,11 +59,18 @@ Global
 		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E012C66E-74EA-4420-BA73-950C737AFC0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AED2F33-51F8-4AF9-8C6B-808B763E754D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AED2F33-51F8-4AF9-8C6B-808B763E754D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AED2F33-51F8-4AF9-8C6B-808B763E754D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AED2F33-51F8-4AF9-8C6B-808B763E754D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8D96779-225B-4C10-91D7-BE0FFA806B9A}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

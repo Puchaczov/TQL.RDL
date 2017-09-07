@@ -6,12 +6,10 @@ namespace TQL.RDL.Parser.Nodes
     public class StartAtNode : ConstantNode
     {
         private readonly LeafNode _when;
-        private Token _token;
 
-        public StartAtNode(Token token, LeafNode when)
+        public StartAtNode(LeafNode when)
             : base(when)
         {
-            _token = token;
             _when = when;
         }
 

@@ -82,9 +82,9 @@ namespace TQL.RDL.Parser
             switch (token.TokenType)
             {
                 case StatementType.Var:
-                    return new StartAtNode(startAtToken, new VarNode(token as VarToken));
+                    return new StartAtNode(new VarNode(token as VarToken));
                 case StatementType.Word:
-                    return new StartAtNode(startAtToken, new DateTimeNode(token, _formats, _ci));
+                    return new StartAtNode(new DateTimeNode(token, _formats, _ci));
             }
             throw new NotSupportedException();
         }

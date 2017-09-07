@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Parser;
@@ -13,6 +14,9 @@ namespace TQL.RDL.Evaluator.Instructions
     {
         private readonly int _callParamsCount;
         private readonly MethodInfo _info;
+        private readonly ParameterInfo[] _infoParameters;
+        private readonly ParameterInfo[] _withoutInjectParameters;
+        private readonly InjectTypeAttribute[] _toInjectAttributes;
         private readonly object _obj;
         private readonly PartOfDate _partOfDate;
         private readonly int _functionOccurenceAmount;
@@ -31,6 +35,10 @@ namespace TQL.RDL.Evaluator.Instructions
         {
             _obj = obj;
             _info = info;
+            _infoParameters = _info.GetParameters();
+            _withoutInjectParameters = _infoParameters.GetParametersWithoutAttribute<InjectTypeAttribute>();
+            var toInjectParameters = _infoParameters.GetParametersWithAttribute<InjectTypeAttribute>();
+            _toInjectAttributes = toInjectParameters.Select(f => f.GetCustomAttribute<InjectTypeAttribute>()).ToArray();
             _callParamsCount = callParamsCount;
             _partOfDate = partOfDate;
             _functionOccurenceAmount = functionOccurenceAmount;
@@ -43,14 +51,12 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="machine"></param>
         public void Run(RdlVirtualMachine machine)
         {
-            var parameters = _info.GetParameters();
-            var toInjectParams = parameters.GetParametersWithAttribute<InjectTypeAttribute>();
+            var parameters = _infoParameters;
 
             var args = new List<object>();
 
-            foreach (var parameterInfo in toInjectParams)
+            foreach (var attribute in _toInjectAttributes)
             {
-                var attribute = parameterInfo.GetCustomAttribute<InjectTypeAttribute>();
                 switch (attribute.GetType().Name)
                 {
                     case nameof(InjectReferenceTimeAttribute):
@@ -77,7 +83,7 @@ namespace TQL.RDL.Evaluator.Instructions
                 }
             }
 
-            var normalParams = parameters.GetParametersWithoutAttribute<InjectTypeAttribute>();
+            var normalParams = _withoutInjectParameters;
 
             for (var i = 0; i < normalParams.Length && i < _callParamsCount; i++)
             {

@@ -22,7 +22,8 @@ namespace TQL.RDL
             "dd/M/yyyy H:m:s",
             "dd/M/yyyy h:m:s tt",
             "dd.M.yyyy H:m:s",
-            "dd.M.yyyy h:m:s tt"
+            "dd.M.yyyy h:m:s tt",
+            "dd.M.yyyy"
         };
 
         #region Private variables
