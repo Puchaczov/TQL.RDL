@@ -16,6 +16,9 @@
     <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="codecracker.CSharp" Version="1.0.3" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\TQL.RDL.Evaluator\TQL.RDL.Evaluator.csproj" />
     <ProjectReference Include="..\TQL.RDL.Preprocessor\TQL.RDL.Preprocessor.csproj" />
   </ItemGroup>

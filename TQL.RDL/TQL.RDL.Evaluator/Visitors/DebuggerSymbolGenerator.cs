@@ -44,7 +44,7 @@ namespace TQL.RDL.Evaluator.Visitors
             where TNode : RdlSyntaxNode
         {
             Instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.Before, (n, m) => { }, (n, m) => { }));
-            visit(node);
+            visit?.Invoke(node);
             Instructions.Add(new DebuggerTrap(node, DebuggerTrap.ExpressionState.After, (n, m) => { }, (n, m) => { }));
         }
     }

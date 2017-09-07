@@ -305,7 +305,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="node">Node do check.</param>
         /// <returns>true if can be generalized, else false.</returns>
-        private bool CanBeGeneralized(BinaryNode node) => CanBeGeneralized(node.Left, node.Right);
+        private static bool CanBeGeneralized(BinaryNode node) => CanBeGeneralized(node.Left, node.Right);
 
         /// <summary>
         ///     Determine if contains keyword and if it's possible to convert non-keyword types to keyword type
@@ -314,7 +314,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="left">Node do check.</param>
         /// <param name="right">Node do check.</param>
         /// <returns>true if can be generalized, else false.</returns>
-        private bool CanBeGeneralized(RdlSyntaxNode left, RdlSyntaxNode right)
+        private static bool CanBeGeneralized(RdlSyntaxNode left, RdlSyntaxNode right)
         {
             if (right.Token.Value == null)
                 return false;
@@ -354,12 +354,6 @@ namespace TQL.RDL.Evaluator.Visitors
         private void ReportLackOfWhenReturnExpression(WhenNode node)
         {
             AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.LackOfWhenReturnExpression, node.Parent),
-                SyntaxErrorKind.LackOfExpression);
-        }
-
-        private void ReportArgListIsEmpty(ArgListNode node)
-        {
-            AddSyntaxError(node.FullSpan, string.Format(AnalysisMessage.ArgListCannotBeEmpty),
                 SyntaxErrorKind.LackOfExpression);
         }
 

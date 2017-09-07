@@ -103,7 +103,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Or" node.</param>
         public virtual void Visit(OrNode node)
         {
-            ExpressionGenerateLeftToRightInstructions<OrInstruction>(node);
+            ExpressionGenerateLeftToRightInstructions<OrInstruction>();
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Equality" node.</param>
         public virtual void Visit(EqualityNode node)
         {
-            ExpressionGenerateInstructions<EqualityNumeric>(node);
+            ExpressionGenerateInstructions<EqualityNumeric>();
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Diff" node.</param>
         public virtual void Visit(DiffNode node)
         {
-            ExpressionGenerateInstructions<DiffNumeric>(node);
+            ExpressionGenerateInstructions<DiffNumeric>();
         }
 
         /// <summary>
@@ -255,10 +255,10 @@ namespace TQL.RDL.Evaluator.Visitors
                 case nameof(Int64):
                 case nameof(Int32):
                 case nameof(Int16):
-                    ExpressionGenerateIn<InInstructionNumeric>(node);
+                    ExpressionGenerateIn<InInstructionNumeric>();
                     break;
                 case nameof(DateTimeOffset):
-                    ExpressionGenerateIn<InInstructionDatetime>(node);
+                    ExpressionGenerateIn<InInstructionDatetime>();
                     break;
             }
         }
@@ -269,7 +269,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "And" node.</param>
         public virtual void Visit(AndNode node)
         {
-            ExpressionGenerateLeftToRightInstructions<AndInstruction>(node);
+            ExpressionGenerateLeftToRightInstructions<AndInstruction>();
         }
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(GreaterNode node)
         {
-            ExpressionGenerateInstructions<GreaterNumeric>(node);
+            ExpressionGenerateInstructions<GreaterNumeric>();
         }
 
         /// <summary>
@@ -339,7 +339,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Numeric" node.</param>
         public virtual void Visit(GreaterEqualNode node)
         {
-            ExpressionGenerateInstructions<GreaterEqualNumeric>(node);
+            ExpressionGenerateInstructions<GreaterEqualNumeric>();
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Less" node.</param>
         public virtual void Visit(LessNode node)
         {
-            ExpressionGenerateInstructions<LessNumeric>(node);
+            ExpressionGenerateInstructions<LessNumeric>();
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "LessEqual" node.</param>
         public virtual void Visit(LessEqualNode node)
         {
-            ExpressionGenerateInstructions<LessEqualNumeric>(node);
+            ExpressionGenerateInstructions<LessEqualNumeric>();
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Add" node.</param>
         public virtual void Visit(AddNode node)
         {
-            ExpressionGenerateInstructions<AddNumericToNumeric>(node);
+            ExpressionGenerateInstructions<AddNumericToNumeric>();
         }
 
         /// <summary>
@@ -375,7 +375,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="node">The "Modulo" node.</param>
         public virtual void Visit(ModuloNode node)
         {
-            ExpressionGenerateInstructions<ModuloNumericToNumeric>(node);
+            ExpressionGenerateInstructions<ModuloNumericToNumeric>();
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace TQL.RDL.Evaluator.Visitors
         {
             var elseNode = node.Parent.Parent.Else;
 
-            if (node.Parent.ArrayOrder == node.Parent.Parent.WhenThenExpressions.Count() - 1) //is last node. 
+            if (node.Parent.ArrayOrder == node.Parent.Parent.WhenThenExpressions.Length - 1) //is last node.
             {
                 Instructions.Add(new JumpToLabelNotEqual($"else_{elseNode.FullSpan.Start}{elseNode.FullSpan.End}"));
             }
@@ -451,7 +451,7 @@ namespace TQL.RDL.Evaluator.Visitors
             var elseSpan = node.Parent.Parent.Else.FullSpan;
             Instructions.Add(new JumpToLabel($"esac_{elseSpan.Start}{elseSpan.End}"));
 
-            if (node.Parent.ArrayOrder == node.Parent.Parent.WhenThenExpressions.Count() - 1)
+            if (node.Parent.ArrayOrder == node.Parent.Parent.WhenThenExpressions.Length - 1)
                 _labels.Add($"else_{node.Parent.Parent.Else.FullSpan.Start}{node.Parent.Parent.Else.FullSpan.End}",
                     Instructions.Count);
         }
@@ -509,19 +509,19 @@ namespace TQL.RDL.Evaluator.Visitors
             Instructions.Add(new CallExternal(_callMethodContext, registeredMethod, argTypes.Length, _partOfDate, occurenceAmount, occurenceOrder));
         }
 
-        private void ExpressionGenerateIn<TOperator>(InNode node)
+        private void ExpressionGenerateIn<TOperator>()
             where TOperator : IRdlInstruction, new()
         {
             Instructions.Add(new TOperator());
         }
 
-        private void ExpressionGenerateLeftToRightInstructions<TOperator>(BinaryNode node)
+        private void ExpressionGenerateLeftToRightInstructions<TOperator>()
             where TOperator : IRdlInstruction, new()
         {
             Instructions.Add(new TOperator());
         }
 
-        private void ExpressionGenerateInstructions<TNumericOp>(BinaryNode node)
+        private void ExpressionGenerateInstructions<TNumericOp>()
             where TNumericOp : IRdlInstruction, new()
         {
             Instructions.Add(new TNumericOp());
@@ -532,7 +532,6 @@ namespace TQL.RDL.Evaluator.Visitors
         private DateTimeOffset _startAt;
         private DateTimeOffset? _stopAt;
         private readonly Stack<List<IRdlInstruction>> _functions;
-        private MemoryVariables _variables;
         private Modify.Fun _generateNext;
         private readonly Dictionary<string, int> _labels;
         private readonly RdlMetadata _metadatas;
@@ -573,7 +572,6 @@ namespace TQL.RDL.Evaluator.Visitors
         /// <param name="functionOccurences"></param>
         private CodeGenerator(RdlMetadata metadatas, DateTimeOffset startAt, object callMethodContext, IReadOnlyDictionary<string, int> functionOccurences)
         {
-            _variables = new MemoryVariables();
             _functions = new Stack<List<IRdlInstruction>>();
             _functions.Push(new List<IRdlInstruction>());
             _stopAt = null;

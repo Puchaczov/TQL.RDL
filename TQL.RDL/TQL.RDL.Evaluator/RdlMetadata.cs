@@ -55,8 +55,7 @@ namespace TQL.RDL.Evaluator
         /// <returns>Method that fits requirements.</returns>
         public MethodInfo GetMethod(string name, Type[] methodArgs)
         {
-            var index = -1;
-            if (!TryGetAnnotatedMethod(name, methodArgs, out index))
+            if (!TryGetAnnotatedMethod(name, methodArgs, out var index))
                 throw new MethodNotFoundedException();
 
             return _methods[name][index];
@@ -71,8 +70,7 @@ namespace TQL.RDL.Evaluator
         /// <returns>True if method exists, otherwise false.</returns>
         public bool TryGetMethod(string name, Type[] methodArgs, out MethodInfo result)
         {
-            var index = -1;
-            if (!TryGetAnnotatedMethod(name, methodArgs, out index))
+            if (!TryGetAnnotatedMethod(name, methodArgs, out var index))
             {
                 result = null;
                 return false;

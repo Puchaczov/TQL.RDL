@@ -11,7 +11,7 @@ namespace TQL.RDL.Parser.Nodes
 
         public override Type ReturnType => typeof(bool);
 
-        public override string ToString() => $"{Left} {"in"} ({Right})";
+        public override string ToString() => $"{Left} in ({Right})";
         public override void Accept(INodeVisitor visitor) => visitor.Visit(this);
     }
 }

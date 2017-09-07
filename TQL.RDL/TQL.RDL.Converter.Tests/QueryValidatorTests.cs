@@ -12,7 +12,7 @@ namespace TQL.RDL.Converter.Tests
         {
             var validator = TestHelper.Convert("repeat every 4 seecondsds start at '21.04.2013'");
 
-            Assert.AreEqual(1, validator.Messages.Count());
+            Assert.AreEqual(1, validator.Messages.Count);
             Assert.AreEqual(MessageLevel.Error, validator.Messages.First().Level);
         }
 
@@ -58,7 +58,7 @@ namespace TQL.RDL.Converter.Tests
             var validator = TestHelper.Convert(query);
 
             Assert.AreEqual(errorCount, errorKinds.Length);
-            Assert.AreEqual(errorCount, validator.Messages.Count());
+            Assert.AreEqual(errorCount, validator.Messages.Count);
 
             for (var i = 0; i < errorCount; ++i)
                 Assert.AreEqual(errorKinds[i], (validator.Messages.ElementAt(i) as SyntaxError).Kind);

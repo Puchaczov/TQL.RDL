@@ -24,14 +24,14 @@ namespace TQL.RDL.Parser.Nodes
         {
             get
             {
-                for (int i = 0, j = Parent.Descendants.Count(); i < j; ++i)
+                for (int i = 0, j = Parent.Descendants.Length; i < j; ++i)
                     if (Parent.Descendants[i] == this)
                         return i;
                 return -1;
             }
         }
 
-        public int WhenThenCount => Parent.Descendants.Count() - 1;
+        public int WhenThenCount => Parent.Descendants.Length - 1;
 
         public override Type ReturnType => Then.ReturnType;
 

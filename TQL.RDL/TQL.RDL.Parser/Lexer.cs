@@ -152,7 +152,7 @@ namespace TQL.RDL.Parser
         /// <param name="tokenText">Text that match some definition</param>
         /// <param name="matchedDefinition">Definition that text matched.</param>
         /// <returns>Statement type.</returns>
-        private StatementType GetTokenCandidate(string tokenText, TokenDefinition matchedDefinition)
+        private static StatementType GetTokenCandidate(string tokenText, TokenDefinition matchedDefinition)
         {
             switch (tokenText.ToLowerInvariant())
             {
@@ -227,8 +227,7 @@ namespace TQL.RDL.Parser
 
             if (matchedDefinition.Regex.ToString() == TokenRegexDefinition.Function)
                 return StatementType.Function;
-            var number = 0;
-            if (int.TryParse(tokenText, out number) && !tokenText.Contains(" "))
+            if (int.TryParse(tokenText, out int number) && !tokenText.Contains(" "))
                 return StatementType.Numeric;
             if (matchedDefinition.Regex.GroupNumberFromName("varname") != -1)
                 return StatementType.Var;

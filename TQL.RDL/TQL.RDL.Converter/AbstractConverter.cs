@@ -59,7 +59,7 @@ namespace TQL.RDL
         /// <returns>Abstract syntax tree</returns>
         protected override RootScriptNode InstantiateRootNodeFromRequest(ConvertionRequest<TMethodsAggregator> request)
         {
-            string[] formats = null;
+            string[] formats;
 
             if (request.Formats == null || request.Formats.Length == 0)
                 formats = _defaultFormats;
@@ -72,9 +72,8 @@ namespace TQL.RDL
             var preprocessor = new Preprocessor.Preprocessor(destinationTime, formats);
             var query = preprocessor.Execute(request.Query);
             var lexer = new Lexer(query, true);
-            RdlParser parser = null;
 
-            parser = new RdlParser(lexer, formats, request.CultureInfo,
+            var parser = new RdlParser(lexer, formats, request.CultureInfo,
                 new MethodDeclarationResolver(Metdatas), MethodOccurences);
 
             return parser.ComposeRootComponents();

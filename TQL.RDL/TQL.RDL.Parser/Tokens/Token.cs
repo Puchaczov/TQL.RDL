@@ -18,8 +18,7 @@ namespace TQL.RDL.Parser.Tokens
 
         public override bool Equals(object obj)
         {
-            var token = obj as Token;
-            if (token == null)
+            if (!(obj is Token token))
                 return false;
             if (ReferenceEquals(obj, this))
                 return true;

@@ -14,7 +14,7 @@ namespace TQL.RDL.Parser.Helpers
         public static string GetTypeName(this Type type) => GetUnderlyingNullable(type).Name;
 
         /// <summary>
-        ///     Gets internal type of Nullable<T> or type if not nullable.
+        ///     Gets internal type of Nullable or type if not nullable.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The type.</returns>

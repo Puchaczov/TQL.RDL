@@ -2,7 +2,7 @@
 
 namespace TQL.RDL.Evaluator.Attributes
 {
-    public class InjectReferenceTimeAttribute : InjectTypeAttribute
+    public sealed class InjectReferenceTimeAttribute : InjectTypeAttribute
     {
         public override Type InjectType => typeof(DateTimeOffset);
     }

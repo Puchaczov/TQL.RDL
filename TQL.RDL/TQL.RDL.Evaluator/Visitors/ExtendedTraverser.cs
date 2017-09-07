@@ -1,20 +1,18 @@
-﻿using System.Collections.Generic;
-using TQL.RDL.Evaluator.Scope;
+﻿using TQL.RDL.Evaluator.Scope;
 using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Visitors
 {
     public class ExtendedTraverser : Traverser
-    {   
+    {
         private readonly ScopeContext _scope;
 
         /// <summary>
         /// Initialize instance.
         /// </summary>
         /// <param name="codeGenerationVisitor">The destination visitor.</param>
-        /// <param name="methodOccurences">Method occurences dictionary.</param>
         /// <param name="scope">The scope.</param>
-        public ExtendedTraverser(INodeVisitor codeGenerationVisitor, IDictionary<string, int> methodOccurences, ScopeContext scope)
+        public ExtendedTraverser(INodeVisitor codeGenerationVisitor, ScopeContext scope)
             : base(codeGenerationVisitor)
         {
             _scope = scope;
@@ -32,7 +30,7 @@ namespace TQL.RDL.Evaluator.Visitors
             {
                 base.Visit(node);
             }
-            else if(inScopePlace == Scope.InvocationVisibilityStatus.FirstCall)
+            else if(inScopePlace == InvocationVisibilityStatus.FirstCall)
             {
                 Visit(new CallFunctionAndStoreValueNode(node));
             }
@@ -47,7 +45,7 @@ namespace TQL.RDL.Evaluator.Visitors
         /// </summary>
         /// <param name="node">The raw function.</param>
         /// <returns>True if node is cacheable, else false.</returns>
-        private bool IsCacheable(RawFunctionNode node)
+        private static bool IsCacheable(RawFunctionNode node)
         {
             return !node.DoNotCache;
         }

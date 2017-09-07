@@ -2,7 +2,7 @@
 
 namespace TQL.RDL.Evaluator.Attributes
 {
-    public class BindableMethodAttribute : Attribute
+    public sealed class BindableMethodAttribute : Attribute
     {
     }
 }

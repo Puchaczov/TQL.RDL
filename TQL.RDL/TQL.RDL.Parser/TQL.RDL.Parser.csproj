@@ -13,6 +13,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="codecracker.CSharp" Version="1.0.3" />
     <PackageReference Include="TQL.Core" Version="5.0.1" />
     <PackageReference Include="TQL.Interfaces" Version="2.0.1" />
   </ItemGroup>

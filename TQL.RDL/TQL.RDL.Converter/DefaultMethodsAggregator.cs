@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Evaluator.Helpers;
@@ -8,6 +9,7 @@ using TQL.RDL.Parser;
 namespace TQL.RDL
 {
     [BindableClass]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class DefaultMethodsAggregator
     {
         private static readonly DayOfWeek[] WorkingDays =
@@ -36,6 +38,10 @@ namespace TQL.RDL
         /// <summary>
         ///     Determine if last fire occured at least N [part of datetime] ago.
         /// </summary>
+        /// <param name="referenceTime">Injected reference time.</param>
+        /// <param name="lastFire">Injected last fire.</param>
+        /// <param name="value">todo: describe value parameter on EveryNth</param>
+        /// <param name="partOfDate">todo: describe partOfDate parameter on EveryNth</param>
         /// <returns>True if last fire occured N [part of datetime] ago or it hasn't last fire set yet, otherwise false.</returns>
         [BindableMethod]
         public static bool EveryNth([InjectReferenceTime] DateTimeOffset referenceTime, [InjectLastFire] DateTimeOffset? lastFire, int value, string partOfDate)
@@ -126,7 +132,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Day of month.</returns>
         [BindableMethod]
-        public int GetDay([InjectReferenceTime] DateTimeOffset datetime) => datetime.Day;
+        public static int GetDay([InjectReferenceTime] DateTimeOffset datetime) => datetime.Day;
 
         /// <summary>
         ///     Gets month of year.
@@ -134,7 +140,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Month of year.</returns>
         [BindableMethod]
-        public int GetMonth([InjectReferenceTime] DateTimeOffset datetime) => datetime.Month;
+        public static int GetMonth([InjectReferenceTime] DateTimeOffset datetime) => datetime.Month;
 
         /// <summary>
         ///     Gets year.
@@ -142,7 +148,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime</param>
         /// <returns>Year</returns>
         [BindableMethod]
-        public int GetYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.Year;
+        public static int GetYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.Year;
 
         /// <summary>
         ///     Gets second.
@@ -150,7 +156,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Second</returns>
         [BindableMethod]
-        public int GetSecond([InjectReferenceTime] DateTimeOffset datetime) => datetime.Second;
+        public static int GetSecond([InjectReferenceTime] DateTimeOffset datetime) => datetime.Second;
 
         /// <summary>
         ///     Gets minute.
@@ -158,7 +164,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns></returns>
         [BindableMethod]
-        public int GetMinute([InjectReferenceTime] DateTimeOffset datetime) => datetime.Minute;
+        public static int GetMinute([InjectReferenceTime] DateTimeOffset datetime) => datetime.Minute;
 
         /// <summary>
         ///     Gets hour.
@@ -166,7 +172,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Hour.</returns>
         [BindableMethod]
-        public int GetHour([InjectReferenceTime] DateTimeOffset datetime) => datetime.Hour;
+        public static int GetHour([InjectReferenceTime] DateTimeOffset datetime) => datetime.Hour;
 
         /// <summary>
         ///     Gets the time
@@ -174,7 +180,7 @@ namespace TQL.RDL
         /// <param name="datetime">The reference time.</param>
         /// <returns></returns>
         [BindableMethod]
-        public long GetTime([InjectReferenceTime] DateTimeOffset datetime) => datetime.TimeOfDay.Ticks;
+        public static long GetTime([InjectReferenceTime] DateTimeOffset datetime) => datetime.TimeOfDay.Ticks;
 
         /// <summary>
         ///     Creates the time.
@@ -184,7 +190,7 @@ namespace TQL.RDL
         /// <param name="second">The second.</param>
         /// <returns>Time based on passed arguments.</returns>
         [BindableMethod]
-        public long Time(int hour, int minute, int second) => new TimeSpan(hour, minute, second).Ticks;
+        public static long Time(int hour, int minute, int second) => new TimeSpan(hour, minute, second).Ticks;
 
         /// <summary>
         ///     Gets week of month.
@@ -193,7 +199,7 @@ namespace TQL.RDL
         /// <param name="type">Type of calcuation to get value.</param>
         /// <returns>Week of month.</returns>
         [BindableMethod]
-        public int GetWeekOfMonth([InjectReferenceTime] DateTimeOffset datetime, string type = "")
+        public static int GetWeekOfMonth([InjectReferenceTime] DateTimeOffset datetime, string type = "")
         {
             switch (type)
             {
@@ -213,7 +219,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Day of year.</returns>
         [BindableMethod]
-        public int GetDayOfYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.DayOfYear;
+        public static int GetDayOfYear([InjectReferenceTime] DateTimeOffset datetime) => datetime.DayOfYear;
 
         /// <summary>
         ///     Gets day of week.
@@ -221,7 +227,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>Day of week.</returns>
         [BindableMethod]
-        public int GetDayOfWeek([InjectReferenceTime] DateTimeOffset datetime) => (int) datetime.DayOfWeek;
+        public static int GetDayOfWeek([InjectReferenceTime] DateTimeOffset datetime) => (int) datetime.DayOfWeek;
 
         /// <summary>
         ///     Determine if the date is working day.
@@ -229,7 +235,7 @@ namespace TQL.RDL
         /// <param name="datetime">The datetime.</param>
         /// <returns>True if it's working day, else false.</returns>
         [BindableMethod]
-        public bool IsWorkingDay([InjectReferenceTime] DateTimeOffset datetime)
+        public static bool IsWorkingDay([InjectReferenceTime] DateTimeOffset datetime)
             => WorkingDays.Contains(datetime.DayOfWeek);
 
         /// <summary>
@@ -278,7 +284,7 @@ namespace TQL.RDL
         [DoNotCache]
         public int NRandomTime([InjectReferenceTime] DateTimeOffset referenceTime, [InjectPartOfDateType] PartOfDate type, [InjectOccurenceOrder] int index, [InjectOccurencesAmount] int count)
         {
-            var minValue = 0;
+            int minValue;
             var divisor = 0;
 
             switch (type)

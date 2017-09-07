@@ -1,6 +1,6 @@
 ﻿namespace TQL.RDL.Evaluator.Attributes
 {
-    public class DoNotCacheAttribute : System.Attribute
+    public sealed class DoNotCacheAttribute : System.Attribute
     {
     }
 }

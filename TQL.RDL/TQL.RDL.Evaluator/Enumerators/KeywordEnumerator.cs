@@ -3,7 +3,7 @@ using TQL.RDL.Parser.Nodes;
 
 namespace TQL.RDL.Evaluator.Enumerators
 {
-    public class KeywordEnumerator : EnumeratorBase<Stack<VisitationState>>, IEnumerator<RdlSyntaxNode>
+    public class KeywordEnumerator : EnumeratorBase<Stack<VisitationState>>
     {
         /// <summary>
         ///     Initialize object.

@@ -4,6 +4,7 @@ namespace TQL.RDL.Evaluator.Attributes
 {
     public abstract class InjectTypeAttribute : Attribute
     {
+        /// <inheritdoc />
         /// <summary>
         ///     Initialize object.
         /// </summary>

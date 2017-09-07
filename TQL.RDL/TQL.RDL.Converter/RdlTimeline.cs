@@ -58,7 +58,7 @@ namespace TQL.RDL
             if (!coretnessChecker.IsValid)
                 return new ConvertionResponse<IFireTimeEvaluator>(null, coretnessChecker.Errors.ToArray());
 
-            Stack<bool> contextChangeTracker = new Stack<bool>();
+            var contextChangeTracker = new Stack<bool>();
             var scopeGenerator = new ContextGenerator(contextChangeTracker);
             var scopeTraverser = new ContextGeneratorTraverser(scopeGenerator, contextChangeTracker);
 
@@ -68,7 +68,7 @@ namespace TQL.RDL
                 ? new DebuggerSymbolGenerator(Metdatas, request.MethodsAggregator, MethodOccurences)
                 : new CodeGenerator(Metdatas, request.MethodsAggregator, MethodOccurences);
 
-            var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, MethodOccurences, scopeGenerator.Scope.GetRootOfAllScopes());
+            var codeGenerationTraverseVisitor = new ExtendedTraverser(codeGenerator, scopeGenerator.Scope.GetRootOfAllScopes());
 
             ast.Accept(codeGenerationTraverseVisitor);
             IFireTimeEvaluator evaluator = codeGenerator.CreateVirtualMachine(request.CancellationToken);
@@ -109,7 +109,7 @@ namespace TQL.RDL
         ///     Checks if method fit injection conditions.
         /// </summary>
         /// <param name="method">method that will be analysed.</param>
-        private void CheckMethodHasInjectableOptionalOrDefaultParameters(MethodInfo method)
+        private static void CheckMethodHasInjectableOptionalOrDefaultParameters(MethodInfo method)
         {
             var parameters = method.GetParameters();
             var injectedParams = parameters.GetParametersWithAttribute<InjectTypeAttribute>();

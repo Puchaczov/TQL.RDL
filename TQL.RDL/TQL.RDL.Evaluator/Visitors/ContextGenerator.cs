@@ -6,7 +6,6 @@ namespace TQL.RDL.Evaluator.Visitors
 {
     public class ContextGenerator : INodeVisitor
     {
-        private readonly ScopeContext _rootScope;
         private readonly Dictionary<RawFunctionNode, ScopeContext> _functionScopeTable;
         private ScopeContext _scope;
         private readonly Stack<bool> _contextChangeTracker;
@@ -20,8 +19,8 @@ namespace TQL.RDL.Evaluator.Visitors
         public ContextGenerator(Stack<bool> contextChangeTracker)
         {
             _functionScopeTable = new Dictionary<RawFunctionNode, ScopeContext>();
-            _rootScope = new ScopeContext(null, _functionScopeTable, "root");
-            _scope = _rootScope;
+            var rootScope = new ScopeContext(null, _functionScopeTable, "root");
+            _scope = rootScope;
             _contextChangeTracker = contextChangeTracker;
         }
 

@@ -26,6 +26,7 @@ namespace TQL.RDL.Evaluator.Instructions
         /// <param name="callParamsCount">Count of parameters passed from AST</param>
         /// <param name="partOfDate">Part of date</param>
         /// <param name="functionOccurenceAmount">Function occurence amount.</param>
+        /// <param name="functionOrder">Function order</param>
         public CallExternal(object obj, MethodInfo info, int callParamsCount, PartOfDate partOfDate, int functionOccurenceAmount, int functionOrder)
         {
             _obj = obj;

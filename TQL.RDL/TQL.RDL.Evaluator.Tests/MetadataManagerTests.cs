@@ -20,8 +20,8 @@ namespace TQL.RDL.Evaluator.Tests
         public void HasMethod_CheckMethodExists_ShouldPass()
         {
             Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[0]));
-            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[] {typeof(int)}));
-            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new Type[] {typeof(int), typeof(int)}));
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new[] {typeof(int)}));
+            Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA), new[] {typeof(int), typeof(int)}));
             Assert.IsTrue(_manager.HasMethod(nameof(TestMethodClass.MethodA),
                 new Type[4] {typeof(int), typeof(int), typeof(int), typeof(string)}));
             Assert.IsFalse(_manager.HasMethod(nameof(TestMethodClass.MethodA),

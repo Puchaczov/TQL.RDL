@@ -5,6 +5,7 @@ namespace TQL.RDL.Evaluator.Enumerators
 {
     public class ArythmeticEnumerator : EnumeratorBase<Stack<VisitationState>>
     {
+        /// <inheritdoc />
         /// <summary>
         ///     Create instance of tree enumerator
         /// </summary>

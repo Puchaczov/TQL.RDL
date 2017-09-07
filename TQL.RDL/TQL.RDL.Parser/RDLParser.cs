@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using TQL.Core.Exceptions;
 using TQL.Core.Syntax;
 using TQL.RDL.Parser.Exceptions;
@@ -23,7 +22,7 @@ namespace TQL.RDL.Parser
             IMethodDeclarationResolver resolver, IDictionary<string, int> functionCallOccurence)
         {
             _cLexer = lexer;
-            
+
             _formats = formats;
             _ci = ci;
             _resolver = resolver;
@@ -236,14 +235,11 @@ namespace TQL.RDL.Parser
             return ComposeAndSkip(parserAction, aStatement);
         }
 
-        private TNode SkipAndCompose<TNode>(Func<RdlParser, TNode> parserAction, StatementType statement)
-        {
-            Consume(statement);
-            return parserAction(this);
-        }
-
         private TNode ComposeAndSkip<TNode>(Func<RdlParser, TNode> parserAction, StatementType statement)
         {
+            if(parserAction == null)
+                throw new ArgumentNullException(nameof(parserAction));
+
             var node = parserAction(this);
             Consume(statement);
             return node;
@@ -264,9 +260,8 @@ namespace TQL.RDL.Parser
                     return new CaseNode(ConsumeAndGetToken(), ComposeWhenThenNodes(),
                         ComposeAndSkip(f => ComposeElseNode(), StatementType.CaseEnd));
                 case StatementType.Function:
-                    var func = Current as FunctionToken;
 
-                    if (func == null)
+                    if (!(Current is FunctionToken func))
                         throw new ArgumentNullException();
 
                     Consume(StatementType.Function);
@@ -274,8 +269,7 @@ namespace TQL.RDL.Parser
                     var args = ComposeArgs();
                     var argsTypes = args.Descendants.Select(f => f.ReturnType).ToArray();
 
-                    MethodInfo registeredMethod;
-                    if (_resolver.TryResolveMethod(func.Value, argsTypes, out registeredMethod))
+                    if (_resolver.TryResolveMethod(func.Value, argsTypes, out var registeredMethod))
                     {
                         var function = new RawFunctionNode(func, args, registeredMethod.ReturnType, !_resolver.CanBeCached(registeredMethod));
                         var detailedIdentifierHash = function.DetailedFunctionIdentifier();
@@ -374,13 +368,13 @@ namespace TQL.RDL.Parser
             return token;
         }
 
-        private bool IsElseNode(Token current)
+        private static bool IsElseNode(Token current)
             => current.TokenType == StatementType.Else;
 
         private Token ConsumeAndGetToken()
             => ConsumeAndGetToken(Current.TokenType);
 
-        private bool IsArithmeticOperator(Token currentToken, Precendence precendence)
+        private static bool IsArithmeticOperator(Token currentToken, Precendence precendence)
         {
             switch (precendence)
             {
@@ -400,7 +394,7 @@ namespace TQL.RDL.Parser
             return false;
         }
 
-        private bool IsEqualityOperator(Token currentToken)
+        private static bool IsEqualityOperator(Token currentToken)
             => currentToken.TokenType == StatementType.Greater ||
                currentToken.TokenType == StatementType.GreaterEqual ||
                currentToken.TokenType == StatementType.Less ||
@@ -462,15 +456,13 @@ namespace TQL.RDL.Parser
             Level3
         }
 
-        private Type InferMinimalNumericType(Token token)
+        private static Type InferMinimalNumericType(Token token)
         {
-            bool bResult;
-            short sResult;
 
-            if (bool.TryParse(token.Value, out bResult))
+            if (bool.TryParse(token.Value, out bool bResult))
                 return typeof(bool);
 
-            if (short.TryParse(token.Value, out sResult))
+            if (short.TryParse(token.Value, out short sResult))
                 return typeof(short);
 
             return typeof(long);
