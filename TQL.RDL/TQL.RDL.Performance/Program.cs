@@ -11,18 +11,15 @@ namespace TQL.RDL.Performance
     {
         static void Main(string[] args)
         {
-            args = new[] {@"repeat every hours where 1 = 
+            args = new[] {@"
+                repeat every minutes where 1 = 
                     (case 
-                when GetDayOfWeek() in (monday, tuesday)
-                then GetHour() = 10
-                when GetDayOfWeek() = wednesday
-                then GetHour() = 0
-                when GetDayOfWeek() = thursday
-                then GetHour() = 4
-                when GetDayOfWeek() = friday
-                then GetHour() = 6
-                else 0
-                esac) start at '01.08.2017' stop at '01.08.2040'"};
+                        when GetWeekOfMonth() in (1,3) and GetDayOfWeek() = monday
+                        then GetTime() between Time(8, 30, 0) and Time(11, 30, 0)
+                        when GetWeekOfMonth() in (2,4) and GetDayOfWeek() in (tuesday, sunday)
+                        then GetTime() = Time(12, 0, 0)
+                        else 0
+                    esac) start at '01.04.2017' stop at '30.04.2019'"};
 
             Console.WriteLine($@"Timer started at: {DateTimeOffset.UtcNow}");
 

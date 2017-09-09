@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using TQL.RDL.Evaluator.Attributes;
 using TQL.RDL.Parser;
@@ -119,8 +120,12 @@ namespace TQL.RDL.Evaluator.Instructions
             if (countOfUnsetParameters > parameters.CountOptionalParameters())
                 throw new ArgumentException();
 
-            for (var i = 0; i < countOfUnsetParameters; ++i)
-                args.Add(Type.Missing);
+            for (int i = 0, j = parameters.Length - countOfUnsetParameters; i < countOfUnsetParameters; ++i)
+            {
+                var param = parameters[j + i];
+
+                args.Add(param.HasDefaultValue ? param.DefaultValue : Type.Missing);
+            }
 
             var result = _info.Invoke(_obj, args.ToArray());
 
