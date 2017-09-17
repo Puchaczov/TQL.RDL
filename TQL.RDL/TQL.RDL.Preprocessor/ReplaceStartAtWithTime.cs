@@ -36,10 +36,10 @@ namespace TQL.RDL.Preprocessor
             quotedDate = quotedDate.Replace("hh", _time.Hour.ToString().PadLeft(2, '0'));
             quotedDate = quotedDate.Replace("h", _time.Hour.ToString());
             quotedDate = quotedDate.Replace("H", _time.Hour.ToString());
-            quotedDate = quotedDate.Replace("mm", _time.Hour.ToString().PadLeft(2, '0'));
-            quotedDate = quotedDate.Replace("m", _time.Hour.ToString());
-            quotedDate = quotedDate.Replace("ss", _time.Hour.ToString().PadLeft(2, '0'));
-            quotedDate = quotedDate.Replace("s", _time.Hour.ToString());
+            quotedDate = quotedDate.Replace("mm", _time.Minute.ToString().PadLeft(2, '0'));
+            quotedDate = quotedDate.Replace("m", _time.Minute.ToString());
+            quotedDate = quotedDate.Replace("ss", _time.Second.ToString().PadLeft(2, '0'));
+            quotedDate = quotedDate.Replace("s", _time.Second.ToString());
 
             return input.Replace(match.Groups[2].Value, quotedDate);
         }
